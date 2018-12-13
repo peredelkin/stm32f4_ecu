@@ -40,18 +40,25 @@ void ecu_blue_blink(ecu_t* ecu) {
     }
 }
 
-void ecu_crank_capture_period_ovf_write(ecu_t* ecu,uint16_t capture) {
+void ecu_crank_capture_period_ovf_write(ecu_t* ecu,uint8_t prev_1,uint8_t vr_count,uint16_t capture) {
     timer_ch_ccr_write(&ecu->ovf_cap_ch,(uint16_t)(capture + 0xffff)); //сдвиг ovf cap
-    ecu_crank_capture_write(ecu,ecu->vr_count,capture); //запись захвата
-    ecu_crank_period_write(ecu,ecu->vr_count,ecu_crank_period_calc(ecu,capture)); //запись периода
+    ecu_crank_capture_write(ecu,vr_count,capture); //запись захвата
+    ecu_crank_period_write(ecu,vr_count,ecu_crank_period_calc(ecu,prev_1,capture)); //запись периода
 }
 
 void ecu_crank_capture_handler(ecu_t* ecu,void* tim_ch) {
     ecu_crank_counter(ecu); //vr_count++
-    ecu_crank_capture_period_ovf_write(ecu,timer_ch_ccr_read(tim_ch)); //чтение захвата и запись ovf,capture,period
-    ecu_crank_gap_search(ecu); //поиск метки и синхронизация углов,если метка найдена
-    ecu_crank_gap_check(ecu); //проверка метки в точке синхронизации
-    crank_extrapolation_calc(ecu); //расчет экстраполяции в точках vr_count + 1 и vr_count + 2
+    
+    uint8_t vr_count = ecu->vr_count;
+    uint8_t prev_2 = ecu_crank_vr_numb_normalization(vr_count - 2); //prev->prev
+    uint8_t prev_1 = ecu_crank_vr_numb_normalization(vr_count - 1); //prev
+    uint8_t next_1 = ecu_crank_vr_numb_normalization(vr_count + 1); //next
+    uint8_t next_2 = ecu_crank_vr_numb_normalization(vr_count + 2); //next->next
+    
+    ecu_crank_capture_period_ovf_write(ecu,prev_1,vr_count,timer_ch_ccr_read(tim_ch)); //чтение захвата и запись ovf,capture,period
+    ecu_crank_gap_search(ecu,prev_2,prev_1,vr_count); //поиск метки и синхронизация углов,если метка найдена
+    ecu_crank_gap_check(ecu,prev_2,prev_1,vr_count); //проверка метки в точке синхронизации
+    crank_extrapolation_calc(ecu,prev_1,vr_count,next_1,next_2); //расчет экстраполяции в точках vr_count + 1 и vr_count + 2
     ecu_blue_blink(ecu); //blue led on на 0 зубе
 }
 

@@ -20,8 +20,8 @@
 
 #define ECU_VR_SYNC_POINT (uint8_t)1
 
-extern void ecu_crank_gap_search(ecu_t* ecu);
-extern void ecu_crank_gap_check(ecu_t* ecu);
+extern void ecu_crank_gap_search(ecu_t* ecu,uint8_t prev_2, uint8_t prev_1, uint8_t vr_count);
+extern void ecu_crank_gap_check(ecu_t* ecu,uint8_t prev_2, uint8_t prev_1, uint8_t vr_count);
 
 #endif /* ECU_SYNC_H */
 
