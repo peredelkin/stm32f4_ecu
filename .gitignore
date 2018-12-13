@@ -1,0 +1,6 @@
+#ignore paths
+dist/
+build/
+nbproject/
+#files
+*.pdf
