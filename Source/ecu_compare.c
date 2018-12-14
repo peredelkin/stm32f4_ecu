@@ -17,3 +17,12 @@ bool crank_gap_one_missing_check(uint16_t tnbm2_w, uint16_t tnbm1_w) {
 bool ecu_coil_window_angle_check(uint16_t check_angle,uint16_t angle, uint16_t next_angle) {
     return ((angle <= check_angle) && (check_angle <= (uint16_t) (next_angle - 1)));
 }
+
+//возвращает true,если обороты выше минимальных
+bool ecu_crank_min_time(uint16_t min_time,uint16_t tnbm2_w) {
+    return (tnbm2_w < min_time);
+}
+//возвращает true,если ниже минимальных
+bool ecu_crank_min_time_reset(uint16_t min_time,uint16_t tnbm1_w,uint16_t tnbm_w) {
+    return ((tnbm1_w > min_time) && (tnbm_w > min_time));
+}
