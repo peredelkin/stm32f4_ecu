@@ -55,3 +55,19 @@ void ecu_crank_gap_check(ecu_t* ecu,uint8_t prev_2, uint8_t prev_1, uint8_t vr_c
         }
     }
 }
+
+//проверка времени захвата
+void ecu_crank_min_time_check(ecu_t* ecu,uint8_t prev_2, uint8_t prev_1, uint8_t vr_count) {
+    uint16_t tnbm2_w = ecu_crank_period_read(ecu, prev_2);
+    uint16_t tnbm1_w = ecu_crank_period_read(ecu, prev_1);
+    uint16_t tnbm_w = ecu_crank_period_read(ecu, vr_count);
+    if(ecu_crank_min_time_reset(ECU_MAX_TOOTH_TIME,tnbm1_w,tnbm_w)) {
+        ecu->cap_time_norm = true;
+    } else {
+        if(ecu_crank_min_time_set(ECU_MAX_TOOTH_TIME,tnbm2_w)) {
+            ecu->cap_time_norm = false;
+            ecu->gap_correct = false; //(!)
+            ecu->gap_found = false; //(!)
+        }
+    }
+}

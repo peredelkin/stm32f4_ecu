@@ -25,6 +25,10 @@ extern bool crank_gap_one_to_much_check(uint16_t tnbm1_w, uint16_t tnbm_w);
 extern bool crank_gap_one_missing_check(uint16_t tnbm2_w, uint16_t tnbm1_w);
 //возвращает true,если искомый углол в заданном окне
 extern bool ecu_coil_window_angle_check(uint16_t check_angle,uint16_t angle, uint16_t next_angle);
+//возвращает true,если обороты выше минимальных
+extern bool ecu_crank_min_time_set(uint16_t min_time,uint16_t tnbm2_w);
+//возвращает true,если ниже минимальных
+extern bool ecu_crank_min_time_reset(uint16_t min_time,uint16_t tnbm1_w,uint16_t tnbm_w);
 
 #endif /* ECU_COMPARE_H */
 

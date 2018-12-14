@@ -19,7 +19,7 @@ bool ecu_coil_window_angle_check(uint16_t check_angle,uint16_t angle, uint16_t n
 }
 
 //возвращает true,если обороты выше минимальных
-bool ecu_crank_min_time(uint16_t min_time,uint16_t tnbm2_w) {
+bool ecu_crank_min_time_set(uint16_t min_time,uint16_t tnbm2_w) {
     return (tnbm2_w < min_time);
 }
 //возвращает true,если ниже минимальных

@@ -30,6 +30,7 @@ typedef struct {
 	uint8_t vr_sync_point; //значение vr_count на момент синхронизации
 	bool gap_found; //метка найдена
 	bool gap_correct; //метка верна
+        bool cap_time_norm; //время захвата меньше минимального
 } ecu_t;
 
 ecu_t ecu_struct; //структура эбу
