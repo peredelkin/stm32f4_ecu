@@ -71,9 +71,10 @@ void ecu_coil_angle_check(coil_event_t* action, uint16_t angle, uint16_t next_an
     }
 }
 
-void ecu_coil_angle_update(coil_event_t* action, uint16_t angle, uint16_t next_angle) {
-    if (ecu_coil_window_angle_check(action->angle_s,angle,next_angle)) {
-        action->angle = action->angle_s;
+void ecu_coil_angle_update(coil_t* coil, uint16_t angle, uint16_t next_angle) {
+    if (ecu_coil_window_angle_check(coil->reset.angle_s,angle,next_angle)) {
+        coil->set.angle = coil->set.angle_s;
+        coil->reset.angle = coil->reset.angle_s;
     }
 }
 
@@ -92,10 +93,8 @@ void ecu_coil_handler(ecu_t* ecu) {
         ecu_coil_angle_check(&coil_2_3.set, angle, next_angle, capture, next_period);
         ecu_coil_angle_check(&coil_2_3.reset, angle, next_angle, capture, next_period);
 
-        ecu_coil_angle_update(&coil_1_4.set, angle, next_angle);
-        ecu_coil_angle_update(&coil_1_4.reset, angle, next_angle);
-        ecu_coil_angle_update(&coil_2_3.set, angle, next_angle);
-        ecu_coil_angle_update(&coil_2_3.reset, angle, next_angle);
+        ecu_coil_angle_update(&coil_1_4, angle, next_angle);
+        ecu_coil_angle_update(&coil_2_3, angle, next_angle);
 
         //test begin
         coil_1_4.set.angle_s++; 
