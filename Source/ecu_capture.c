@@ -1,7 +1,7 @@
 #include "ecu_capture.h"
 
 void ecu_capture_timer_init() {
-//    NVIC_SetPriority(TIM1_CC_IRQn, 6); //34 default
+    NVIC_SetPriority(TIM1_CC_IRQn, 6); //34 default
     NVIC_EnableIRQ(ECU_CAP_TIM_IRQn); // Capture/compare Interrupt Enable
 
     ECU_CAP_TIM->CCMR1 |= TIM_CCMR1_CC1S_0; // Capture TI1
