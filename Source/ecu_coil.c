@@ -73,15 +73,25 @@ void ecu_coil_angle_check(coil_event_t* action, uint16_t angle, uint16_t next_an
 
 void ecu_coil_angle_update(coil_t* coil, uint16_t angle, uint16_t next_angle) {
     if (ecu_coil_window_angle_check(coil->reset.angle_s,angle,next_angle)) {
+        coil->busy = false;
         coil->set.angle = coil->set.angle_s;
         coil->reset.angle = coil->reset.angle_s;
     }
 }
 
+void ecu_coil_set_angle_calc(ecu_t* ecu,uint8_t prev_1,uint8_t vr_count, coil_t* coil) {
+    uint16_t period_angles = (uint16_t)(ecu->crank.angle[vr_count] - ecu->crank.angle[prev_1]);
+    uint16_t time = 4000; //4ms
+    uint16_t angle  = (time*period_angles)/(ecu->crank.period[vr_count]);
+    coil->set.angle_s = (uint16_t)(coil->reset.angle_s - angle);
+}
+
 void ecu_coil_handler(ecu_t* ecu) {
     if (ecu->gap_correct) {
-        uint8_t next_1 = ecu_crank_vr_numb_normalization(ecu->vr_count + 1);
-        uint8_t next_2 = ecu_crank_vr_numb_normalization(ecu->vr_count + 2);
+        uint8_t vr_count = ecu->vr_count;
+        uint8_t prev_1 = ecu_crank_vr_numb_normalization(vr_count - 1);
+        uint8_t next_1 = ecu_crank_vr_numb_normalization(vr_count + 1);
+        uint8_t next_2 = ecu_crank_vr_numb_normalization(vr_count + 2);
 
         uint16_t angle = ecu->crank.angle[next_1];
         uint16_t next_angle = ecu->crank.angle[next_2];
@@ -95,13 +105,18 @@ void ecu_coil_handler(ecu_t* ecu) {
 
         ecu_coil_angle_update(&coil_1_4, angle, next_angle);
         ecu_coil_angle_update(&coil_2_3, angle, next_angle);
-
+        
         //test begin
-        coil_1_4.set.angle_s++; 
-        coil_1_4.reset.angle_s++;
-
-        coil_2_3.set.angle_s++;
-        coil_2_3.reset.angle_s++;
+        if(coil_1_4.busy == false) {
+            coil_1_4.busy = true;
+            coil_1_4.reset.angle_s+=100;
+            ecu_coil_set_angle_calc(ecu,prev_1,vr_count,&coil_1_4);
+        }
+        if (coil_2_3.busy == false) {
+            coil_2_3.busy = true;
+            coil_2_3.reset.angle_s+=100;
+            ecu_coil_set_angle_calc(ecu, prev_1, vr_count, &coil_2_3);
+        }
     }
 }
 
