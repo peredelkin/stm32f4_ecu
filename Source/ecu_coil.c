@@ -79,13 +79,6 @@ void ecu_coil_angle_update(coil_t* coil, uint16_t angle, uint16_t next_angle) {
     }
 }
 
-void ecu_coil_set_angle_calc(ecu_t* ecu,uint8_t prev_1,uint8_t vr_count, coil_t* coil) {
-    uint16_t period_angles = (uint16_t)(ecu->crank.angle[vr_count] - ecu->crank.angle[prev_1]);
-    uint16_t time = 4000; //4ms
-    uint16_t angle  = (time*period_angles)/(ecu->crank.period[vr_count]);
-    coil->set.angle_s = (uint16_t)(coil->reset.angle_s - angle);
-}
-
 void ecu_coil_handler(ecu_t* ecu) {
     if (ecu->gap_correct) {
 

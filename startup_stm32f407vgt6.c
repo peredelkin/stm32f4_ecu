@@ -38,11 +38,16 @@ extern char _sidata;
 extern char _sdata;
 // Конец.
 extern char _edata;
-// Неинициализированные данные в ОЗУ.
+// Неинициализированные данные в RAM.
 // Начало.
 extern char _sbss;
 // Конец.
 extern char _ebss;
+//Неинициализированные данные CCM
+//Начало
+extern char _ccram_top;
+//Конец
+extern char _ccram;
 // Массив инициализации.
 // Начало.
 extern char __init_array_start;
@@ -77,6 +82,10 @@ STARTUP_FUNC_ATTR static void __Reset_Handler(void) {
 
     dst = (long*) &_sbss;
     end = (long*) &_ebss;
+    while (dst < end) *dst++ = 0;
+    
+    dst = (long*) &_ccram_top;
+    end = (long*) &_ccram;
     while (dst < end) *dst++ = 0;
 
     src = (long*) &__init_array_start;

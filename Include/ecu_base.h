@@ -32,7 +32,7 @@ typedef struct {
 }vr_count_t;
 
 typedef struct {
-        timer_ch_it_t capture_ch; //канал захвата
+        timer_ch_it_t cap_ch; //канал захвата
         timer_ch_it_t ovf_cap_ch; //канал переполнения захвата
 	crank_time_t crank; //таблица захвата
         vr_count_t vr; //номера элементов
@@ -40,8 +40,6 @@ typedef struct {
 	bool gap_correct; //метка верна
         bool cap_time_norm; //время захвата меньше минимального
 } ecu_t;
-
-ecu_t ecu_struct; //структура эбу
 
 extern void ecu_crank_counter(vr_count_t* vr_struct);
 

@@ -20,6 +20,13 @@
 #include "ecu_capture.h"
 #include "ecu_coil.h"
 
+//ecu_t ecu_struct __attribute__((section(".ccram"))); //структура эбу
+ecu_t ecu_struct; //структура эбу
+
+void ECU_CAP_TIM_IRQHandler(void) {
+    ecu_cap_irq_handler(&ecu_struct);
+}
+
 void ecu_crank_handler_callback(void* channel) {
     GPIOD->BSRRL = GPIO_ODR_ODR_12;
     ecu_crank_capture_handler(&ecu_struct,channel);
@@ -28,16 +35,18 @@ void ecu_crank_handler_callback(void* channel) {
 }
 
 void ecu_init(void) {
-    timer_ch_event_set(&ecu_struct.capture_ch,&ecu_crank_handler_callback); //
-    timer_ch_it_enable(&ecu_struct.capture_ch,false); //const it
+    timer_ch_event_set(&ecu_struct.cap_ch,&ecu_crank_handler_callback); //
+    timer_ch_it_enable(&ecu_struct.cap_ch,false); //const it
     ECU_CAP_TIM->CR1 |= TIM_CR1_CEN;
 }
 
-void delay_1s(void)
-{
-    volatile uint32_t i = 8000000;
-    while(-- i);
-}
+//volatile uint32_t i;
+//
+//void delay_1s(void)
+//{
+//    i = 8000000;
+//    while(-- i);
+//}
 
 int main() {
 	rcc_init(); //тактирование
