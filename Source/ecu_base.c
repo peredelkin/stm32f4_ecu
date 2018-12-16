@@ -36,10 +36,15 @@ uint8_t ecu_crank_vr_numb_normalization(int8_t numb) {
     }
 }
 
-void ecu_crank_counter(ecu_t* ecu) {
-    if(ecu->vr_count == ECU_VR_COUNT_RESET) {
-        ecu->vr_count = 0;
+void ecu_crank_counter(vr_count_t* vr_struct) {
+    if(vr_struct->count == ECU_VR_COUNT_RESET) {
+        vr_struct->count = 0;
     } else {
-        ecu->vr_count++;
+        vr_struct->count++;
     }
+    uint8_t vr_count = vr_struct->count;
+    vr_struct->prev_2 = ecu_crank_vr_numb_normalization(vr_count - 2); //prev->prev
+    vr_struct->prev_1 = ecu_crank_vr_numb_normalization(vr_count - 1); //prev
+    vr_struct->next_1 = ecu_crank_vr_numb_normalization(vr_count + 1); //next
+    vr_struct->next_2 = ecu_crank_vr_numb_normalization(vr_count + 2); //next->next
 }

@@ -23,11 +23,19 @@ typedef struct {
 }crank_time_t;
 
 typedef struct {
+    uint8_t prev_2;
+    uint8_t prev_1;
+    uint8_t count;
+    uint8_t sync_point;
+    uint8_t next_1;
+    uint8_t next_2;
+}vr_count_t;
+
+typedef struct {
         timer_ch_it_t capture_ch; //канал захвата
         timer_ch_it_t ovf_cap_ch; //канал переполнения захвата
 	crank_time_t crank; //таблица захвата
-        uint8_t vr_count; //счетчик зубов для записи захвата
-	uint8_t vr_sync_point; //значение vr_count на момент синхронизации
+        vr_count_t vr; //номера элементов
 	bool gap_found; //метка найдена
 	bool gap_correct; //метка верна
         bool cap_time_norm; //время захвата меньше минимального
@@ -35,7 +43,7 @@ typedef struct {
 
 ecu_t ecu_struct; //структура эбу
 
-extern void ecu_crank_counter(ecu_t* ecu);
+extern void ecu_crank_counter(vr_count_t* vr_struct);
 
 extern uint8_t ecu_crank_vr_numb_normalization(int8_t numb);
 

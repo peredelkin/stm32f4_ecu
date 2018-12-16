@@ -88,15 +88,11 @@ void ecu_coil_set_angle_calc(ecu_t* ecu,uint8_t prev_1,uint8_t vr_count, coil_t*
 
 void ecu_coil_handler(ecu_t* ecu) {
     if (ecu->gap_correct) {
-        uint8_t vr_count = ecu->vr_count;
-        uint8_t prev_1 = ecu_crank_vr_numb_normalization(vr_count - 1);
-        uint8_t next_1 = ecu_crank_vr_numb_normalization(vr_count + 1);
-        uint8_t next_2 = ecu_crank_vr_numb_normalization(vr_count + 2);
 
-        uint16_t angle = ecu->crank.angle[next_1];
-        uint16_t next_angle = ecu->crank.angle[next_2];
-        uint16_t capture = ecu->crank.capture[next_1];
-        uint16_t next_period = ecu->crank.period[next_2];
+        uint16_t angle = ecu->crank.angle[ecu->vr.next_1];
+        uint16_t next_angle = ecu->crank.angle[ecu->vr.next_2];
+        uint16_t capture = ecu->crank.capture[ecu->vr.next_1];
+        uint16_t next_period = ecu->crank.period[ecu->vr.next_2];
 
         ecu_coil_angle_check(&coil_1_4.set, angle, next_angle, capture, next_period);
         ecu_coil_angle_check(&coil_1_4.reset, angle, next_angle, capture, next_period);
@@ -110,12 +106,12 @@ void ecu_coil_handler(ecu_t* ecu) {
         if(coil_1_4.busy == false) {
             coil_1_4.busy = true;
             coil_1_4.reset.angle_s+=100;
-            ecu_coil_set_angle_calc(ecu,prev_1,vr_count,&coil_1_4);
+            ecu_coil_set_angle_calc(ecu,ecu->vr.prev_1,ecu->vr.count,&coil_1_4);
         }
         if (coil_2_3.busy == false) {
             coil_2_3.busy = true;
             coil_2_3.reset.angle_s+=100;
-            ecu_coil_set_angle_calc(ecu, prev_1, vr_count, &coil_2_3);
+            ecu_coil_set_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, &coil_2_3);
         }
     }
 }
