@@ -43,7 +43,7 @@ void ecu_blue_blink(ecu_t* ecu) {
 void ecu_crank_capture_period_ovf_write(ecu_t* ecu,uint16_t capture) {
     timer_ch_ccr_write(&ecu->ovf_cap_ch,(uint16_t)(capture + 0xffff)); //сдвиг ovf cap
     ecu_crank_capture_write(ecu,ecu->vr.count,capture); //запись захвата
-    ecu_crank_period_write(ecu,ecu->vr.count,ecu_crank_period_calc(ecu,ecu->vr.prev_1,capture)); //запись периода
+    ecu_crank_period_write(ecu,ecu->vr.count,ecu_crank_period_calc(ecu)); //запись периода
 }
 
 void ecu_crank_capture_handler(ecu_t* ecu,void* tim_ch) {

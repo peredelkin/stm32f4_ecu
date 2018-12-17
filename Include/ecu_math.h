@@ -16,9 +16,9 @@
 
 #include "ecu_coil.h"
 
-extern uint16_t ecu_crank_period_calc(ecu_t* ecu,uint8_t prev_1,uint16_t capture);
+extern uint16_t ecu_crank_period_calc(ecu_t* ecu);
 extern void crank_extrapolation_calc(ecu_t *ecu);
-extern void ecu_coil_interpolation_calc(coil_event_t* action, uint16_t angle, uint16_t capture, uint16_t next_period, uint16_t next_angle_period);
+extern uint16_t ecu_coil_interpolation_calc(uint16_t action_angle,uint16_t angle, uint16_t capture, uint16_t next_period, uint16_t next_angle_period);
 extern void ecu_coil_set_angle_calc(ecu_t* ecu,uint8_t prev_1,uint8_t vr_count, coil_t* coil);
 
 #endif /* ECU_MATH_H */
