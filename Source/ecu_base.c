@@ -48,3 +48,8 @@ void ecu_crank_counter(vr_count_t* vr_struct) {
     vr_struct->next_1 = ecu_crank_vr_numb_normalization(vr_count + 1); //next
     vr_struct->next_2 = ecu_crank_vr_numb_normalization(vr_count + 2); //next->next
 }
+
+void ecu_main_irq_handler(ecu_t* ecu) {
+    timer_ch_it_handler(&ecu->cap_ch);
+    timer_ch_it_handler(&ecu->ovf_cap_ch);
+}

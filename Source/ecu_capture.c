@@ -61,8 +61,3 @@ void ecu_crank_capture_init(ecu_t* ecu) {
     make_timer_ch_it_init(&ecu->cap_ch,ECU_CAP_TIM,1); //настройка канала "захват"
     make_timer_ch_it_init(&ecu->ovf_cap_ch,ECU_CAP_TIM,2); //настройка канала "переполнение захвата"
 }
-
-void ecu_cap_irq_handler(ecu_t* ecu) {
-    timer_ch_it_handler(&ecu->cap_ch);
-    timer_ch_it_handler(&ecu->ovf_cap_ch);
-}
