@@ -95,7 +95,7 @@ void crank_extrapolation_calc(ecu_t *ecu) {
 }
 
 /**
- * Расчет интерполяции
+ * Расчет CCR с интерполяцией
  * @param action_angle Угол задачи
  * @param angle Угол
  * @param capture Захват
