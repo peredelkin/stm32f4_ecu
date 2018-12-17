@@ -23,6 +23,7 @@
 
 extern void ecu_crank_capture_handler(ecu_t* ecu,void* tim_ch);
 extern void ecu_crank_capture_init(ecu_t* ecu);
+extern void ecu_cap_irq_handler(ecu_t* ecu);
 
 #endif /* ECU_CAPTURE_H */
 

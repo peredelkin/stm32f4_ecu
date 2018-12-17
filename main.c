@@ -24,7 +24,7 @@
 ecu_t ecu_struct; //структура эбу
 
 void ECU_CAP_TIM_IRQHandler(void) {
-    ecu_main_irq_handler(&ecu_struct);
+    ecu_cap_irq_handler(&ecu_struct);
 }
 
 void ecu_crank_handler_callback(void* channel) {

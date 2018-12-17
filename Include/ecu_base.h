@@ -41,8 +41,6 @@ typedef struct {
         bool cap_time_norm; //время захвата меньше минимального
 } ecu_t;
 
-extern void ecu_main_irq_handler(ecu_t* ecu);
-
 extern void ecu_crank_counter(vr_count_t* vr_struct);
 
 extern uint8_t ecu_crank_vr_numb_normalization(int8_t numb);
