@@ -75,12 +75,9 @@ void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
     }
 }
 
+//\todo Переписать
 void ecu_coil_angle_update(coil_t* coil, uint16_t angle, uint16_t next_angle) {
-    if (ecu_coil_window_angle_check(coil->reset.angle_s,angle,next_angle) && coil->busy) {
-        coil->busy = false;
-        coil->set.angle = coil->set.angle_s;
-        coil->reset.angle = coil->reset.angle_s;
-    }
+    
 }
 
 void ecu_coil_handler(ecu_t* ecu) {
