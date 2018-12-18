@@ -33,7 +33,7 @@ void ecu_capture_timer_init() {
 }
 
 void ecu_blue_blink(ecu_t* ecu) {
-    if(ecu->crank.angle[ecu->vr.count] == (uint16_t)44782) {
+    if(ecu->crank.angle[ecu->vr.count] == (uint16_t)0) {
         GPIOD->BSRRL = GPIO_ODR_ODR_15;
     } else {
         GPIOD->BSRRH = GPIO_ODR_ODR_15;

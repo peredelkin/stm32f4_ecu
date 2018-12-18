@@ -77,7 +77,13 @@ void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
 
 //\todo Переписать
 void ecu_coil_angle_update(coil_t* coil, uint16_t angle, uint16_t next_angle) {
+    if(ecu_coil_window_angle_check(coil->set.angle_s,angle,next_angle)) {
+            coil->set.angle = coil->set.angle_s;
+    }
     
+    if(ecu_coil_window_angle_check(coil->reset.angle_s,angle,next_angle)) {
+            coil->reset.angle = coil->reset.angle_s;
+    }
 }
 
 void ecu_coil_handler(ecu_t* ecu) {
@@ -97,16 +103,11 @@ void ecu_coil_handler(ecu_t* ecu) {
         ecu_coil_angle_update(&coil_2_3, angle, next_angle);
         
         //test begin
-        if(coil_1_4.busy == false) {
-            coil_1_4.busy = true;
-            coil_1_4.reset.angle_s+=100;
+            coil_1_4.reset.angle_s+=10;
             ecu_coil_set_angle_calc(ecu,ecu->vr.prev_1,ecu->vr.count,&coil_1_4);
-        }
-        if (coil_2_3.busy == false) {
-            coil_2_3.busy = true;
-            coil_2_3.reset.angle_s+=100;
+            
+            coil_2_3.reset.angle_s+=10;
             ecu_coil_set_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, &coil_2_3);
-        }
     }
 }
 
