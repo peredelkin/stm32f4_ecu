@@ -19,9 +19,14 @@
 #define ECU_COIL_TIM_2_IRQHandler TIM4_IRQHandler
 
 typedef struct {
-    timer_ch_it_t event_ch;
     uint16_t angle;
-    uint16_t angle_s;
+    bool update;
+} coil_angle_t;
+
+typedef struct {
+    timer_ch_it_t event_ch;
+    coil_angle_t current;
+    coil_angle_t next;
 } coil_event_t;
 
 typedef struct {

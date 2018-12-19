@@ -2,6 +2,8 @@
 #include "ecu_math.h"
 #include "ecu_compare.h"
 
+//\todo Переписать обновление углов. (В текущем виде работает только если new < current)
+
 void ecu_coil_slave_timer_1_init() {
     NVIC_SetPriority(TIM3_IRQn, 5); //36 default
     NVIC_EnableIRQ(ECU_COIL_TIM_1_IRQn); //Compare
@@ -48,6 +50,12 @@ void ecu_coil_1_4_on(void* channel) {
 
 void ecu_coil_1_4_off(void* channel) {
     GPIOD->BSRRH = GPIO_ODR_ODR_13; //оранжевый
+    if(coil_1_4.reset.next.update && coil_1_4.set.next.update) {
+        coil_1_4.set.next.update = false;
+        coil_1_4.reset.next.update = false;
+        coil_1_4.set.current.angle = coil_1_4.set.next.angle;
+        coil_1_4.reset.current.angle = coil_1_4.reset.next.angle;
+    }
 }
 
 void ecu_coil_2_3_on(void* channel) {
@@ -56,6 +64,12 @@ void ecu_coil_2_3_on(void* channel) {
 
 void ecu_coil_2_3_off(void* channel) {
     GPIOD->BSRRH = GPIO_ODR_ODR_14; //красный
+    if(coil_2_3.reset.next.update && coil_2_3.set.next.update) {
+        coil_2_3.set.next.update = false;
+        coil_2_3.reset.next.update = false;
+        coil_2_3.set.current.angle = coil_2_3.set.next.angle;
+        coil_2_3.reset.current.angle = coil_2_3.reset.next.angle;
+    }
 }
 
 void ECU_COIL_TIM_1_IRQHandler(void) {
@@ -67,22 +81,14 @@ void ECU_COIL_TIM_1_IRQHandler(void) {
 
 void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
         uint16_t next_angle, uint16_t capture, uint16_t next_period) {
-    if (ecu_coil_window_angle_check(action->angle, angle, next_angle)) {
-        timer_ch_ccr_write(
-                &action->event_ch, ecu_coil_interpolation_calc(action->angle,
-                angle, capture, next_period, ((uint16_t) (next_angle - angle))));
-        timer_ch_it_enable(&action->event_ch, true);
-    }
-}
-
-//\todo Переписать
-void ecu_coil_angle_update(coil_t* coil, uint16_t angle, uint16_t next_angle) {
-    if(ecu_coil_window_angle_check(coil->set.angle_s,angle,next_angle)) {
-            coil->set.angle = coil->set.angle_s;
+    
+    if (ecu_coil_window_angle_check(action->next.angle, angle, next_angle)) {
+        if(action->next.update == false) action->next.update = true;
     }
     
-    if(ecu_coil_window_angle_check(coil->reset.angle_s,angle,next_angle)) {
-            coil->reset.angle = coil->reset.angle_s;
+    if (ecu_coil_window_angle_check(action->current.angle, angle, next_angle)) {
+        timer_ch_ccr_write(&action->event_ch, ecu_coil_interpolation_calc(action->current.angle, angle, capture, next_period, ((uint16_t) (next_angle - angle))));
+        timer_ch_it_enable(&action->event_ch, true);
     }
 }
 
@@ -99,15 +105,18 @@ void ecu_coil_handler(ecu_t* ecu) {
         ecu_coil_angle_check(&coil_2_3.set, angle, next_angle, capture, next_period);
         ecu_coil_angle_check(&coil_2_3.reset, angle, next_angle, capture, next_period);
 
-        ecu_coil_angle_update(&coil_1_4, angle, next_angle);
-        ecu_coil_angle_update(&coil_2_3, angle, next_angle);
-        
         //test begin
-            coil_1_4.reset.angle_s+=10;
-            ecu_coil_set_angle_calc(ecu,ecu->vr.prev_1,ecu->vr.count,&coil_1_4);
-            
-            coil_2_3.reset.angle_s+=10;
+        
+        if ((coil_1_4.reset.next.update == false) && (coil_1_4.set.next.update == false)) {
+            coil_1_4.reset.next.angle --;
+            ecu_coil_set_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, &coil_1_4);
+        }
+
+        if ((coil_2_3.reset.next.update == false) && (coil_2_3.set.next.update == false)) {
+            coil_2_3.reset.next.angle ++;
             ecu_coil_set_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, &coil_2_3);
+        }
+        //test end
     }
 }
 
@@ -115,11 +124,11 @@ void ecu_coil_init(void) {
     ecu_coil_slave_timer_1_init();
     //    ecu_coil_slave_timer_2_init();
 
-    coil_1_4.set.angle_s = 0;
-    coil_1_4.reset.angle_s = 1092*3;
+    coil_1_4.set.next.angle = 0;
+    coil_1_4.reset.next.angle = 1092 * 3;
 
-    coil_2_3.set.angle_s = 0;
-    coil_2_3.reset.angle_s = 1092*3;
+    coil_2_3.set.next.angle = 0;
+    coil_2_3.reset.next.angle = 1092 * 3;
 
     make_timer_ch_it_init(&coil_1_4.set.event_ch, ECU_COIL_TIM_1, 1);
     timer_ch_event_set(&coil_1_4.set.event_ch, &ecu_coil_1_4_on);
