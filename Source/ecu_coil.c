@@ -2,7 +2,7 @@
 #include "ecu_math.h"
 #include "ecu_compare.h"
 
-//\todo Переписать обновление углов. (В текущем виде работает только если new < current)
+//\todo Переписать обновление углов.
 
 void ecu_coil_slave_timer_1_init() {
     NVIC_SetPriority(TIM3_IRQn, 5); //36 default
@@ -50,12 +50,6 @@ void ecu_coil_1_4_on(void* channel) {
 
 void ecu_coil_1_4_off(void* channel) {
     GPIOD->BSRRH = GPIO_ODR_ODR_13; //оранжевый
-    if(coil_1_4.reset.next.update && coil_1_4.set.next.update) {
-        coil_1_4.set.next.update = false;
-        coil_1_4.reset.next.update = false;
-        coil_1_4.set.current.angle = coil_1_4.set.next.angle;
-        coil_1_4.reset.current.angle = coil_1_4.reset.next.angle;
-    }
 }
 
 void ecu_coil_2_3_on(void* channel) {
@@ -64,12 +58,6 @@ void ecu_coil_2_3_on(void* channel) {
 
 void ecu_coil_2_3_off(void* channel) {
     GPIOD->BSRRH = GPIO_ODR_ODR_14; //красный
-    if(coil_2_3.reset.next.update && coil_2_3.set.next.update) {
-        coil_2_3.set.next.update = false;
-        coil_2_3.reset.next.update = false;
-        coil_2_3.set.current.angle = coil_2_3.set.next.angle;
-        coil_2_3.reset.current.angle = coil_2_3.reset.next.angle;
-    }
 }
 
 void ECU_COIL_TIM_1_IRQHandler(void) {
@@ -89,6 +77,13 @@ void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
     if (ecu_coil_window_angle_check(action->current.angle, angle, next_angle)) {
         timer_ch_ccr_write(&action->event_ch, ecu_coil_interpolation_calc(action->current.angle, angle, capture, next_period, ((uint16_t) (next_angle - angle))));
         timer_ch_it_enable(&action->event_ch, true);
+        if(action->current.update == false) action->current.update = true;
+    }
+    
+    if((action->current.update) && (action->next.update)) {
+        action->current.update = false;
+        action->next.update = false;
+        action->current.angle = action->next.angle;
     }
 }
 
