@@ -84,14 +84,14 @@ void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
         //разрешить однократное выполнеие канала задания
         timer_ch_it_enable(&action->event_ch, true);
         //
-        if(action->current.update == false) action->current.update = true;
+        action->current.update = true;
     }
-    
+
     if (ecu_coil_window_angle_check(action->next.angle, angle, next_angle)) {
-        if(action->next.update == false) action->next.update = true;
+        action->next.update = true;
     }
-    
-    if((action->current.update) && (action->next.update)) {
+
+    if ((action->current.update) && (action->next.update)) {
         action->current.update = false;
         action->next.update = false;
         action->current.angle = action->next.angle;
@@ -118,12 +118,12 @@ void ecu_coil_handler(ecu_t* ecu) {
         //test begin
         //блокировка изменения углов
         if ((coil_1_4.reset.next.update == false) && (coil_1_4.set.next.update == false)) {
-            coil_1_4.reset.next.angle --;
+            coil_1_4.reset.next.angle -=50;
             ecu_coil_set_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, &coil_1_4);
         }
         //блокировка изменения углов
         if ((coil_2_3.reset.next.update == false) && (coil_2_3.set.next.update == false)) {
-            coil_2_3.reset.next.angle ++;
+            coil_2_3.reset.next.angle +=50;
             ecu_coil_set_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, &coil_2_3);
         }
         //test end
