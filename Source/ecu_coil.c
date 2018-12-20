@@ -118,7 +118,7 @@ void ecu_coil_handler(ecu_t* ecu) {
         ecu_coil_angle_check(&coil_1_4.reset, angle, next_angle, capture, next_period);
         ecu_coil_angle_check(&coil_2_3.set, angle, next_angle, capture, next_period);
         ecu_coil_angle_check(&coil_2_3.reset, angle, next_angle, capture, next_period);
-
+        
         //test begin
         //блокировка изменения углов
         if ((coil_1_4.reset.next.update == false) && (coil_1_4.set.next.update == false)) {
