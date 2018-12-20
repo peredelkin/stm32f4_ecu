@@ -114,5 +114,5 @@ void ecu_coil_set_angle_calc(ecu_t* ecu, uint8_t prev_1, uint8_t vr_count, coil_
     uint16_t period_angles = (uint16_t) (ecu->crank.angle[vr_count] - ecu->crank.angle[prev_1]);
     uint16_t time = 4000; //4ms
     uint16_t angle = (time * period_angles) / (ecu->crank.period[vr_count]);
-    coil->set.angle_s = (uint16_t) (coil->reset.angle_s - angle);
+    coil->set.next.angle = (uint16_t) (coil->reset.next.angle - angle);
 }
