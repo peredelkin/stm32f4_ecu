@@ -85,18 +85,18 @@ void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
         //разрешить однократное выполнеие канала задания
         timer_ch_it_enable(&action->event_ch, true);
         //
-        if(action->current.angle != action->next.angle) action->current.update = true;
+        if((action->current.angle) != (action->next.angle)) action->current.update = true;
     }
     
     if (ecu_coil_window_angle_check(action->next.angle, angle, next_angle)) {
-        if(action->current.angle != action->next.angle) action->next.update = true;
+        if((action->current.angle) != (action->next.angle)) action->next.update = true;
     }
 
     if ((action->next.update) && (action->current.update)) {
        action->current.angle = action->next.angle;
     }
 
-    if (action->current.angle == action->next.angle) {
+    if ((action->current.angle) == (action->next.angle)) {
         action->current.update = false;
         action->next.update = false;
     }
