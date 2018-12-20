@@ -69,15 +69,14 @@ void ECU_COIL_TIM_1_IRQHandler(void) {
 
 void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
         uint16_t next_angle, uint16_t capture, uint16_t next_period) {
-    
-    if (ecu_coil_window_angle_check(action->next.angle, angle, next_angle)) {
-        if(action->next.update == false) action->next.update = true;
-    }
-    
     if (ecu_coil_window_angle_check(action->current.angle, angle, next_angle)) {
         timer_ch_ccr_write(&action->event_ch, ecu_coil_interpolation_calc(action->current.angle, angle, capture, next_period, ((uint16_t) (next_angle - angle))));
         timer_ch_it_enable(&action->event_ch, true);
         if(action->current.update == false) action->current.update = true;
+    }
+    
+    if (ecu_coil_window_angle_check(action->next.angle, angle, next_angle)) {
+        if(action->next.update == false) action->next.update = true;
     }
     
     if((action->current.update) && (action->next.update)) {
