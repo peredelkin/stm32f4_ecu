@@ -80,21 +80,25 @@ void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
     //если угол_захвата_1 <= угол_задания <= угол_захвата_2 - 1
     if (ecu_coil_window_angle_check(action->current.angle, angle, next_angle)) {
         //задать CCR канала задания
-        timer_ch_ccr_write(&action->event_ch, ecu_coil_interpolation_calc(action->current.angle, angle, capture, next_period, ((uint16_t) (next_angle - angle))));
+        uint16_t ccr = ecu_coil_interpolation_calc(action->current.angle, angle, capture, next_period, ((uint16_t) (next_angle - angle)));
+        timer_ch_ccr_write(&action->event_ch, ccr);
         //разрешить однократное выполнеие канала задания
         timer_ch_it_enable(&action->event_ch, true);
         //
-        action->current.update = true;
+        if(action->current.angle != action->next.angle) action->current.update = true;
     }
-
+    
     if (ecu_coil_window_angle_check(action->next.angle, angle, next_angle)) {
-        action->next.update = true;
+        if(action->current.angle != action->next.angle) action->next.update = true;
     }
 
-    if ((action->current.update) && (action->next.update)) {
+    if ((action->next.update) && (action->current.update)) {
+       action->current.angle = action->next.angle;
+    }
+
+    if (action->current.angle == action->next.angle) {
         action->current.update = false;
         action->next.update = false;
-        action->current.angle = action->next.angle;
     }
 }
 
