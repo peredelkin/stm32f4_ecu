@@ -67,11 +67,23 @@ void ECU_COIL_TIM_1_IRQHandler(void) {
     timer_ch_it_handler(&coil_2_3.reset.event_ch);
 }
 
+/**
+ * Проверка угла события в окне углов захвата N+1 и N+2 с заданием события,если достигнуто искомое окно
+ * @param action Задание
+ * @param angle Угол захвата N+1
+ * @param next_angle Угол захвата N+2
+ * @param capture Значение захвата N+1
+ * @param next_period Период между захватами N+1 и N+2
+ */
 void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
         uint16_t next_angle, uint16_t capture, uint16_t next_period) {
+    //если угол_захвата_1 <= угол_задания <= угол_захвата_2 - 1
     if (ecu_coil_window_angle_check(action->current.angle, angle, next_angle)) {
+        //задать CCR канала задания
         timer_ch_ccr_write(&action->event_ch, ecu_coil_interpolation_calc(action->current.angle, angle, capture, next_period, ((uint16_t) (next_angle - angle))));
+        //разрешить однократное выполнеие канала задания
         timer_ch_it_enable(&action->event_ch, true);
+        //
         if(action->current.update == false) action->current.update = true;
     }
     
@@ -88,24 +100,28 @@ void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
 
 void ecu_coil_handler(ecu_t* ecu) {
     if (ecu->gap_correct) {
-
+        //угол захвата N+1
         uint16_t angle = ecu->crank.angle[ecu->vr.next_1];
+        //угол захвата N+2
         uint16_t next_angle = ecu->crank.angle[ecu->vr.next_2];
+        //значение захвата N+1
         uint16_t capture = ecu->crank.capture[ecu->vr.next_1];
+        //период захвата N+2
         uint16_t next_period = ecu->crank.period[ecu->vr.next_2];
-
+        
+        //проверка углов с запуском событий
         ecu_coil_angle_check(&coil_1_4.set, angle, next_angle, capture, next_period);
         ecu_coil_angle_check(&coil_1_4.reset, angle, next_angle, capture, next_period);
         ecu_coil_angle_check(&coil_2_3.set, angle, next_angle, capture, next_period);
         ecu_coil_angle_check(&coil_2_3.reset, angle, next_angle, capture, next_period);
 
         //test begin
-        
+        //блокировка изменения углов
         if ((coil_1_4.reset.next.update == false) && (coil_1_4.set.next.update == false)) {
             coil_1_4.reset.next.angle --;
             ecu_coil_set_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, &coil_1_4);
         }
-
+        //блокировка изменения углов
         if ((coil_2_3.reset.next.update == false) && (coil_2_3.set.next.update == false)) {
             coil_2_3.reset.next.angle ++;
             ecu_coil_set_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, &coil_2_3);
