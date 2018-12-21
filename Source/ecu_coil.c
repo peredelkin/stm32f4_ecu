@@ -118,13 +118,11 @@ void ecu_coil_handler(ecu_t* ecu) {
         
         //test begin
         //блокировка изменения углов
-        if ((coil_1_4.reset.next.update == false) && (coil_1_4.set.next.update == false)) {
+        if ((coil_1_4.reset.next.update == false) && (coil_1_4.set.next.update == false)
+                && (coil_2_3.reset.next.update == false) && (coil_2_3.set.next.update == false)) {
             coil_1_4.reset.next.angle+=50;
             ecu_coil_set_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, &coil_1_4);//
-        }
-        //блокировка изменения углов
-        if ((coil_2_3.reset.next.update == false) && (coil_2_3.set.next.update == false)) {
-            coil_2_3.reset.next.angle +=49;
+            coil_2_3.reset.next.angle = coil_1_4.reset.next.angle + (uint16_t)(65536/2);
             ecu_coil_set_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, &coil_2_3);//
         }
         //test end
@@ -136,7 +134,7 @@ void ecu_coil_init(void) {
     //    ecu_coil_slave_timer_2_init();
 
     coil_1_4.set.next.angle = 0;
-    coil_1_4.reset.next.angle = 1092 * 3;
+    coil_1_4.reset.next.angle = (1092 * 3)+10;
 
     coil_2_3.set.next.angle = 0;
     coil_2_3.reset.next.angle = 1092 * 3;
