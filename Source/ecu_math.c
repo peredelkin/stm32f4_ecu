@@ -112,7 +112,7 @@ uint16_t ecu_coil_interpolation_calc(uint16_t action_angle,uint16_t angle, uint1
 
 void ecu_coil_set_angle_calc(ecu_t* ecu, uint8_t prev_1, uint8_t vr_count, coil_t* coil) {
     uint16_t period_angles = (uint16_t) (ecu->crank.angle[vr_count] - ecu->crank.angle[prev_1]);
-    uint16_t time = 1000; //4ms
-    uint16_t angle = (time * period_angles) / (ecu->crank.period[vr_count]);
+    uint16_t time = 3500; //3.5ms
+    uint16_t angle = (uint16_t)((time * period_angles) / ecu->crank.period[vr_count]);
     coil->set.next.angle = (uint16_t) (coil->reset.next.angle - angle);
 }
