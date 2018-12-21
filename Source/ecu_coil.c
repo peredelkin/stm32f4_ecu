@@ -76,7 +76,16 @@ void ECU_COIL_TIM_1_IRQHandler(void) {
  * @param next_period Период между захватами N+1 и N+2
  */
 void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
-        uint16_t next_angle, uint16_t capture, uint16_t next_period) {  
+        uint16_t next_angle, uint16_t capture, uint16_t next_period) {
+    
+    if (ecu_coil_window_angle_check(action->next.angle, angle, next_angle)) {
+        if(action->current.update) {
+            action->current.angle = action->next.angle;
+        } else {
+            action->next.update = true;
+        }
+    }
+    
     //если угол_захвата_1 <= угол_задания <= угол_захвата_2 - 1
     if (ecu_coil_window_angle_check(action->current.angle, angle, next_angle)) {
         //задать CCR канала задания
@@ -85,11 +94,24 @@ void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
         //разрешить однократное выполнеие канала задания
         timer_ch_it_enable(&action->event_ch, true);
         //
-        action->current.update = true;
+        if(action->next.update) {
+            action->current.angle = action->next.angle;
+        } else {
+            action->current.update = true;
+        }
     }
     
     if (ecu_coil_window_angle_check(action->next.angle, angle, next_angle)) {
-        action->next.update = true;
+        if(action->current.update) {
+            action->current.angle = action->next.angle;
+        } else {
+            action->next.update = true;
+        }
+    }
+    
+    if(action->current.angle == action->next.angle) {
+        action->current.update = false;
+        action->next.update = false;
     }
 }
 
@@ -110,36 +132,16 @@ void ecu_coil_handler(ecu_t* ecu) {
         ecu_coil_angle_check(&coil_2_3.set, angle, next_angle, capture, next_period);
         ecu_coil_angle_check(&coil_2_3.reset, angle, next_angle, capture, next_period);
         
-        if(coil_1_4.set.current.update && coil_1_4.reset.current.update && coil_1_4.set.next.update && coil_1_4.reset.next.update) {
-            coil_1_4.set.current.update = false;
-            coil_1_4.reset.current.update = false;
-            coil_1_4.set.next.update = false;
-            coil_1_4.reset.next.update = false;
-            coil_1_4.set.current.angle = coil_1_4.set.next.angle;
-            coil_1_4.reset.current.angle = coil_1_4.reset.next.angle;
-        }
-        
-        if(coil_2_3.set.current.update && coil_2_3.reset.current.update && coil_2_3.set.next.update && coil_2_3.reset.next.update) {
-            coil_2_3.set.current.update = false;
-            coil_2_3.reset.current.update = false;
-            coil_2_3.set.next.update = false;
-            coil_2_3.reset.next.update = false;
-            coil_2_3.set.current.angle = coil_2_3.set.next.angle;
-            coil_2_3.reset.current.angle = coil_2_3.reset.next.angle;
-        }
-        
         //test begin
         //блокировка изменения углов
-        if ((coil_1_4.reset.next.update == false) && (coil_1_4.set.next.update == false) && (coil_1_4.reset.current.update == false) && (coil_1_4.set.current.update == false)) {
-            coil_1_4.reset.next.angle -=30;
-            coil_1_4.set.next.angle = (uint16_t)((coil_1_4.reset.next.angle) - (uint16_t)(1095*5));
-            //ecu_coil_set_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, &coil_1_4);//
+        if ((coil_1_4.reset.next.update == false) && (coil_1_4.set.next.update == false)) {
+            coil_1_4.reset.next.angle++;
+            ecu_coil_set_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, &coil_1_4);//
         }
         //блокировка изменения углов
-        if ((coil_2_3.reset.next.update == false) && (coil_2_3.set.next.update == false) && (coil_2_3.reset.current.update == false) && (coil_2_3.set.current.update == false)) {
-            coil_2_3.reset.next.angle +=30;
-            coil_2_3.set.next.angle = (uint16_t)((coil_2_3.reset.next.angle) - (uint16_t)(1095*5));
-            //ecu_coil_set_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, &coil_2_3);//
+        if ((coil_2_3.reset.next.update == false) && (coil_2_3.set.next.update == false)) {
+            coil_2_3.reset.next.angle = coil_1_4.reset.next.angle + (uint16_t)(65536/2);
+            ecu_coil_set_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, &coil_2_3);//
         }
         //test end
     }
