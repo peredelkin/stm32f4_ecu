@@ -62,6 +62,10 @@ void ecu_coil_2_3_off(void* channel) {
 }
 
 void ecu_all_coil_reset(void) {
+    timer_ch_it_disable(&coil_1_4.set.event_ch);
+    timer_ch_it_disable(&coil_1_4.reset.event_ch);
+    timer_ch_it_disable(&coil_2_3.set.event_ch);
+    timer_ch_it_disable(&coil_2_3.reset.event_ch);
     ecu_coil_1_4_off(NULL);
     ecu_coil_2_3_off(NULL);
 }
