@@ -70,7 +70,7 @@ void ecu_crank_min_time_check(ecu_t* ecu) {
         ecu->cap_time_norm = true; //скорость выше минимальной
     } else {
         if(ecu_crank_min_time_reset(ECU_MAX_TOOTH_TIME,tnbm1_w,tnbm_w)) {
-            ecu->cap_time_norm = false;
+            ecu->cap_time_norm = false; //скорость ниже минимальной
         }
     }
 }
