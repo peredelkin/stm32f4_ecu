@@ -28,16 +28,31 @@ void ECU_CAP_TIM_IRQHandler(void) {
 }
 
 void ecu_crank_handler_callback(void* channel) {
-    GPIOD->BSRRL = GPIO_ODR_ODR_12;
     ecu_crank_capture_handler(&ecu_struct,channel);
     ecu_coil_handler(&ecu_struct);
-    GPIOD->BSRRH = GPIO_ODR_ODR_12;
+}
+
+void ecu_crank_ovf_handler_callback(void* channel) {
+    timer_ch_it_disable(&ecu_struct.cap_ch); //выключение прерывания захвата
+    ECU_CAP_TIM->CR1 &= ~TIM_CR1_CEN; //остановка таймера захвата
+    ECU_CAP_TIM->CNT = 0; //сброс счета таймера захвата
+    ECU_COIL_TIM_1->CNT = 0; //сброс счета таймера катушек 1
+    ECU_COIL_TIM_2->CNT = 0; //сброс счета таймера катушек 2
+    
+    ecu_struct.cap_time_norm = false;
+    ecu_struct.gap_correct = false;
+    ecu_struct.gap_found = false;
+    
+    ecu_all_coil_reset();
+    
+    GPIOD->BSRRH = GPIO_ODR_ODR_12; //зеленый выкл
+    timer_ch_it_enable(&ecu_struct.cap_ch,false); //включение прерывания захвата
 }
 
 void ecu_init(void) {
-    timer_ch_event_set(&ecu_struct.cap_ch,&ecu_crank_handler_callback); //
-    timer_ch_it_enable(&ecu_struct.cap_ch,false); //const it
-    ECU_CAP_TIM->CR1 |= TIM_CR1_CEN;
+    timer_ch_event_set(&ecu_struct.cap_ch,&ecu_crank_handler_callback); //обработчик захвата
+    timer_ch_event_set(&ecu_struct.ovf_cap_ch,&ecu_crank_ovf_handler_callback); //обработчик останова
+    timer_ch_it_enable(&ecu_struct.cap_ch,false); //включение прерывания захвата
 }
 
 //volatile uint32_t i;

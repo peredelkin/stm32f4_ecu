@@ -8,10 +8,10 @@ void ecu_capture_timer_init() {
 
     ECU_CAP_TIM->CCMR1 |= TIM_CCMR1_IC1F_0 | TIM_CCMR1_IC1F_1; // Filter Fsampling N=8
 
-//      0000: No filter, sampling is done at fDTS
-//	0001: fSAMPLING=fCK_INT , N=2
-//	0010: fSAMPLING=fCK_INT , N=4
-//	0011: fSAMPLING=fCK_INT , N=8
+    //      0000: No filter, sampling is done at fDTS
+    //	0001: fSAMPLING=fCK_INT , N=2
+    //	0010: fSAMPLING=fCK_INT , N=4
+    //	0011: fSAMPLING=fCK_INT , N=8
 
     ECU_CAP_TIM->CCER |= TIM_CCER_CC1P; // !Falling edge
 
@@ -33,22 +33,27 @@ void ecu_capture_timer_init() {
 }
 
 void ecu_blue_blink(ecu_t* ecu) {
-    if(ecu->crank.angle[ecu->vr.count] == (uint16_t)0) {
+    if (ecu->crank.angle[ecu->vr.count] == (uint16_t) 0) {
         GPIOD->BSRRL = GPIO_ODR_ODR_15;
     } else {
         GPIOD->BSRRH = GPIO_ODR_ODR_15;
     }
 }
 
-void ecu_crank_capture_period_ovf_write(ecu_t* ecu,uint16_t capture) {
-    timer_ch_ccr_write(&ecu->ovf_cap_ch,(uint16_t)(capture + 0xffff)); //сдвиг ovf cap
-    ecu_crank_capture_write(ecu,ecu->vr.count,capture); //запись захвата
-    ecu_crank_period_write(ecu,ecu->vr.count,ecu_crank_period_calc(ecu)); //запись периода
+void ecu_crank_capture_period_ovf_write(ecu_t* ecu, uint16_t capture) {
+    timer_ch_ccr_write(&ecu->ovf_cap_ch, (uint16_t) (capture + 0xffff)); //сдвиг ovf cap
+    ecu_crank_capture_write(ecu, ecu->vr.count, capture); //запись захвата
+    ecu_crank_period_write(ecu, ecu->vr.count, ecu_crank_period_calc(ecu)); //запись периода
+    if (!(ECU_CAP_TIM->CR1 & TIM_CR1_CEN)) {
+        GPIOD->BSRRL = GPIO_ODR_ODR_12; //зеленый вкл
+        timer_ch_it_enable(&ecu->ovf_cap_ch, true); //включение однократного прерывания останова
+        ECU_CAP_TIM->CR1 |= TIM_CR1_CEN;
+    }
 }
 
-void ecu_crank_capture_handler(ecu_t* ecu,void* tim_ch) {
+void ecu_crank_capture_handler(ecu_t* ecu, void* tim_ch) {
     ecu_crank_counter(&ecu->vr); //vr_count++
-    ecu_crank_capture_period_ovf_write(ecu,timer_ch_ccr_read(tim_ch)); //чтение захвата и запись ovf,capture,period
+    ecu_crank_capture_period_ovf_write(ecu, timer_ch_ccr_read(tim_ch)); //чтение захвата и запись ovf,capture,period
     ecu_crank_min_time_check(ecu); //проверка периода захвата
     ecu_crank_gap_search(ecu); //поиск метки и синхронизация углов,если метка найдена
     ecu_crank_gap_check(ecu); //проверка метки в точке синхронизации
@@ -58,8 +63,8 @@ void ecu_crank_capture_handler(ecu_t* ecu,void* tim_ch) {
 
 void ecu_crank_capture_init(ecu_t* ecu) {
     ecu_capture_timer_init();
-    make_timer_ch_it_init(&ecu->cap_ch,ECU_CAP_TIM,1); //настройка канала "захват"
-    make_timer_ch_it_init(&ecu->ovf_cap_ch,ECU_CAP_TIM,2); //настройка канала "переполнение захвата"
+    make_timer_ch_it_init(&ecu->cap_ch, ECU_CAP_TIM, 1); //настройка канала "захват"
+    make_timer_ch_it_init(&ecu->ovf_cap_ch, ECU_CAP_TIM, 2); //настройка канала "переполнение захвата"
 }
 
 void ecu_cap_irq_handler(ecu_t* ecu) {

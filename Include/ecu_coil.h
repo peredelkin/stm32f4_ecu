@@ -40,6 +40,7 @@ coil_t coil_2_3;
 
 extern void ecu_coil_handler(ecu_t* ecu);
 extern void ecu_coil_init(void);
+extern void ecu_all_coil_reset(void);
 
 #endif /* ECU_COIL_H */
 

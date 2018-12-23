@@ -1,6 +1,7 @@
 #include "ecu_coil.h"
 #include "ecu_math.h"
 #include "ecu_compare.h"
+#include <stddef.h>
 
 //\todo Переписать обновление углов.
 
@@ -58,6 +59,11 @@ void ecu_coil_2_3_on(void* channel) {
 
 void ecu_coil_2_3_off(void* channel) {
     GPIOD->BSRRH = GPIO_ODR_ODR_14; //красный
+}
+
+void ecu_all_coil_reset(void) {
+    ecu_coil_1_4_off(NULL);
+    ecu_coil_2_3_off(NULL);
 }
 
 void ECU_COIL_TIM_1_IRQHandler(void) {
