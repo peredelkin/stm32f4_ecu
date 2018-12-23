@@ -23,6 +23,7 @@
 
 extern void ecu_crank_gap_search(ecu_t* ecu);
 extern void ecu_crank_gap_check(ecu_t* ecu);
+extern void ecu_crank_min_time_check(ecu_t* ecu);
 
 #endif /* ECU_SYNC_H */
 

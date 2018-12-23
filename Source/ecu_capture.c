@@ -48,8 +48,8 @@ void ecu_crank_capture_period_ovf_write(ecu_t* ecu,uint16_t capture) {
 
 void ecu_crank_capture_handler(ecu_t* ecu,void* tim_ch) {
     ecu_crank_counter(&ecu->vr); //vr_count++
-    
     ecu_crank_capture_period_ovf_write(ecu,timer_ch_ccr_read(tim_ch)); //чтение захвата и запись ovf,capture,period
+    ecu_crank_min_time_check(ecu); //проверка периода захвата
     ecu_crank_gap_search(ecu); //поиск метки и синхронизация углов,если метка найдена
     ecu_crank_gap_check(ecu); //проверка метки в точке синхронизации
     crank_extrapolation_calc(ecu); //расчет экстраполяции в точках vr_count + 1 и vr_count + 2
