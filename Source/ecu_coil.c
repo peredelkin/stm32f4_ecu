@@ -87,6 +87,11 @@ void ECU_COIL_TIM_1_IRQHandler(void) {
 void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
         uint16_t next_angle, uint16_t capture, uint16_t next_period) {
 
+    if (ecu_coil_window_angle_check(action->next.angle, angle, next_angle)) {
+//        action->next.update = true;
+        action->current.angle = action->next.angle;
+    }
+    
     //если угол_захвата_1 <= угол_задания <= угол_захвата_2 - 1
     if (ecu_coil_window_angle_check(action->current.angle, angle, next_angle)) {
         //задать CCR канала задания
@@ -95,18 +100,19 @@ void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
         //разрешить однократное выполнеие канала задания
         timer_ch_it_enable(&action->event_ch, true);
         //
-        action->current.update = true;
+        //action->current.update = true;
     }
 
-    if (ecu_coil_window_angle_check(action->next.angle, angle, next_angle)) {
-        action->next.update = true;
-    }
+//    if (ecu_coil_window_angle_check(action->next.angle, angle, next_angle)) {
+////        action->next.update = true;
+//        action->current.angle = action->next.angle;
+//    }
 
-    if (action->current.update && action->next.update) {
-        action->current.update = false;
-        action->next.update = false;
-        action->current.angle = action->next.angle;
-    }
+//    if (action->current.update && action->next.update) {
+//        action->current.update = false;
+//        action->next.update = false;
+//        action->current.angle = action->next.angle;
+//    }
 }
 
 void ecu_coil_handler(ecu_t* ecu) {
