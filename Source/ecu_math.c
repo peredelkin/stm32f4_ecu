@@ -7,7 +7,7 @@
  * \f period=capture[n]-capture[n-1]
  */
 uint16_t ecu_crank_period_calc(ecu_t* ecu) {
-    return (ecu_crank_capture_read(ecu, ecu->vr.count)
+    return (uint16_t)(ecu_crank_capture_read(ecu, ecu->vr.count)
             - ecu_crank_capture_read(ecu, ecu->vr.prev_1));
 }
 
@@ -20,7 +20,7 @@ uint16_t ecu_crank_period_calc(ecu_t* ecu) {
  * \f period_angle = angle[n] - angle [n-1]
  */
 uint16_t ecu_period_angle_calc(ecu_t* ecu, uint8_t current, uint8_t prev) {
-    return (ecu_crank_angle_read(ecu, current) - ecu_crank_angle_read(ecu, prev));
+    return (uint16_t)(ecu_crank_angle_read(ecu, current) - ecu_crank_angle_read(ecu, prev));
 }
 
 /**
