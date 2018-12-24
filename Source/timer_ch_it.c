@@ -29,9 +29,7 @@ void timer_ch_it_handler(timer_ch_it_t* t_it_ch) {
     if ((*t_it_ch->DIER & t_it_ch->IE_MASK) && (*t_it_ch->SR & t_it_ch->SR_MASK)) { //чтение разрешения прерывания и статуса
         *t_it_ch->SR = ~t_it_ch->SR_MASK; //очистка статуса
         if (t_it_ch->once) {
-            mutex_lock(&t_it_ch->mutex);
             *t_it_ch->DIER &= ~t_it_ch->IE_MASK; //запрет прерывания при однократном выполнении
-            mutex_unlock(&t_it_ch->mutex);
         }
         if (t_it_ch->event) t_it_ch->event(t_it_ch); //вызов
     }
@@ -40,15 +38,11 @@ void timer_ch_it_handler(timer_ch_it_t* t_it_ch) {
 void timer_ch_it_enable(timer_ch_it_t* t_it_ch,bool once) {
     t_it_ch->once = once;
     *t_it_ch->SR = ~t_it_ch->SR_MASK;
-    mutex_lock(&t_it_ch->mutex);
     *t_it_ch->DIER |= t_it_ch->IE_MASK;
-    mutex_unlock(&t_it_ch->mutex);
 }
 
 void timer_ch_it_disable(timer_ch_it_t* t_it_ch) {
-    mutex_lock(&t_it_ch->mutex);
     *t_it_ch->DIER &= ~t_it_ch->IE_MASK;
-    mutex_unlock(&t_it_ch->mutex);
 }
 
 uint16_t timer_ch_ccr_read(timer_ch_it_t* t_it_ch) {

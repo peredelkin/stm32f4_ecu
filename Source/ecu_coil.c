@@ -2,6 +2,9 @@
 #include "ecu_math.h"
 #include "ecu_compare.h"
 #include <stddef.h>
+#include "mutex.h"
+
+mutex_t ecu_coil_tim_1_mutex;
 
 //\todo Переписать обновление углов.
 
@@ -71,11 +74,14 @@ void ecu_all_coil_reset(void) {
 }
 
 void ECU_COIL_TIM_1_IRQHandler(void) {
+    mutex_lock(&ecu_coil_tim_1_mutex);
     timer_ch_it_handler(&coil_1_4.set.event_ch);
     timer_ch_it_handler(&coil_1_4.reset.event_ch);
     timer_ch_it_handler(&coil_2_3.set.event_ch);
     timer_ch_it_handler(&coil_2_3.reset.event_ch);
+    mutex_unlock(&ecu_coil_tim_1_mutex);
 }
+
 /**
  * Проверка угла события в окне углов захвата N+1 и N+2 с заданием события,если достигнуто искомое окно
  * @param action Задание
@@ -86,34 +92,18 @@ void ECU_COIL_TIM_1_IRQHandler(void) {
  */
 void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
         uint16_t next_angle, uint16_t capture, uint16_t next_period) {
-
-    if (ecu_coil_window_angle_check(action->next.angle, angle, next_angle)) {
-//        action->next.update = true;
+    if (ecu_coil_window_angle_check(action->current.angle, angle, next_angle)) {
+        uint16_t ccr = ecu_coil_interpolation_calc(action->current.angle, angle, capture, next_period, ((uint16_t) (next_angle - angle)));
+        
+        mutex_lock(&ecu_coil_tim_1_mutex);
+        
+        timer_ch_ccr_write(&action->event_ch, ccr);
+        timer_ch_it_enable(&action->event_ch, true);
+        
+        mutex_unlock(&ecu_coil_tim_1_mutex);
+        
         action->current.angle = action->next.angle;
     }
-    
-    //если угол_захвата_1 <= угол_задания <= угол_захвата_2 - 1
-    if (ecu_coil_window_angle_check(action->current.angle, angle, next_angle)) {
-        //задать CCR канала задания
-        uint16_t ccr = ecu_coil_interpolation_calc(action->current.angle, angle, capture, next_period, ((uint16_t) (next_angle - angle)));
-        timer_ch_ccr_write(&action->event_ch, ccr);
-        //разрешить однократное выполнеие канала задания
-        timer_ch_it_enable(&action->event_ch, true);
-        //
-        //action->current.update = true;
-    }
-
-//    if (ecu_coil_window_angle_check(action->next.angle, angle, next_angle)) {
-////        action->next.update = true;
-//        action->current.angle = action->next.angle;
-//    }
-
-//    if (action->current.update && action->next.update) {
-//        action->current.update = false;
-//        action->next.update = false;
-//        action->current.angle = action->next.angle;
-//    }
-    
 }
 
 void ecu_coil_handler(ecu_t* ecu) {
@@ -133,17 +123,17 @@ void ecu_coil_handler(ecu_t* ecu) {
         ecu_coil_angle_check(&coil_2_3.set, angle, next_angle, capture, next_period);
         ecu_coil_angle_check(&coil_2_3.reset, angle, next_angle, capture, next_period);
 
-        //test begin
+        //test
         //блокировка изменения углов
-        if ((coil_1_4.reset.next.update == false) && (coil_1_4.set.next.update == false)) {
-            coil_1_4.reset.next.angle ++;
+        if ((coil_1_4.reset.current.angle == coil_1_4.reset.next.angle) && (coil_1_4.set.current.angle == coil_1_4.set.next.angle)) {
+            coil_1_4.reset.next.angle -=1092;
             coil_1_4.set.next.angle = ecu_coil_set_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, coil_1_4.reset.next.angle, 3500); //
         }
-        if ((coil_2_3.set.next.update == false) && (coil_2_3.reset.next.update == false)) {
-            coil_2_3.reset.next.angle = coil_1_4.reset.next.angle + (uint16_t) (65536 / 2);
+        if ((coil_2_3.reset.current.angle == coil_2_3.reset.next.angle) && (coil_2_3.set.current.angle == coil_2_3.set.next.angle)) {
+            coil_2_3.reset.next.angle -=1092;
             coil_2_3.set.next.angle = ecu_coil_set_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, coil_2_3.reset.next.angle, 3500); //
         }
-        //test end
+        //end test
     }
 }
 

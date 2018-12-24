@@ -20,7 +20,6 @@
 
 typedef struct {
     uint16_t angle;
-    bool update;
 } coil_angle_t;
 
 typedef struct {

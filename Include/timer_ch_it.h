@@ -33,7 +33,6 @@ typedef struct {
     uint8_t IE_MASK;
     bool once;
     _timer_event event;
-    mutex_t mutex;
 } timer_ch_it_t;
 
 extern void timer_ch_it_init(timer_ch_it_t* t_it_ch, TIM_TypeDef* TIM,
