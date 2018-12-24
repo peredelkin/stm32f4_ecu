@@ -113,6 +113,7 @@ void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
 //        action->next.update = false;
 //        action->current.angle = action->next.angle;
 //    }
+    
 }
 
 void ecu_coil_handler(ecu_t* ecu) {
