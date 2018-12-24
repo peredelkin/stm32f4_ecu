@@ -21,9 +21,8 @@
 #define ECU_MAX_TOOTH_TIME (uint16_t)(0xffff/3)
 #define ECU_VR_SYNC_POINT (uint8_t)1
 
-extern void ecu_crank_gap_search(ecu_t* ecu);
-extern void ecu_crank_gap_check(ecu_t* ecu);
-extern void ecu_crank_min_time_check(ecu_t* ecu);
+
+extern void ecu_crank_sync(ecu_t* ecu);
 
 #endif /* ECU_SYNC_H */
 
