@@ -94,6 +94,7 @@ void ecu_coil_angle_check(coil_event_t** action, uint16_t angle,
         uint16_t ccr = ecu_coil_interpolation_calc((*action)->angle, angle, capture, next_period, ((uint16_t) (next_angle - angle)));
         timer_ch_ccr_write(&(*action)->event_ch, ccr);
         timer_ch_it_enable(&(*action)->event_ch, true);
+        (*action)->busy = false;
         if((*action)->next) *action = (*action)->next;
     }
 }
@@ -114,10 +115,17 @@ void ecu_coil_handler(ecu_t* ecu) {
         uint16_t next_period = ecu->crank.period[ecu->vr.next_2];
 
         //проверка углов с запуском событий
-        ecu_coil_angle_check(&coil_set_current,angle,next_angle,capture,next_period);
-        ecu_coil_angle_check(&coil_reset_current,angle,next_angle,capture,next_period);
-        coil_reset_current->prev->angle++; //для теста
-        ecu_coil_prev_set_angle_calc(&coil_set_current,&coil_reset_current,ecu,ecu->vr.prev_1,ecu->vr.count);
+        ecu_coil_angle_check(&coil_set_current, angle, next_angle, capture, next_period);
+        ecu_coil_angle_check(&coil_reset_current, angle, next_angle, capture, next_period);
+        if ((coil_set_current->prev->busy == false) && (coil_reset_current->prev->busy == false)) {
+
+            coil_set_current->prev->busy = true;
+            coil_reset_current->prev->busy = true;
+
+            coil_reset_current->prev->angle += 100; //для теста
+
+            ecu_coil_prev_set_angle_calc(&coil_set_current, &coil_reset_current, ecu, ecu->vr.prev_1, ecu->vr.count);
+        }
     }
 }
 

@@ -23,6 +23,7 @@ typedef struct _coil_event_t {
     struct _coil_event_t* prev;
     timer_ch_it_t event_ch;
     uint16_t angle;
+    bool busy;
 } coil_event_t;
 
 coil_event_t coil_set[4];
