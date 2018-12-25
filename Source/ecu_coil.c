@@ -2,9 +2,6 @@
 #include "ecu_math.h"
 #include "ecu_compare.h"
 #include <stddef.h>
-#include "mutex.h"
-
-mutex_t ecu_coil_tim_1_mutex;
 
 //\todo Переписать обновление углов.
 
@@ -65,21 +62,22 @@ void ecu_coil_2_3_off(void* channel) {
 }
 
 void ecu_all_coil_reset(void) {
-    timer_ch_it_disable(&coil_1_4.set.event_ch);
-    timer_ch_it_disable(&coil_1_4.reset.event_ch);
-    timer_ch_it_disable(&coil_2_3.set.event_ch);
-    timer_ch_it_disable(&coil_2_3.reset.event_ch);
     ecu_coil_1_4_off(NULL);
     ecu_coil_2_3_off(NULL);
 }
 
 void ECU_COIL_TIM_1_IRQHandler(void) {
-    mutex_lock(&ecu_coil_tim_1_mutex);
-    timer_ch_it_handler(&coil_1_4.set.event_ch);
-    timer_ch_it_handler(&coil_1_4.reset.event_ch);
-    timer_ch_it_handler(&coil_2_3.set.event_ch);
-    timer_ch_it_handler(&coil_2_3.reset.event_ch);
-    mutex_unlock(&ecu_coil_tim_1_mutex);
+    timer_ch_it_handler(&coil_set[0].event_ch);
+    timer_ch_it_handler(&coil_set[1].event_ch);
+    timer_ch_it_handler(&coil_set[2].event_ch);
+    timer_ch_it_handler(&coil_set[3].event_ch);
+}
+
+void ECU_COIL_TIM_2_IRQHandler(void) {
+    timer_ch_it_handler(&coil_reset[0].event_ch);
+    timer_ch_it_handler(&coil_reset[1].event_ch);
+    timer_ch_it_handler(&coil_reset[2].event_ch);
+    timer_ch_it_handler(&coil_reset[3].event_ch);
 }
 
 /**
@@ -92,17 +90,12 @@ void ECU_COIL_TIM_1_IRQHandler(void) {
  */
 void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
         uint16_t next_angle, uint16_t capture, uint16_t next_period) {
-    if (ecu_coil_window_angle_check(action->current.angle, angle, next_angle)) {
-        uint16_t ccr = ecu_coil_interpolation_calc(action->current.angle, angle, capture, next_period, ((uint16_t) (next_angle - angle)));
-        
-        mutex_lock(&ecu_coil_tim_1_mutex);
+    if (ecu_coil_window_angle_check(action->angle, angle, next_angle)) {
+        uint16_t ccr = ecu_coil_interpolation_calc(action->angle, angle, capture, next_period, ((uint16_t) (next_angle - angle)));
         
         timer_ch_ccr_write(&action->event_ch, ccr);
         timer_ch_it_enable(&action->event_ch, true);
         
-        mutex_unlock(&ecu_coil_tim_1_mutex);
-        
-        action->current.angle = action->next.angle;
     }
 }
 
@@ -118,44 +111,40 @@ void ecu_coil_handler(ecu_t* ecu) {
         uint16_t next_period = ecu->crank.period[ecu->vr.next_2];
 
         //проверка углов с запуском событий
-        ecu_coil_angle_check(&coil_1_4.set, angle, next_angle, capture, next_period);
-        ecu_coil_angle_check(&coil_1_4.reset, angle, next_angle, capture, next_period);
-        ecu_coil_angle_check(&coil_2_3.set, angle, next_angle, capture, next_period);
-        ecu_coil_angle_check(&coil_2_3.reset, angle, next_angle, capture, next_period);
-
-        //test
-        //блокировка изменения углов
-        if ((coil_1_4.reset.current.angle == coil_1_4.reset.next.angle) && (coil_1_4.set.current.angle == coil_1_4.set.next.angle)) {
-            coil_1_4.reset.next.angle -=1092;
-            coil_1_4.set.next.angle = ecu_coil_set_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, coil_1_4.reset.next.angle, 3500); //
-        }
-        if ((coil_2_3.reset.current.angle == coil_2_3.reset.next.angle) && (coil_2_3.set.current.angle == coil_2_3.set.next.angle)) {
-            coil_2_3.reset.next.angle -=1092;
-            coil_2_3.set.next.angle = ecu_coil_set_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, coil_2_3.reset.next.angle, 3500); //
-        }
-        //end test
+        
     }
 }
 
 void ecu_coil_init(void) {
     ecu_coil_slave_timer_1_init();
-    //    ecu_coil_slave_timer_2_init();
+    ecu_coil_slave_timer_2_init();
+    
+    coil_set_current = coil_set;
+    coil_reset_current = coil_reset;
 
-    coil_1_4.set.next.angle = 0;
-    coil_1_4.reset.next.angle = (1092 * 3)+10;
+    //set
+    make_timer_ch_it_init(&coil_set[0].event_ch, ECU_COIL_TIM_1, 1);
+    timer_ch_event_set(&coil_set[0].event_ch, &ecu_coil_1_4_on);
 
-    coil_2_3.set.next.angle = 0;
-    coil_2_3.reset.next.angle = 1092 * 3;
+    make_timer_ch_it_init(&coil_set[1].event_ch, ECU_COIL_TIM_1, 2);
+    timer_ch_event_set(&coil_set[1].event_ch, &ecu_coil_2_3_on);
 
-    make_timer_ch_it_init(&coil_1_4.set.event_ch, ECU_COIL_TIM_1, 1);
-    timer_ch_event_set(&coil_1_4.set.event_ch, &ecu_coil_1_4_on);
+    make_timer_ch_it_init(&coil_set[2].event_ch, ECU_COIL_TIM_1, 3);
+    timer_ch_event_set(&coil_set[2].event_ch, &ecu_coil_1_4_on);
 
-    make_timer_ch_it_init(&coil_1_4.reset.event_ch, ECU_COIL_TIM_1, 2);
-    timer_ch_event_set(&coil_1_4.reset.event_ch, &ecu_coil_1_4_off);
+    make_timer_ch_it_init(&coil_set[3].event_ch, ECU_COIL_TIM_1, 4);
+    timer_ch_event_set(&coil_set[3].event_ch, &ecu_coil_2_3_on);
+    
+    //reset
+    make_timer_ch_it_init(&coil_reset[0].event_ch, ECU_COIL_TIM_2, 1);
+    timer_ch_event_set(&coil_reset[0].event_ch, &ecu_coil_1_4_off);
 
-    make_timer_ch_it_init(&coil_2_3.set.event_ch, ECU_COIL_TIM_1, 3);
-    timer_ch_event_set(&coil_2_3.set.event_ch, &ecu_coil_2_3_on);
+    make_timer_ch_it_init(&coil_reset[1].event_ch, ECU_COIL_TIM_2, 2);
+    timer_ch_event_set(&coil_reset[1].event_ch, &ecu_coil_2_3_off);
 
-    make_timer_ch_it_init(&coil_2_3.reset.event_ch, ECU_COIL_TIM_1, 4);
-    timer_ch_event_set(&coil_2_3.reset.event_ch, &ecu_coil_2_3_off);
+    make_timer_ch_it_init(&coil_reset[2].event_ch, ECU_COIL_TIM_2, 3);
+    timer_ch_event_set(&coil_reset[2].event_ch, &ecu_coil_1_4_off);
+
+    make_timer_ch_it_init(&coil_reset[3].event_ch, ECU_COIL_TIM_2, 4);
+    timer_ch_event_set(&coil_reset[3].event_ch, &ecu_coil_2_3_off);
 }

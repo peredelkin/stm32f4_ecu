@@ -22,21 +22,18 @@ typedef struct {
     uint16_t angle;
 } coil_angle_t;
 
-typedef struct {
+typedef struct _coil_event_t {
+    struct _coil_event_t* next;
+    struct _coil_event_t* prev;
     timer_ch_it_t event_ch;
-    coil_angle_t current;
-    coil_angle_t next;
+    uint16_t angle;
 } coil_event_t;
 
-typedef struct {
-    bool busy;
-    coil_event_t set;
-    coil_event_t reset;
-} coil_t;
-
-coil_t coil_1_4;
-coil_t coil_2_3;
-
+coil_event_t coil_set[4];
+coil_event_t *coil_set_current;
+coil_event_t coil_reset[4];
+coil_event_t *coil_reset_current;
+        
 extern void ecu_coil_handler(ecu_t* ecu);
 extern void ecu_coil_init(void);
 extern void ecu_all_coil_reset(void);

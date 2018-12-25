@@ -14,7 +14,7 @@
 #ifndef ECU_MATH_H
 #define ECU_MATH_H
 
-#include "ecu_coil.h"
+#include "ecu_base.h"
 
 extern uint16_t ecu_crank_period_calc(ecu_t* ecu);
 extern void crank_extrapolation_calc(ecu_t *ecu);

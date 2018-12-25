@@ -22,6 +22,7 @@
 
 //ecu_t ecu_struct __attribute__((section(".ccram"))); //структура эбу
 ecu_t ecu_struct; //структура эбу
+coil_event_t coil_set[4];
 
 void ECU_CAP_TIM_IRQHandler(void) {
     ecu_cap_irq_handler(&ecu_struct);
@@ -35,9 +36,15 @@ void ecu_crank_handler_callback(void* channel) {
 void ecu_crank_ovf_handler_callback(void* channel) {
     timer_ch_it_disable(&ecu_struct.cap_ch); //выключение прерывания захвата
     ECU_CAP_TIM->CR1 &= ~TIM_CR1_CEN; //остановка таймера захвата
+    ECU_COIL_TIM_1->CR1 &= ~TIM_CR1_CEN; //остановка таймера катушек 1
+    ECU_COIL_TIM_2->CR1 &= ~TIM_CR1_CEN; //остановка таймера катушек 2
+    
     ECU_CAP_TIM->CNT = 0; //сброс счета таймера захвата
     ECU_COIL_TIM_1->CNT = 0; //сброс счета таймера катушек 1
     ECU_COIL_TIM_2->CNT = 0; //сброс счета таймера катушек 2
+    
+    ECU_COIL_TIM_1->CR1 |= TIM_CR1_CEN; //разрешение запуска таймера катушек 1 (слейв)
+    ECU_COIL_TIM_2->CR1 |= TIM_CR1_CEN; //разрешение запуска таймера катушек 2 (слейв)
     
     ecu_struct.cap_time_norm = false;
     ecu_struct.gap_correct = false;
