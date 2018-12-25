@@ -88,14 +88,13 @@ void ECU_COIL_TIM_2_IRQHandler(void) {
  * @param capture Значение захвата N+1
  * @param next_period Период между захватами N+1 и N+2
  */
-void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
+void ecu_coil_angle_check(coil_event_t** action, uint16_t angle,
         uint16_t next_angle, uint16_t capture, uint16_t next_period) {
-    if (ecu_coil_window_angle_check(action->angle, angle, next_angle)) {
-        uint16_t ccr = ecu_coil_interpolation_calc(action->angle, angle, capture, next_period, ((uint16_t) (next_angle - angle)));
-        
-        timer_ch_ccr_write(&action->event_ch, ccr);
-        timer_ch_it_enable(&action->event_ch, true);
-        
+    if (ecu_coil_window_angle_check((*action)->angle, angle, next_angle)) {
+        uint16_t ccr = ecu_coil_interpolation_calc((*action)->angle, angle, capture, next_period, ((uint16_t) (next_angle - angle)));
+        timer_ch_ccr_write(&(*action)->event_ch, ccr);
+        timer_ch_it_enable(&(*action)->event_ch, true);
+        if((*action)->next) *action = (*action)->next;
     }
 }
 
@@ -111,7 +110,8 @@ void ecu_coil_handler(ecu_t* ecu) {
         uint16_t next_period = ecu->crank.period[ecu->vr.next_2];
 
         //проверка углов с запуском событий
-        
+        ecu_coil_angle_check(&coil_set_current,angle,next_angle,capture,next_period);
+        ecu_coil_angle_check(&coil_reset_current,angle,next_angle,capture,next_period);
     }
 }
 
@@ -138,6 +138,18 @@ void ecu_coil_init(void) {
     
     coil_set_current = coil_set;
     coil_reset_current = coil_reset;
+    
+    coil_set[0].angle = 0;
+    coil_reset[0].angle = 1092;
+    
+    coil_set[1].angle = 65536/2;
+    coil_reset[1].angle = (65536/2) + 1092;
+    
+    coil_set[2].angle = 0;
+    coil_reset[2].angle = 1092;
+    
+    coil_set[3].angle = 65536/2;
+    coil_reset[3].angle = (65536/2) + 1092;
     
     ecu_coil_list_init();
 
