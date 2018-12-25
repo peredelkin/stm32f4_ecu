@@ -115,12 +115,31 @@ void ecu_coil_handler(ecu_t* ecu) {
     }
 }
 
+void ecu_coil_list_set(coil_event_t* current,coil_event_t* next) {
+    current->next = next;
+    next->prev = current;
+}
+
+void ecu_coil_list_init() {
+    ecu_coil_list_set(&coil_set[0],&coil_set[1]);
+    ecu_coil_list_set(&coil_set[1],&coil_set[2]);
+    ecu_coil_list_set(&coil_set[2],&coil_set[3]);
+    ecu_coil_list_set(&coil_set[3],&coil_set[0]);
+    
+    ecu_coil_list_set(&coil_reset[0],&coil_reset[1]);
+    ecu_coil_list_set(&coil_reset[1],&coil_reset[2]);
+    ecu_coil_list_set(&coil_reset[2],&coil_reset[3]);
+    ecu_coil_list_set(&coil_reset[3],&coil_reset[0]);
+}
+
 void ecu_coil_init(void) {
     ecu_coil_slave_timer_1_init();
     ecu_coil_slave_timer_2_init();
     
     coil_set_current = coil_set;
     coil_reset_current = coil_reset;
+    
+    ecu_coil_list_init();
 
     //set
     make_timer_ch_it_init(&coil_set[0].event_ch, ECU_COIL_TIM_1, 1);

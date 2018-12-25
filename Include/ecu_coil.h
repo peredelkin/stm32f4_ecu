@@ -18,10 +18,6 @@
 #define ECU_COIL_TIM_2_IRQn TIM4_IRQn
 #define ECU_COIL_TIM_2_IRQHandler TIM4_IRQHandler
 
-typedef struct {
-    uint16_t angle;
-} coil_angle_t;
-
 typedef struct _coil_event_t {
     struct _coil_event_t* next;
     struct _coil_event_t* prev;
