@@ -98,6 +98,10 @@ void ecu_coil_angle_check(coil_event_t** action, uint16_t angle,
     }
 }
 
+void ecu_coil_prev_set_angle_calc(coil_event_t** set,coil_event_t** reset,ecu_t* ecu, uint8_t prev_1, uint8_t vr_count) {
+    (*set)->prev->angle = ecu_coil_set_angle_calc(ecu,prev_1,vr_count,(*reset)->prev->angle, 3500);
+}
+
 void ecu_coil_handler(ecu_t* ecu) {
     if (ecu->gap_correct) {
         //угол захвата N+1
@@ -112,12 +116,14 @@ void ecu_coil_handler(ecu_t* ecu) {
         //проверка углов с запуском событий
         ecu_coil_angle_check(&coil_set_current,angle,next_angle,capture,next_period);
         ecu_coil_angle_check(&coil_reset_current,angle,next_angle,capture,next_period);
+        coil_reset_current->prev->angle++; //для теста
+        ecu_coil_prev_set_angle_calc(&coil_set_current,&coil_reset_current,ecu,ecu->vr.prev_1,ecu->vr.count);
     }
 }
 
-void ecu_coil_list_set(coil_event_t* current,coil_event_t* next) {
-    current->next = next;
-    next->prev = current;
+void ecu_coil_list_set(coil_event_t* prev,coil_event_t* next) {
+    prev->next = next;
+    next->prev = prev;
 }
 
 void ecu_coil_list_init() {

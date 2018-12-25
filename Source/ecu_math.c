@@ -109,6 +109,6 @@ uint16_t ecu_coil_interpolation_calc(uint16_t action_angle,uint16_t angle, uint1
 }
 
 //расчет угла между set и reset от времени накопления
-uint16_t ecu_coil_set_angle_calc(ecu_t* ecu, uint8_t prev_1, uint8_t vr_count, uint16_t reset_angle, uint16_t time) {
+uint16_t ecu_coil_set_angle_calc(ecu_t* ecu,const uint8_t prev_1,const uint8_t vr_count,const uint16_t reset_angle,const uint16_t time) {
     return (uint16_t)(reset_angle - ((time * (uint16_t)(ecu->crank.angle[vr_count] - ecu->crank.angle[prev_1])) / ecu->crank.period[vr_count]));
 }
