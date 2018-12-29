@@ -119,11 +119,11 @@ void ecu_coil_angle_update_check(ecu_t* ecu, coil_t* coil) {
     if ((coil->set.update) && (coil->reset.update)) {
         coil->set.update = false;
         coil->reset.update = false;
+        coil->dwell_angle = ecu_coil_delta_angle_calc(ecu,ecu->vr.prev_1,ecu->vr.count,5000);
     }
     
     if (coil->set.update == false) {
-        coil->reset.angle+=10;
-        coil->dwell_angle = ecu_coil_delta_angle_calc(ecu,ecu->vr.prev_1,ecu->vr.count,5000);
+        coil->reset.angle+=50;
         coil->set.angle = coil->reset.angle - coil->dwell_angle;
     }
 }
@@ -144,15 +144,15 @@ void ecu_coil_handler(ecu_t* ecu) {
         //проверка углов с запуском событий
         ecu_coil_angle_check(&ign_coil[0].set,angle,next_angle,capture,next_period);
         ecu_coil_angle_check(&ign_coil[0].reset,angle,next_angle,capture,next_period);
-//        if(ecu_coil_window_angle_check(ign_coil[0].set.angle,next_angle,next_next_angle) == false) {
+        if(ecu_coil_window_angle_check(ign_coil[0].set.angle,next_angle,next_next_angle) == false) {
             ecu_coil_angle_update_check(ecu,&ign_coil[0]);
-//        }
+        }
             
         ecu_coil_angle_check(&ign_coil[1].set,angle,next_angle,capture,next_period);
         ecu_coil_angle_check(&ign_coil[1].reset,angle,next_angle,capture,next_period);
-//        if(ecu_coil_window_angle_check(ign_coil[1].set.angle,next_angle,next_next_angle) == false) {
+        if(ecu_coil_window_angle_check(ign_coil[1].set.angle,next_angle,next_next_angle) == false) {
             ecu_coil_angle_update_check(ecu,&ign_coil[1]);
-//        }
+        }
         
         ecu_coil_angle_check(&ign_coil[2].set,angle,next_angle,capture,next_period);
         ecu_coil_angle_check(&ign_coil[2].reset,angle,next_angle,capture,next_period);
