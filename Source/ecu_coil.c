@@ -144,21 +144,21 @@ void ecu_coil_handler(ecu_t* ecu) {
         //проверка углов с запуском событий
         ecu_coil_angle_check(&ign_coil[0].set,angle,next_angle,capture,next_period);
         ecu_coil_angle_check(&ign_coil[0].reset,angle,next_angle,capture,next_period);
-        if(ecu_coil_window_angle_check(ign_coil[0].set.angle,next_angle,next_next_angle) == false) {
+//        if(ecu_coil_window_angle_check(ign_coil[0].set.angle,next_angle,next_next_angle) == false) {
             ecu_coil_angle_update_check(ecu,&ign_coil[0]);
-        }
+//        }
             
         ecu_coil_angle_check(&ign_coil[1].set,angle,next_angle,capture,next_period);
         ecu_coil_angle_check(&ign_coil[1].reset,angle,next_angle,capture,next_period);
-        if(ecu_coil_window_angle_check(ign_coil[1].set.angle,next_angle,next_next_angle) == false) {
+//        if(ecu_coil_window_angle_check(ign_coil[1].set.angle,next_angle,next_next_angle) == false) {
             ecu_coil_angle_update_check(ecu,&ign_coil[1]);
-        }
+//        }
         
         ecu_coil_angle_check(&ign_coil[2].set,angle,next_angle,capture,next_period);
         ecu_coil_angle_check(&ign_coil[2].reset,angle,next_angle,capture,next_period);
-        if(ecu_coil_window_angle_check(ign_coil[2].set.angle,next_angle,next_next_angle) == false) {
+//        if(ecu_coil_window_angle_check(ign_coil[2].set.angle,next_angle,next_next_angle) == false) {
             ecu_coil_angle_update_check(ecu,&ign_coil[2]);
-        }
+//        }
 //        ecu_coil_angle_check(&ign_coil[3].set,angle,next_angle,capture,next_period);
 //        ecu_coil_angle_check(&ign_coil[3].reset,angle,next_angle,capture,next_period);
 //        ecu_coil_angle_update_check(ecu,&ign_coil[3]);
@@ -173,13 +173,13 @@ void ecu_coil_init(void) {
     ign_coil[0].reset.angle = 45874;
 
     ign_coil[1].set.angle = 44782;
-    ign_coil[1].reset.angle = 45874+2;
+    ign_coil[1].reset.angle = 45874;
 
     ign_coil[2].set.angle = 44782;
-    ign_coil[2].reset.angle = 45874+4;
+    ign_coil[2].reset.angle = 45874;
 
     ign_coil[3].set.angle = 44782;
-    ign_coil[3].reset.angle = 45874+6;
+    ign_coil[3].reset.angle = 45874;
 
     //set 0
     make_timer_ch_it_init(&ign_coil[0].set.event_ch, ECU_COIL_TIM_1, 1);
