@@ -1,5 +1,4 @@
 #include "timer_ch_it.h"
-#include <stddef.h>
 
 void timer_ch_it_init(timer_ch_it_t* t_it_ch,TIM_TypeDef* TIM,
         const uint8_t channel,const uint16_t status_mask,
