@@ -32,20 +32,20 @@ void ecu_capture_timer_init() {
     //=================Master End=====================
 }
 
-void ecu_blue_blink(ecu_t* ecu) {
-    if (ecu->crank.angle[ecu->vr.count] == (uint16_t) 0) {
-        GPIOD->BSRRL = GPIO_ODR_ODR_15;
-    } else {
-        GPIOD->BSRRH = GPIO_ODR_ODR_15;
-    }
-}
+//void ecu_blue_blink(ecu_t* ecu) {
+//    if (ecu->crank.angle[ecu->vr.count] == (uint16_t) 0) {
+//        GPIOD->BSRRL = GPIO_ODR_ODR_15;
+//    } else {
+//        GPIOD->BSRRH = GPIO_ODR_ODR_15;
+//    }
+//}
 
 void ecu_crank_capture_period_ovf_write(ecu_t* ecu, uint16_t capture) {
     timer_ch_ccr_write(&ecu->ovf_cap_ch, (uint16_t) (capture + 0xffff)); //сдвиг ovf cap
     ecu_crank_capture_write(ecu, ecu->vr.count, capture); //запись захвата
     ecu_crank_period_write(ecu, ecu->vr.count, ecu_crank_period_calc(ecu)); //запись периода
     if (!(ECU_CAP_TIM->CR1 & TIM_CR1_CEN)) {
-        GPIOD->BSRRL = GPIO_ODR_ODR_12; //зеленый вкл
+//        GPIOD->BSRRL = GPIO_ODR_ODR_12; //зеленый вкл
         timer_ch_it_enable(&ecu->ovf_cap_ch, true); //включение однократного прерывания останова
         ECU_CAP_TIM->CR1 |= TIM_CR1_CEN;
     }
@@ -56,7 +56,7 @@ void ecu_crank_capture_handler(ecu_t* ecu, void* tim_ch) {
     ecu_crank_capture_period_ovf_write(ecu, timer_ch_ccr_read(tim_ch)); //чтение захвата и запись ovf,capture,period
     ecu_crank_sync(ecu);
     crank_extrapolation_calc(ecu); //расчет экстраполяции в точках vr_count + 1 и vr_count + 2
-    ecu_blue_blink(ecu); //blue led on на 0 зубе
+//    ecu_blue_blink(ecu); //blue led on на 0 зубе
 }
 
 void ecu_crank_capture_init(ecu_t* ecu) {

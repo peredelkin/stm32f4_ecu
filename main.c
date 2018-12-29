@@ -22,7 +22,6 @@
 
 //ecu_t ecu_struct __attribute__((section(".ccram"))); //структура эбу
 ecu_t ecu_struct; //структура эбу
-coil_event_t coil_set[4];
 
 void ECU_CAP_TIM_IRQHandler(void) {
     ecu_cap_irq_handler(&ecu_struct);
@@ -52,7 +51,7 @@ void ecu_crank_ovf_handler_callback(void* channel) {
     
     ecu_all_coil_reset();
     
-    GPIOD->BSRRH = GPIO_ODR_ODR_12; //зеленый выкл
+//    GPIOD->BSRRH = GPIO_ODR_ODR_12; //зеленый выкл
     timer_ch_it_enable(&ecu_struct.cap_ch,false); //включение прерывания захвата
 }
 
@@ -62,13 +61,13 @@ void ecu_init(void) {
     timer_ch_it_enable(&ecu_struct.cap_ch,false); //включение прерывания захвата
 }
 
-//volatile uint32_t i;
-//
-//void delay_1s(void)
-//{
-//    i = 8000000;
-//    while(-- i);
-//}
+volatile uint32_t i;
+
+void delay_1s(void)
+{
+    i = 800000;
+    while(-- i);
+}
 
 int main() {
 	rcc_init(); //тактирование
@@ -78,7 +77,6 @@ int main() {
         ecu_coil_init(); //инициализация катушек
         ecu_init(); //
 	while (1) {
-//		delay_1s();
-//		GPIOD->ODR ^= GPIO_ODR_ODR_12;
+            
 	}
 }

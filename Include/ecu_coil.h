@@ -18,18 +18,18 @@
 #define ECU_COIL_TIM_2_IRQn TIM4_IRQn
 #define ECU_COIL_TIM_2_IRQHandler TIM4_IRQHandler
 
-typedef struct _coil_event_t {
-    struct _coil_event_t* next;
-    struct _coil_event_t* prev;
+typedef struct {
     timer_ch_it_t event_ch;
     uint16_t angle;
     bool busy;
 } coil_event_t;
 
-coil_event_t coil_set[4];
-coil_event_t *coil_set_current;
-coil_event_t coil_reset[4];
-coil_event_t *coil_reset_current;
+typedef struct {
+    coil_event_t set;
+    coil_event_t reset;
+} coil_t;
+
+coil_t ign_coil[4];
         
 extern void ecu_coil_handler(ecu_t* ecu);
 extern void ecu_coil_init(void);

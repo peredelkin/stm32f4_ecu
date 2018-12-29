@@ -1,5 +1,8 @@
 #include "timer_ch_it.h"
 
+#define CRITICAL_ENTER() __asm__ volatile ("cpsid i")
+#define CRITICAL_EXIT() __asm__ volatile ("cpsie i")
+
 void timer_ch_it_init(timer_ch_it_t* t_it_ch,TIM_TypeDef* TIM,
         const uint8_t channel,const uint16_t status_mask,
         const uint16_t interrupt_mask) {
@@ -29,7 +32,9 @@ void timer_ch_it_handler(timer_ch_it_t* t_it_ch) {
     if ((*t_it_ch->DIER & t_it_ch->IE_MASK) && (*t_it_ch->SR & t_it_ch->SR_MASK)) { //чтение разрешения прерывания и статуса
         *t_it_ch->SR = ~t_it_ch->SR_MASK; //очистка статуса
         if (t_it_ch->once) {
+            CRITICAL_ENTER();
             *t_it_ch->DIER &= ~t_it_ch->IE_MASK; //запрет прерывания при однократном выполнении
+            CRITICAL_EXIT();
         }
         if (t_it_ch->event) t_it_ch->event(t_it_ch); //вызов
     }
@@ -38,11 +43,15 @@ void timer_ch_it_handler(timer_ch_it_t* t_it_ch) {
 void timer_ch_it_enable(timer_ch_it_t* t_it_ch,bool once) {
     t_it_ch->once = once;
     *t_it_ch->SR = ~t_it_ch->SR_MASK;
+    CRITICAL_ENTER();
     *t_it_ch->DIER |= t_it_ch->IE_MASK;
+    CRITICAL_EXIT();
 }
 
 void timer_ch_it_disable(timer_ch_it_t* t_it_ch) {
+    CRITICAL_ENTER();
     *t_it_ch->DIER &= ~t_it_ch->IE_MASK;
+    CRITICAL_EXIT();
 }
 
 uint16_t timer_ch_ccr_read(timer_ch_it_t* t_it_ch) {
