@@ -111,7 +111,20 @@ void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
         uint16_t ccr = ecu_coil_interpolation_calc(action->angle, angle, capture, next_period, ((uint16_t) (next_angle - angle)));
         timer_ch_ccr_write(&action->event_ch, ccr);
         timer_ch_it_enable(&action->event_ch, true);
-        action->busy = false;
+        action->update = true;
+    }
+}
+
+void ecu_coil_angle_update_check(ecu_t* ecu, coil_t* coil) {
+    if ((coil->set.update) && (coil->reset.update)) {
+        coil->set.update = false;
+        coil->reset.update = false;
+    }
+    
+    if (coil->set.update == false) {
+        coil->reset.angle+=10;
+        coil->dwell_angle = ecu_coil_delta_angle_calc(ecu,ecu->vr.prev_1,ecu->vr.count,5000);
+        coil->set.angle = coil->reset.angle - coil->dwell_angle;
     }
 }
 
@@ -121,6 +134,8 @@ void ecu_coil_handler(ecu_t* ecu) {
         uint16_t angle = ecu->crank.angle[ecu->vr.next_1];
         //угол захвата N+2
         uint16_t next_angle = ecu->crank.angle[ecu->vr.next_2];
+        //угол захвата N+3
+        uint16_t next_next_angle = ecu->crank.angle[ecu->vr.next_3];
         //значение захвата N+1
         uint16_t capture = ecu->crank.capture[ecu->vr.next_1];
         //период захвата N+2
@@ -129,15 +144,24 @@ void ecu_coil_handler(ecu_t* ecu) {
         //проверка углов с запуском событий
         ecu_coil_angle_check(&ign_coil[0].set,angle,next_angle,capture,next_period);
         ecu_coil_angle_check(&ign_coil[0].reset,angle,next_angle,capture,next_period);
-        
+//        if(ecu_coil_window_angle_check(ign_coil[0].set.angle,next_angle,next_next_angle) == false) {
+            ecu_coil_angle_update_check(ecu,&ign_coil[0]);
+//        }
+            
         ecu_coil_angle_check(&ign_coil[1].set,angle,next_angle,capture,next_period);
         ecu_coil_angle_check(&ign_coil[1].reset,angle,next_angle,capture,next_period);
+//        if(ecu_coil_window_angle_check(ign_coil[1].set.angle,next_angle,next_next_angle) == false) {
+            ecu_coil_angle_update_check(ecu,&ign_coil[1]);
+//        }
         
         ecu_coil_angle_check(&ign_coil[2].set,angle,next_angle,capture,next_period);
         ecu_coil_angle_check(&ign_coil[2].reset,angle,next_angle,capture,next_period);
-        
-        ecu_coil_angle_check(&ign_coil[3].set,angle,next_angle,capture,next_period);
-        ecu_coil_angle_check(&ign_coil[3].reset,angle,next_angle,capture,next_period);
+        if(ecu_coil_window_angle_check(ign_coil[2].set.angle,next_angle,next_next_angle) == false) {
+            ecu_coil_angle_update_check(ecu,&ign_coil[2]);
+        }
+//        ecu_coil_angle_check(&ign_coil[3].set,angle,next_angle,capture,next_period);
+//        ecu_coil_angle_check(&ign_coil[3].reset,angle,next_angle,capture,next_period);
+//        ecu_coil_angle_update_check(ecu,&ign_coil[3]);
     }
 }
 
@@ -145,17 +169,17 @@ void ecu_coil_init(void) {
     ecu_coil_slave_timer_1_init();
     ecu_coil_slave_timer_2_init();
 
-    ign_coil[0].set.angle = 0;
-    ign_coil[0].reset.angle = 1092;
+    ign_coil[0].set.angle = 44782;
+    ign_coil[0].reset.angle = 45874;
 
-    ign_coil[1].set.angle = 65536 / 2;
-    ign_coil[1].reset.angle = (65536 / 2) + 1092;
+    ign_coil[1].set.angle = 44782;
+    ign_coil[1].reset.angle = 45874+2;
 
-    ign_coil[2].set.angle = 0;
-    ign_coil[2].reset.angle = 1092;
+    ign_coil[2].set.angle = 44782;
+    ign_coil[2].reset.angle = 45874+4;
 
-    ign_coil[3].set.angle = 65536 / 2;
-    ign_coil[3].reset.angle = (65536 / 2) + 1092;
+    ign_coil[3].set.angle = 44782;
+    ign_coil[3].reset.angle = 45874+6;
 
     //set 0
     make_timer_ch_it_init(&ign_coil[0].set.event_ch, ECU_COIL_TIM_1, 1);

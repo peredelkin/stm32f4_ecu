@@ -47,4 +47,5 @@ void ecu_crank_counter(vr_count_t* vr_struct) {
     vr_struct->prev_1 = ecu_crank_vr_numb_normalization(vr_count - 1); //prev
     vr_struct->next_1 = ecu_crank_vr_numb_normalization(vr_count + 1); //next
     vr_struct->next_2 = ecu_crank_vr_numb_normalization(vr_count + 2); //next->next
+    vr_struct->next_3 = ecu_crank_vr_numb_normalization(vr_count + 3); //next->next->next
 }

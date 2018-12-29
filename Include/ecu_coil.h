@@ -21,10 +21,11 @@
 typedef struct {
     timer_ch_it_t event_ch;
     uint16_t angle;
-    bool busy;
+    bool update;
 } coil_event_t;
 
 typedef struct {
+    uint16_t dwell_angle;
     coil_event_t set;
     coil_event_t reset;
 } coil_t;

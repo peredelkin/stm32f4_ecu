@@ -29,6 +29,7 @@ typedef struct {
     uint8_t sync_point;
     uint8_t next_1;
     uint8_t next_2;
+    uint8_t next_3;
 }vr_count_t;
 
 typedef struct {
