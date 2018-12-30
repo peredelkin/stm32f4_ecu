@@ -74,7 +74,7 @@ int main() {
 	gpio_led_init(); //светодиоды
 	gpio_master_timer_init(); //инициализация пина захвата
 	ecu_crank_capture_init(&ecu_struct); //инициализация захвата
-        ecu_coil_init(); //инициализация катушек
+        ecu_coil_init(&ecu_struct); //инициализация катушек
         ecu_init(); //
 	while (1) {
             

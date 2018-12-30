@@ -25,7 +25,7 @@ typedef struct {
 } coil_event_t;
 
 typedef struct {
-    uint16_t dwell_angle;
+    uint16_t offset_angle;
     coil_event_t set;
     coil_event_t reset;
 } coil_t;
@@ -33,7 +33,7 @@ typedef struct {
 coil_t ign_coil[4];
         
 extern void ecu_coil_handler(ecu_t* ecu);
-extern void ecu_coil_init(void);
+extern void ecu_coil_init(ecu_t* ecu);
 extern void ecu_all_coil_reset(void);
 
 #endif /* ECU_COIL_H */
