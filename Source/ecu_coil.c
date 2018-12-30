@@ -124,9 +124,7 @@ void ecu_coil_angle_update(ecu_t* ecu, coil_t* coil) {
     if (coil->set.update == false) {
         uint16_t reset_angle = ecu->ignition.angle + coil->offset_angle;
         uint16_t set_angle = reset_angle - ecu->ignition.dwell_angle;
-//        coil->reset.angle = ecu->ignition.angle + coil->offset_angle;
-//        coil->set.angle = coil->reset.angle - ecu->ignition.dwell_angle;
-        if((int16_t)(set_angle - ecu->crank.angle[ecu->vr.next_2]) > 0) {
+        if(((int16_t)(set_angle - ecu->crank.angle[ecu->vr.next_2]) > 0) && ((int16_t)(ecu->crank.angle[ecu->vr.next_1] - reset_angle) > 0)) {
             coil->reset.angle = reset_angle;
             coil->set.angle = set_angle;
         }
