@@ -115,7 +115,7 @@ void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
     }
 }
 
-void ecu_coil_angle_update_check(ecu_t* ecu, coil_t* coil) {
+void ecu_coil_angle_update(ecu_t* ecu, coil_t* coil) {
     if ((coil->set.update) && (coil->reset.update)) {
         coil->set.update = false;
         coil->reset.update = false;
@@ -123,7 +123,7 @@ void ecu_coil_angle_update_check(ecu_t* ecu, coil_t* coil) {
     }
     
     if (coil->set.update == false) {
-        coil->reset.angle+=50;
+        coil->reset.angle++;
         coil->set.angle = coil->reset.angle - coil->dwell_angle;
     }
 }
@@ -142,26 +142,21 @@ void ecu_coil_handler(ecu_t* ecu) {
         uint16_t next_period = ecu->crank.period[ecu->vr.next_2];
 
         //проверка углов с запуском событий
-        ecu_coil_angle_check(&ign_coil[0].set,angle,next_angle,capture,next_period);
-        ecu_coil_angle_check(&ign_coil[0].reset,angle,next_angle,capture,next_period);
-//        if(ecu_coil_window_angle_check(ign_coil[0].set.angle,next_angle,next_next_angle) == false) {
-            ecu_coil_angle_update_check(ecu,&ign_coil[0]);
-//        }
-            
-        ecu_coil_angle_check(&ign_coil[1].set,angle,next_angle,capture,next_period);
-        ecu_coil_angle_check(&ign_coil[1].reset,angle,next_angle,capture,next_period);
-//        if(ecu_coil_window_angle_check(ign_coil[1].set.angle,next_angle,next_next_angle) == false) {
-            ecu_coil_angle_update_check(ecu,&ign_coil[1]);
-//        }
-        
-        ecu_coil_angle_check(&ign_coil[2].set,angle,next_angle,capture,next_period);
-        ecu_coil_angle_check(&ign_coil[2].reset,angle,next_angle,capture,next_period);
-//        if(ecu_coil_window_angle_check(ign_coil[2].set.angle,next_angle,next_next_angle) == false) {
-            ecu_coil_angle_update_check(ecu,&ign_coil[2]);
-//        }
-//        ecu_coil_angle_check(&ign_coil[3].set,angle,next_angle,capture,next_period);
-//        ecu_coil_angle_check(&ign_coil[3].reset,angle,next_angle,capture,next_period);
-//        ecu_coil_angle_update_check(ecu,&ign_coil[3]);
+        ecu_coil_angle_check(&ign_coil[0].set, angle, next_angle, capture, next_period);
+        ecu_coil_angle_check(&ign_coil[0].reset, angle, next_angle, capture, next_period);
+        ecu_coil_angle_update(ecu, &ign_coil[0]);
+
+        ecu_coil_angle_check(&ign_coil[1].set, angle, next_angle, capture, next_period);
+        ecu_coil_angle_check(&ign_coil[1].reset, angle, next_angle, capture, next_period);
+        ecu_coil_angle_update(ecu, &ign_coil[1]);
+
+        ecu_coil_angle_check(&ign_coil[2].set, angle, next_angle, capture, next_period);
+        ecu_coil_angle_check(&ign_coil[2].reset, angle, next_angle, capture, next_period);
+        ecu_coil_angle_update(ecu, &ign_coil[2]);
+
+        //        ecu_coil_angle_check(&ign_coil[3].set,angle,next_angle,capture,next_period);
+        //        ecu_coil_angle_check(&ign_coil[3].reset,angle,next_angle,capture,next_period);
+        //        ecu_coil_angle_update_check(ecu,&ign_coil[3]);
     }
 }
 
@@ -169,14 +164,14 @@ void ecu_coil_init(void) {
     ecu_coil_slave_timer_1_init();
     ecu_coil_slave_timer_2_init();
 
-    ign_coil[0].set.angle = 44782;
-    ign_coil[0].reset.angle = 45874;
+    ign_coil[0].set.angle = 0;
+    ign_coil[0].reset.angle = 1092;
 
-    ign_coil[1].set.angle = 44782;
-    ign_coil[1].reset.angle = 45874;
+    ign_coil[1].set.angle = 21845;
+    ign_coil[1].reset.angle = 21845+1092;
 
-    ign_coil[2].set.angle = 44782;
-    ign_coil[2].reset.angle = 45874;
+    ign_coil[2].set.angle = 43690;
+    ign_coil[2].reset.angle = 43690+1092;
 
     ign_coil[3].set.angle = 44782;
     ign_coil[3].reset.angle = 45874;
