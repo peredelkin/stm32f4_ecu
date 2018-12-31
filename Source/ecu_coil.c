@@ -140,22 +140,6 @@ void ecu_coil_angle_handler(ecu_t* ecu) {
         ecu_coil_angle_check(&ign_coil[coil_count].reset, angle, next_angle, capture, next_period);
         ecu_coil_angle_update(ecu, &ign_coil[coil_count]);
     }
-    
-//    ecu_coil_angle_check(&ign_coil[0].set, angle, next_angle, capture, next_period);
-//    ecu_coil_angle_check(&ign_coil[0].reset, angle, next_angle, capture, next_period);
-//    ecu_coil_angle_update(ecu, &ign_coil[0]);
-//
-//    ecu_coil_angle_check(&ign_coil[1].set, angle, next_angle, capture, next_period);
-//    ecu_coil_angle_check(&ign_coil[1].reset, angle, next_angle, capture, next_period);
-//    ecu_coil_angle_update(ecu, &ign_coil[1]);
-//
-//    ecu_coil_angle_check(&ign_coil[2].set, angle, next_angle, capture, next_period);
-//    ecu_coil_angle_check(&ign_coil[2].reset, angle, next_angle, capture, next_period);
-//    ecu_coil_angle_update(ecu, &ign_coil[2]);
-//
-//    ecu_coil_angle_check(&ign_coil[3].set, angle, next_angle, capture, next_period);
-//    ecu_coil_angle_check(&ign_coil[3].reset, angle, next_angle, capture, next_period);
-//    ecu_coil_angle_update(ecu, &ign_coil[3]);
 }
 
 void ecu_coil_handler(ecu_t* ecu) {
