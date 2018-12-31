@@ -75,17 +75,17 @@ void ecu_all_coil_reset(void) {
 }
 
 void ECU_COIL_TIM_1_IRQHandler(void) {
-    timer_ch_it_handler(&ign_coil[0].set.event_ch);
-    timer_ch_it_handler(&ign_coil[0].reset.event_ch);
-    timer_ch_it_handler(&ign_coil[1].set.event_ch);
-    timer_ch_it_handler(&ign_coil[1].reset.event_ch);
+    timer_ch_it_handler(&ecu_struct.ignition.ign_coil[0].set.event_ch);
+    timer_ch_it_handler(&ecu_struct.ignition.ign_coil[0].reset.event_ch);
+    timer_ch_it_handler(&ecu_struct.ignition.ign_coil[1].set.event_ch);
+    timer_ch_it_handler(&ecu_struct.ignition.ign_coil[1].reset.event_ch);
 }
 
 void ECU_COIL_TIM_2_IRQHandler(void) {
-    timer_ch_it_handler(&ign_coil[2].set.event_ch);
-    timer_ch_it_handler(&ign_coil[2].reset.event_ch);
-    timer_ch_it_handler(&ign_coil[3].set.event_ch);
-    timer_ch_it_handler(&ign_coil[3].reset.event_ch);
+    timer_ch_it_handler(&ecu_struct.ignition.ign_coil[2].set.event_ch);
+    timer_ch_it_handler(&ecu_struct.ignition.ign_coil[2].reset.event_ch);
+    timer_ch_it_handler(&ecu_struct.ignition.ign_coil[3].set.event_ch);
+    timer_ch_it_handler(&ecu_struct.ignition.ign_coil[3].reset.event_ch);
 }
 
 /**
@@ -136,9 +136,9 @@ void ecu_coil_angle_handler(ecu_t* ecu) {
     //проверка углов с запуском событий
     while (coil_count) {
         coil_count--;
-        ecu_coil_angle_check(&ign_coil[coil_count].set, angle, next_angle, capture, next_period);
-        ecu_coil_angle_check(&ign_coil[coil_count].reset, angle, next_angle, capture, next_period);
-        ecu_coil_angle_update(ecu, &ign_coil[coil_count]);
+        ecu_coil_angle_check(&ecu->ignition.ign_coil[coil_count].set, angle, next_angle, capture, next_period);
+        ecu_coil_angle_check(&ecu->ignition.ign_coil[coil_count].reset, angle, next_angle, capture, next_period);
+        ecu_coil_angle_update(ecu, &ecu->ignition.ign_coil[coil_count]);
     }
 }
 
@@ -164,36 +164,36 @@ void ecu_coil_init(ecu_t* ecu) {
     
     ecu->ignition.dwell_angle = 1092;
     
-    ecu_ign_coil_angle_init(ecu,&ign_coil[0],COIL_0_OFFSET_ANGLE);
-    ecu_ign_coil_angle_init(ecu,&ign_coil[1],COIL_1_OFFSET_ANGLE);
-    ecu_ign_coil_angle_init(ecu,&ign_coil[2],COIL_2_OFFSET_ANGLE);
-    ecu_ign_coil_angle_init(ecu,&ign_coil[3],COIL_3_OFFSET_ANGLE);
+    ecu_ign_coil_angle_init(ecu,&ecu->ignition.ign_coil[0],COIL_0_OFFSET_ANGLE);
+    ecu_ign_coil_angle_init(ecu,&ecu->ignition.ign_coil[1],COIL_1_OFFSET_ANGLE);
+    ecu_ign_coil_angle_init(ecu,&ecu->ignition.ign_coil[2],COIL_2_OFFSET_ANGLE);
+    ecu_ign_coil_angle_init(ecu,&ecu->ignition.ign_coil[3],COIL_3_OFFSET_ANGLE);
 
     //set 0
-    make_timer_ch_it_init(&ign_coil[0].set.event_ch, ECU_COIL_TIM_1, 1);
-    timer_ch_event_set(&ign_coil[0].set.event_ch, &ecu_coil_0_on);
+    make_timer_ch_it_init(&ecu->ignition.ign_coil[0].set.event_ch, ECU_COIL_TIM_1, 1);
+    timer_ch_event_set(&ecu->ignition.ign_coil[0].set.event_ch, &ecu_coil_0_on);
     //reset 0
-    make_timer_ch_it_init(&ign_coil[0].reset.event_ch, ECU_COIL_TIM_1, 2);
-    timer_ch_event_set(&ign_coil[0].reset.event_ch, &ecu_coil_0_off);
+    make_timer_ch_it_init(&ecu->ignition.ign_coil[0].reset.event_ch, ECU_COIL_TIM_1, 2);
+    timer_ch_event_set(&ecu->ignition.ign_coil[0].reset.event_ch, &ecu_coil_0_off);
     
     //set 1
-    make_timer_ch_it_init(&ign_coil[1].set.event_ch, ECU_COIL_TIM_1, 3);
-    timer_ch_event_set(&ign_coil[1].set.event_ch, &ecu_coil_1_on);
+    make_timer_ch_it_init(&ecu->ignition.ign_coil[1].set.event_ch, ECU_COIL_TIM_1, 3);
+    timer_ch_event_set(&ecu->ignition.ign_coil[1].set.event_ch, &ecu_coil_1_on);
     //reset 1
-    make_timer_ch_it_init(&ign_coil[1].reset.event_ch, ECU_COIL_TIM_1, 4);
-    timer_ch_event_set(&ign_coil[1].reset.event_ch, &ecu_coil_1_off);
+    make_timer_ch_it_init(&ecu->ignition.ign_coil[1].reset.event_ch, ECU_COIL_TIM_1, 4);
+    timer_ch_event_set(&ecu->ignition.ign_coil[1].reset.event_ch, &ecu_coil_1_off);
     
     //set 2
-    make_timer_ch_it_init(&ign_coil[2].set.event_ch, ECU_COIL_TIM_2, 1);
-    timer_ch_event_set(&ign_coil[2].set.event_ch, &ecu_coil_2_on);
+    make_timer_ch_it_init(&ecu->ignition.ign_coil[2].set.event_ch, ECU_COIL_TIM_2, 1);
+    timer_ch_event_set(&ecu->ignition.ign_coil[2].set.event_ch, &ecu_coil_2_on);
     //reset 2
-    make_timer_ch_it_init(&ign_coil[2].reset.event_ch, ECU_COIL_TIM_2, 2);
-    timer_ch_event_set(&ign_coil[2].reset.event_ch, &ecu_coil_2_off);
+    make_timer_ch_it_init(&ecu->ignition.ign_coil[2].reset.event_ch, ECU_COIL_TIM_2, 2);
+    timer_ch_event_set(&ecu->ignition.ign_coil[2].reset.event_ch, &ecu_coil_2_off);
     
     //set 3
-    make_timer_ch_it_init(&ign_coil[3].set.event_ch, ECU_COIL_TIM_2, 3);
-    timer_ch_event_set(&ign_coil[3].set.event_ch, &ecu_coil_3_on);
+    make_timer_ch_it_init(&ecu->ignition.ign_coil[3].set.event_ch, ECU_COIL_TIM_2, 3);
+    timer_ch_event_set(&ecu->ignition.ign_coil[3].set.event_ch, &ecu_coil_3_on);
     //reset 4
-    make_timer_ch_it_init(&ign_coil[3].reset.event_ch, ECU_COIL_TIM_2, 4);
-    timer_ch_event_set(&ign_coil[3].reset.event_ch, &ecu_coil_3_off);
+    make_timer_ch_it_init(&ecu->ignition.ign_coil[3].reset.event_ch, ECU_COIL_TIM_2, 4);
+    timer_ch_event_set(&ecu->ignition.ign_coil[3].reset.event_ch, &ecu_coil_3_off);
 }

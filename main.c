@@ -20,9 +20,6 @@
 #include "ecu_capture.h"
 #include "ecu_coil.h"
 
-//ecu_t ecu_struct __attribute__((section(".ccram"))); //структура эбу
-ecu_t ecu_struct; //структура эбу
-
 void ECU_CAP_TIM_IRQHandler(void) {
     ecu_cap_irq_handler(&ecu_struct);
 }

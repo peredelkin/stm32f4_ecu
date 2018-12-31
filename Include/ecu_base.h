@@ -57,6 +57,19 @@ typedef struct {
 } vr_count_t;
 
 typedef struct {
+    timer_ch_it_t event_ch;
+    uint16_t angle;
+    bool update;
+} ecu_coil_event_t;
+
+typedef struct {
+    uint16_t offset_angle;
+    ecu_coil_event_t set;
+    ecu_coil_event_t reset;
+} ecu_coil_t;
+
+typedef struct {
+    ecu_coil_t ign_coil[COIL_N];
     uint16_t dwell_angle;
     uint16_t angle;
 } ignition_t;
@@ -71,6 +84,9 @@ typedef struct {
     bool gap_correct; //метка верна
     bool cap_time_norm; //время захвата меньше минимального
 } ecu_t;
+
+//ecu_t ecu_struct __attribute__((section(".ccram"))); //структура эбу
+ecu_t ecu_struct; //структура эбу
 
 extern void ecu_crank_counter(vr_count_t* vr_struct);
 
