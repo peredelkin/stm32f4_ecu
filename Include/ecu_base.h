@@ -14,7 +14,32 @@
 #define ECU_VR_COUNT (uint8_t)58
 #define ECU_VR_COUNT_RESET (uint8_t)ECU_VR_COUNT-1
 
-typedef void (*_ecu_sync_event)(void*);
+#define COIL_N 4
+
+#define COIL_0_OFFSET_ANGLE 0
+#define COIL_0_GPIO GPIOD
+#define COIL_0_BSRR_MASK GPIO_ODR_ODR_13 //оранжевый
+
+#define COIL_1_OFFSET_ANGLE 16384
+#define COIL_1_GPIO GPIOD
+#define COIL_1_BSRR_MASK GPIO_ODR_ODR_14 //красный
+
+#define COIL_2_OFFSET_ANGLE 32768
+#define COIL_2_GPIO GPIOD
+#define COIL_2_BSRR_MASK GPIO_ODR_ODR_15 //синий
+
+#define COIL_3_OFFSET_ANGLE 49152
+#define COIL_3_GPIO GPIOD
+#define COIL_3_BSRR_MASK GPIO_ODR_ODR_12 //зеленый
+
+
+#define ECU_COIL_TIM_1 TIM3
+#define ECU_COIL_TIM_1_IRQn TIM3_IRQn
+#define ECU_COIL_TIM_1_IRQHandler TIM3_IRQHandler
+
+#define ECU_COIL_TIM_2 TIM4
+#define ECU_COIL_TIM_2_IRQn TIM4_IRQn
+#define ECU_COIL_TIM_2_IRQHandler TIM4_IRQHandler
 
 typedef struct {
     uint16_t angle[ECU_VR_COUNT]; //синхронизированная карта углов (дпкв)

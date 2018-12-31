@@ -96,7 +96,7 @@ void ECU_COIL_TIM_2_IRQHandler(void) {
  * @param capture Значение захвата N+1
  * @param next_period Период между захватами N+1 и N+2
  */
-void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
+void ecu_coil_angle_check(ecu_coil_event_t* action, uint16_t angle,
         uint16_t next_angle, uint16_t capture, uint16_t next_period) {
     if (ecu_coil_window_angle_check(action->angle, angle, next_angle)) {
         uint16_t ccr = ecu_coil_interpolation_calc(action->angle, angle, capture, next_period, ((uint16_t) (next_angle - angle)));
@@ -106,7 +106,7 @@ void ecu_coil_angle_check(coil_event_t* action, uint16_t angle,
     }
 }
 
-void ecu_coil_angle_update(ecu_t* ecu, coil_t* coil) {
+void ecu_coil_angle_update(ecu_t* ecu, ecu_coil_t* coil) {
     if ((coil->set.update) && (coil->reset.update)) {
         coil->set.update = false;
         coil->reset.update = false;
@@ -152,7 +152,7 @@ void ecu_coil_handler(ecu_t* ecu) {
     }
 }
 
-void ecu_ign_coil_angle_init(ecu_t* ecu,coil_t* coil,uint16_t offset_angle) {
+void ecu_ign_coil_angle_init(ecu_t* ecu,ecu_coil_t* coil,uint16_t offset_angle) {
     coil->offset_angle = offset_angle;
     coil->reset.angle = ecu->ignition.angle + coil->offset_angle;
     coil->set.angle = coil->reset.angle - ecu->ignition.dwell_angle;
@@ -164,10 +164,10 @@ void ecu_coil_init(ecu_t* ecu) {
     
     ecu->ignition.dwell_angle = 1092;
     
-    ecu_ign_coil_angle_init(ecu,&ign_coil[0],0);
-    ecu_ign_coil_angle_init(ecu,&ign_coil[1],16384);
-    ecu_ign_coil_angle_init(ecu,&ign_coil[2],32768);
-    ecu_ign_coil_angle_init(ecu,&ign_coil[3],49152);
+    ecu_ign_coil_angle_init(ecu,&ign_coil[0],COIL_0_OFFSET_ANGLE);
+    ecu_ign_coil_angle_init(ecu,&ign_coil[1],COIL_1_OFFSET_ANGLE);
+    ecu_ign_coil_angle_init(ecu,&ign_coil[2],COIL_2_OFFSET_ANGLE);
+    ecu_ign_coil_angle_init(ecu,&ign_coil[3],COIL_3_OFFSET_ANGLE);
 
     //set 0
     make_timer_ch_it_init(&ign_coil[0].set.event_ch, ECU_COIL_TIM_1, 1);
