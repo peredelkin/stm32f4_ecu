@@ -3,8 +3,6 @@
 #include "ecu_compare.h"
 #include <stddef.h>
 
-//\todo Переписать обновление углов.
-
 void ecu_coil_slave_timer_1_init() {
     NVIC_SetPriority(TIM3_IRQn, 5); //36 default
     NVIC_EnableIRQ(ECU_COIL_TIM_1_IRQn); //Compare
