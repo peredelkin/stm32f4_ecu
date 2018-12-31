@@ -10,6 +10,8 @@
 
 #include "ecu_base.h"
 
+#define COIL_N 4
+
 #define COIL_0_GPIO GPIOD
 #define COIL_0_BSRR_MASK GPIO_ODR_ODR_13 //оранжевый
 
@@ -43,7 +45,7 @@ typedef struct {
     coil_event_t reset;
 } coil_t;
 
-coil_t ign_coil[4];
+coil_t ign_coil[COIL_N];
         
 extern void ecu_coil_handler(ecu_t* ecu);
 extern void ecu_coil_init(ecu_t* ecu);
