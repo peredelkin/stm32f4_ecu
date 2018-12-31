@@ -81,6 +81,7 @@ void ecu_all_coil_reset(void) {
     ecu_coil_0_off(NULL);
     ecu_coil_1_off(NULL);
     ecu_coil_2_off(NULL);
+    ecu_coil_3_off(NULL);
 }
 
 void ECU_COIL_TIM_1_IRQHandler(void) {
