@@ -21,7 +21,7 @@ void ecu_coil_slave_timer_1_init() {
 
     ECU_COIL_TIM_1->SMCR &= ~TIM_SMCR_TS; // ITR0
 
-    ECU_COIL_TIM_1->CR1 |= TIM_CR1_CEN; //Need Enable in Slave
+//    ECU_COIL_TIM_1->CR1 |= TIM_CR1_CEN; //Need Enable in Slave
     //===================Slave End========================
 }
 
@@ -41,7 +41,7 @@ void ecu_coil_slave_timer_2_init() {
 
     ECU_COIL_TIM_2->SMCR &= ~TIM_SMCR_TS; // ITR0
 
-    ECU_COIL_TIM_2->CR1 |= TIM_CR1_CEN; //Need Enable in Slave
+//    ECU_COIL_TIM_2->CR1 |= TIM_CR1_CEN; //Need Enable in Slave
     //===================Slave End========================
 }
 

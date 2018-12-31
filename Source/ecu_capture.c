@@ -1,4 +1,5 @@
 #include "ecu_capture.h"
+#include "ecu_coil.h"
 
 void ecu_capture_timer_init() {
     NVIC_SetPriority(TIM1_CC_IRQn, 6); //34 default
@@ -45,8 +46,9 @@ void ecu_crank_capture_period_ovf_write(ecu_t* ecu, uint16_t capture) {
     ecu_crank_capture_write(ecu, ecu->vr.count, capture); //запись захвата
     ecu_crank_period_write(ecu, ecu->vr.count, ecu_crank_period_calc(ecu)); //запись периода
     if (!(ECU_CAP_TIM->CR1 & TIM_CR1_CEN)) {
-//        GPIOD->BSRRL = GPIO_ODR_ODR_12; //зеленый вкл
         timer_ch_it_enable(&ecu->ovf_cap_ch, true); //включение однократного прерывания останова
+        ECU_COIL_TIM_1->CR1 |= TIM_CR1_CEN;
+        ECU_COIL_TIM_2->CR1 |= TIM_CR1_CEN;
         ECU_CAP_TIM->CR1 |= TIM_CR1_CEN;
     }
 }
@@ -56,7 +58,6 @@ void ecu_crank_capture_handler(ecu_t* ecu, void* tim_ch) {
     ecu_crank_capture_period_ovf_write(ecu, timer_ch_ccr_read(tim_ch)); //чтение захвата и запись ovf,capture,period
     ecu_crank_sync(ecu);
     crank_extrapolation_calc(ecu); //расчет экстраполяции в точках vr_count + 1 и vr_count + 2
-//    ecu_blue_blink(ecu); //blue led on на 0 зубе
 }
 
 void ecu_crank_capture_init(ecu_t* ecu) {

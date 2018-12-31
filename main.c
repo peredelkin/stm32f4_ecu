@@ -42,16 +42,12 @@ void ecu_crank_ovf_handler_callback(void* channel) {
     ECU_COIL_TIM_1->CNT = 0; //сброс счета таймера катушек 1
     ECU_COIL_TIM_2->CNT = 0; //сброс счета таймера катушек 2
     
-    ECU_COIL_TIM_1->CR1 |= TIM_CR1_CEN; //разрешение запуска таймера катушек 1 (слейв)
-    ECU_COIL_TIM_2->CR1 |= TIM_CR1_CEN; //разрешение запуска таймера катушек 2 (слейв)
-    
     ecu_struct.cap_time_norm = false;
     ecu_struct.gap_correct = false;
     ecu_struct.gap_found = false;
     
     ecu_all_coil_reset();
     
-//    GPIOD->BSRRH = GPIO_ODR_ODR_12; //зеленый выкл
     timer_ch_it_enable(&ecu_struct.cap_ch,false); //включение прерывания захвата
 }
 
