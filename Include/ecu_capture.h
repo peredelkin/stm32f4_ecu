@@ -17,10 +17,6 @@
 #include "ecu_math.h"
 #include "ecu_sync.h"
 
-#define ECU_CAP_TIM TIM1
-#define ECU_CAP_TIM_IRQHandler TIM1_CC_IRQHandler
-#define ECU_CAP_TIM_IRQn TIM1_CC_IRQn
-
 extern void ecu_crank_capture_handler(ecu_t* ecu,void* tim_ch);
 extern void ecu_crank_capture_init(ecu_t* ecu);
 extern void ecu_cap_irq_handler(ecu_t* ecu);
