@@ -14,7 +14,7 @@
 //FreeRTOS end
 #include <main.h>
 #include <gpio.h>
-//#include <usart.h>
+#include <usart.h>
 #include <string.h>
 #include <stdint.h>
 #include "ecu_capture.h"

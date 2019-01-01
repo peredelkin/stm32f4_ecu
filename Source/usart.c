@@ -12,7 +12,7 @@ bool usart_bus_status_register_read(usart_t* usart_struct,uint16_t status) {
 }
 
 void usart_bus_status_register_reset(usart_t* usart_struct,uint16_t status) {
-    usart_struct->usart_bus_port->SR &= ~status;
+    usart_struct->usart_bus_port->SR = ~status;
 }
 
 void usart_bus_baud_rate_register_set(usart_t* usart_struct,uint16_t mantissa, uint16_t fraction) {
