@@ -45,8 +45,8 @@
 #define COIL_3_BSRR_MASK GPIO_ODR_ODR_12 //зеленый
 
 //захват
-#define ECU_CAP_TIM_CLK 1000000 //in Hz
-#define ECU_NOM_ANGLE_BETWEEN_CAP 1092
+#define ECU_CAP_TIM_CLK (uint32_t)1000000 //in Hz
+#define ECU_NOM_ANGLE_BETWEEN_CAP (uint32_t)1092
 
 #define ECU_CAP_TIM TIM1
 #define ECU_CAP_TIM_IRQHandler TIM1_CC_IRQHandler

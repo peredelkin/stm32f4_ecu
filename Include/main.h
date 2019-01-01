@@ -19,8 +19,8 @@
 void rcc_init(void) {
     RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN; //GPIO_D
     RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN; //GPIO_A
-    //RCC->APB1ENR |= RCC_APB1ENR_USART2EN; // USART2
-    //RCC->AHB1ENR |= RCC_AHB1ENR_DMA1EN; // DMA1
+    RCC->APB1ENR |= RCC_APB1ENR_USART2EN; // USART2
+//    RCC->AHB1ENR |= RCC_AHB1ENR_DMA1EN; // DMA1
     RCC->APB2ENR |= RCC_APB2ENR_TIM1EN; // TIM1
     RCC->APB1ENR |= RCC_APB1ENR_TIM3EN; //TIM3
     RCC->APB1ENR |= RCC_APB1ENR_TIM4EN; //TIM4
@@ -43,20 +43,20 @@ void gpio_led_init() {
     GPIOD->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR15;
 }
 
-//void gpio_usart_init() {
-//    GPIOA->MODER &= ~GPIO_MODER_MODER2; //Reset Mode 2
-//    GPIOA->MODER |= GPIO_MODER_MODER2_1; //Set Alternate Mode
-//    
-//    GPIOA->OTYPER &= ~GPIO_OTYPER_ODR_2; //Reset Output Type
-//    
-//    GPIOA->OSPEEDR &= ~GPIO_OSPEEDER_OSPEEDR2;// Reset Speed 2
-//    GPIOA->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR2; //Set Very High Speed 2
-//    
-//    GPIOA->PUPDR &= ~GPIO_PUPDR_PUPDR2; // Reset PUPD
-//    
-//    GPIOA->AFR[0] &= ~(uint32_t)(0b1111 << ((2 % 8)*4)); //Reset Alternate 2
-//    GPIOA->AFR[0] |= (uint32_t)(0b0111 << ((2 % 8)*4)); //Set AF2 to 2
-//}
+void gpio_usart2_init() {
+    GPIOA->MODER &= ~GPIO_MODER_MODER2; //Reset Mode 2
+    GPIOA->MODER |= GPIO_MODER_MODER2_1; //Set Alternate Mode
+    
+    GPIOA->OTYPER &= ~GPIO_OTYPER_ODR_2; //Reset Output Type
+    
+    GPIOA->OSPEEDR &= ~GPIO_OSPEEDER_OSPEEDR2;// Reset Speed 2
+    GPIOA->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR2; //Set Very High Speed 2
+    
+    GPIOA->PUPDR &= ~GPIO_PUPDR_PUPDR2; // Reset PUPD
+    
+    GPIOA->AFR[0] &= ~(uint32_t)(0b1111 << ((2 % 8)*4)); //Reset Alternate 2
+    GPIOA->AFR[0] |= (uint32_t)(0b0111 << ((2 % 8)*4)); //Set AF2 to 2
+}
 
 void gpio_master_timer_init() {
     //Capture TIMER PA8
