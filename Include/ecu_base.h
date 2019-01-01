@@ -78,16 +78,16 @@ typedef struct {
     timer_ch_it_t event_ch; //структура канала таймера
     uint16_t angle; //угол срабатывания
     bool update; // разрешения/запрета обновления углов
-} ecu_coil_event_t;
+} ecu_angle_event_t;
 
 typedef struct {
     uint16_t offset_angle; //угол сдвига катушки
-    ecu_coil_event_t set;
-    ecu_coil_event_t reset;
+    ecu_angle_event_t set;
+    ecu_angle_event_t reset;
 } ecu_coil_t;
 
 typedef struct {
-    ecu_coil_t ign_coil[COIL_N]; //катушки зажигания
+    ecu_coil_t coil[COIL_N]; //катушки зажигания
     uint16_t dwell_angle; //дельта угла между set и reset,т.е. время накопления
     uint16_t angle; // УОЗ
 } ignition_t;

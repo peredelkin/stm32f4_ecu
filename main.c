@@ -26,7 +26,7 @@ void ECU_CAP_TIM_IRQHandler(void) {
 
 void ecu_crank_handler_callback(void* channel) {
     ecu_crank_capture_handler(&ecu_struct,channel);
-    ecu_coil_handler(&ecu_struct);
+    ecu_common_angle_handler(&ecu_struct);
 }
 
 void ecu_crank_ovf_handler_callback(void* channel) {

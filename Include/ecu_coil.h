@@ -10,7 +10,7 @@
 
 #include "ecu_base.h"
         
-extern void ecu_coil_handler(ecu_t* ecu);
+extern void ecu_common_angle_handler(ecu_t* ecu);
 extern void ecu_coil_init(ecu_t* ecu);
 extern void ecu_all_coil_reset(void);
 

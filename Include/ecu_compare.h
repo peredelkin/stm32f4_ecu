@@ -29,6 +29,8 @@ extern bool ecu_coil_window_angle_check(uint16_t check_angle,uint16_t angle, uin
 extern bool ecu_crank_min_time_set(uint16_t min_time,uint16_t tnbm2_w);
 //возвращает true,если ниже минимальных
 extern bool ecu_crank_min_time_reset(uint16_t min_time,uint16_t tnbm1_w,uint16_t tnbm_w);
+//возвращает true,если углы события не в окне поиска
+extern bool ecu_coil_update_window_angle_check(uint16_t set_angle,uint16_t reset_angle,uint16_t angle,uint16_t next_angle);
 
 #endif /* ECU_COMPARE_H */
 
