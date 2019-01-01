@@ -112,3 +112,12 @@ uint16_t ecu_coil_interpolation_calc(uint16_t action_angle,uint16_t angle, uint1
 uint16_t ecu_coil_delta_angle_calc(ecu_t* ecu,const uint8_t prev_1,const uint8_t vr_count,const uint16_t time) {
     return (uint16_t)((time * (uint16_t)(ecu->crank.angle[vr_count] - ecu->crank.angle[prev_1])) / ecu->crank.period[vr_count]);
 }
+
+//расчет частоты вращения двигателя
+void ecu_instant_rpm_calc(ecu_t* ecu) {
+    if (ecu->gap_found) {
+        uint16_t period_angle = ecu_period_angle_calc(ecu, ecu->vr.count, ecu->vr.prev_1);
+        uint16_t period = ecu_crank_period_read(ecu, ecu->vr.count);
+        ecu->instant_rpm = (ECU_CAP_TIM_CLK * period_angle) / (ECU_NOM_ANGLE_BETWEEN_CAP * period);
+    }
+}

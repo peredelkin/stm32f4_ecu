@@ -36,7 +36,7 @@ uint8_t ecu_crank_vr_numb_normalization(int8_t numb) {
     }
 }
 
-void ecu_crank_counter(vr_count_t* vr_struct) {
+void ecu_crank_counter(ecu_vr_count_t* vr_struct) {
     if(vr_struct->count == ECU_VR_COUNT_RESET) {
         vr_struct->count = 0;
     } else {

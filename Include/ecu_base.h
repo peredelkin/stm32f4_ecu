@@ -45,6 +45,9 @@
 #define COIL_3_BSRR_MASK GPIO_ODR_ODR_12 //зеленый
 
 //захват
+#define ECU_CAP_TIM_CLK 1000000 //in Hz
+#define ECU_NOM_ANGLE_BETWEEN_CAP 1092
+
 #define ECU_CAP_TIM TIM1
 #define ECU_CAP_TIM_IRQHandler TIM1_CC_IRQHandler
 #define ECU_CAP_TIM_IRQn TIM1_CC_IRQn
@@ -63,7 +66,7 @@ typedef struct {
     uint16_t angle[ECU_VR_COUNT]; //синхронизированная карта углов (дпкв)
     uint16_t capture[ECU_VR_COUNT]; //карта захвата (дпкв)
     uint16_t period[ECU_VR_COUNT]; //карта периода (дпкв)
-} crank_time_t;
+} ecu_crank_time_t;
 
 typedef struct {
     uint8_t prev_2; //точка N-2
@@ -72,7 +75,7 @@ typedef struct {
     uint8_t sync_point; //точка синхронизации
     uint8_t next_1; //точка N+2
     uint8_t next_2; //точка Т+3
-} vr_count_t;
+} ecu_vr_count_t;
 
 typedef struct {
     timer_ch_it_t event_ch; //структура канала таймера
@@ -90,14 +93,15 @@ typedef struct {
     ecu_coil_t coil[COIL_N]; //катушки зажигания
     uint16_t dwell_angle; //дельта угла между set и reset,т.е. время накопления
     uint16_t angle; // УОЗ
-} ignition_t;
+} ecu_ignition_t;
 
 typedef struct {
-    ignition_t ignition; //структура зажигания
+    uint16_t instant_rpm; //обороты в минуту
+    ecu_ignition_t ignition; //структура зажигания
     timer_ch_it_t cap_ch; //канал захвата
     timer_ch_it_t ovf_cap_ch; //канал переполнения захвата
-    crank_time_t crank; //таблица захвата
-    vr_count_t vr; //номера элементов
+    ecu_crank_time_t crank; //таблица захвата
+    ecu_vr_count_t vr; //номера элементов
     bool gap_found; //метка найдена
     bool gap_correct; //метка верна
     bool cap_time_norm; //время захвата меньше минимального
@@ -106,7 +110,7 @@ typedef struct {
 //ecu_t ecu_struct __attribute__((section(".ccram"))); //структура эбу
 ecu_t ecu_struct; //структура эбу
 
-extern void ecu_crank_counter(vr_count_t* vr_struct);
+extern void ecu_crank_counter(ecu_vr_count_t* vr_struct);
 
 extern uint8_t ecu_crank_vr_numb_normalization(int8_t numb);
 
