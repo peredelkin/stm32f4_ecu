@@ -34,7 +34,11 @@ void ECU_CAP_TIM_IRQHandler(void) {
 }
 
 void ecu_crank_handler_callback(void* channel) {
-    ecu_crank_capture_handler(&ecu_struct,channel);    
+    ecu_crank_capture_handler(&ecu_struct,channel);
+    
+    sprintf(usart2_data, "RPM %u \r\n", ecu_struct.instant_rpm);
+    usart_bus_write_int(&usart2,usart2_data,strlen((const char*)usart2_data));
+    
     ecu_common_angle_handler(&ecu_struct);
 }
 
@@ -68,7 +72,7 @@ void usart2_init() {
     usart2.usart_bus_port = USART2;
     usart_bus_init(&usart2,SystemCoreClock / 4, 921600, true, false); //
     NVIC_EnableIRQ(USART2_IRQn);
-    usart_bus_write_int(&usart2,usart2_data,strlen((const char*)usart2_data));
+//    usart_bus_write_int(&usart2,usart2_data,strlen((const char*)usart2_data));
 }
 
 int main() {

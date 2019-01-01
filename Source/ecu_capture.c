@@ -18,7 +18,7 @@ void ecu_capture_timer_init() {
 
     ECU_CAP_TIM->CCER |= TIM_CCER_CC1E; // Capture Enable
 
-    ECU_CAP_TIM->PSC = (uint16_t) (168 - 1); // Prescaler
+    ECU_CAP_TIM->PSC = (uint16_t) ((SystemCoreClock/ECU_CAP_TIM_CLK) - 1); // Prescaler
 
     ECU_CAP_TIM->EGR = TIM_EGR_UG; // Re-initialize
 

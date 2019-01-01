@@ -7,7 +7,7 @@ void ecu_coil_slave_timer_1_init() {
     NVIC_SetPriority(TIM3_IRQn, 5); //36 default
     NVIC_EnableIRQ(ECU_COIL_TIM_1_IRQn); //Compare
 
-    ECU_COIL_TIM_1->PSC = (uint16_t) (84 - 1); // Prescaler
+    ECU_COIL_TIM_1->PSC = (uint16_t) (((SystemCoreClock/ECU_CAP_TIM_CLK)/2) - 1); // Prescaler
 
     ECU_COIL_TIM_1->EGR = TIM_EGR_UG; // Re-initialize
 
@@ -25,7 +25,7 @@ void ecu_coil_slave_timer_2_init() {
     NVIC_SetPriority(TIM3_IRQn, 5); //37 default
     NVIC_EnableIRQ(ECU_COIL_TIM_2_IRQn); //Compare
 
-    ECU_COIL_TIM_2->PSC = (uint16_t) (84 - 1); // Prescaler
+    ECU_COIL_TIM_2->PSC = (uint16_t) (((SystemCoreClock/ECU_CAP_TIM_CLK)/2) - 1); // Prescaler
 
     ECU_COIL_TIM_2->EGR = TIM_EGR_UG; // Re-initialize
 
@@ -152,7 +152,7 @@ void ecu_angle_handler(ecu_t* ecu) {
 
 void ecu_common_angle_handler(ecu_t* ecu) {
     if (ecu->gap_found) {
-        ecu->ignition.angle++;
+//        ecu->ignition.angle++;
         ecu->ignition.dwell_angle = ecu_coil_delta_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, 5000);
     }
     if (ecu->gap_correct) {
