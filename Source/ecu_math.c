@@ -136,4 +136,12 @@ void ecu_ign_angle_mg_by_cycle_calc(ecu_t* ecu) {
     
     uint8_t rpm_index = (uint8_t)(rpm_pointer - ign_angle_mg_by_cycle_rpm_scale);
     uint8_t mg_index = (uint8_t)(mg_pointer - ign_angle_mg_by_cycle_mg_scale);
+    
+    float angle_0_0 = ign_angle_mg_by_cycle[mg_index][rpm_index];
+    
+    float angle_0_1 = ign_angle_mg_by_cycle[mg_index][rpm_index+1];
+    
+    float angle_1_0 = ign_angle_mg_by_cycle[mg_index+1][rpm_index];
+    
+    float angle_1_1 = ign_angle_mg_by_cycle[mg_index+1][rpm_index+1];
 }
