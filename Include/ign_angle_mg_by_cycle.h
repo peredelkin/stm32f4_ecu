@@ -1,4 +1,14 @@
-float ign_angle_mg_by_cycle[16*16] = {
+#include <stdint.h>
+
+#ifndef IGN_ANGLE_MG_BY_CYCLE
+#define IGN_ANGLE_MG_BY_CYCLE
+
+
+#define IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_N 16
+#define IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N 16
+
+
+float ign_angle_mg_by_cycle[IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_N*IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N] = {
     21.5,   22.5,   23.5,   25.0,   30.5,   31.5,   33.0,   37.0,   37.5,   38.0,   38.5,   39.5,   40.0,   41.0,   42.0,   42.0,   /*29*/
     21.5,   22.5,   23.5,   25.0,   30.5,   31.5,   33.0,   37.0,   37.5,   38.0,   38.5,   39.5,   40.0,   41.0,   42.0,   42.0,   /*57*/
     21.5,   22.5,   23.5,   25.0,   30.5,   31.5,   33.0,   37.0,   37.5,   38.0,   38.5,   39.5,   40.0,   41.0,   42.0,   42.0,   /*85*/
@@ -18,10 +28,18 @@ float ign_angle_mg_by_cycle[16*16] = {
 //  600     720     840     990     1170    1380    1560    1950    2310    2730    3210    3840    4530    5370    6360    7650    rpm\mg
 };
 
-static const uint16_t ign_angle_mg_by_cycle_rpm_scale[16] = {
+static const uint16_t ign_angle_mg_by_cycle_rpm_scale[IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_N] = {
     600,    720,    840,    990,    1170,   1380,   1560,   1950,   2310,   2730,   3210,   3840,   4530,   5370,   6360,   7650
 };
 
-static const uint16_t ign_angle_mg_by_cycle_mg_scale[16] = {
+#define IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_MIN ign_angle_mg_by_cycle_rpm_scale[0]
+#define IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_MAX ign_angle_mg_by_cycle_rpm_scale[IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_N-1]-1
+
+static const uint16_t ign_angle_mg_by_cycle_mg_scale[IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N] = {
     29,     57,     85,     113,    141,    169,    197,    225,    253,    281,    309,    337,    365,    393,    421,    449
 };
+
+#define IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_MIN ign_angle_mg_by_cycle_mg_scale[0]
+#define IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_MAX ign_angle_mg_by_cycle_mg_scale[IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N-1]-1
+
+#endif /*IGN_ANGLE_MG_BY_CYCLE*/

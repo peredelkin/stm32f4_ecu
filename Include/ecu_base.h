@@ -97,6 +97,7 @@ typedef struct {
 
 typedef struct {
     uint16_t instant_rpm; //обороты в минуту
+    uint16_t mg_by_cycle; //цикловой расход
     ecu_ignition_t ignition; //структура зажигания
     timer_ch_it_t cap_ch; //канал захвата
     timer_ch_it_t ovf_cap_ch; //канал переполнения захвата

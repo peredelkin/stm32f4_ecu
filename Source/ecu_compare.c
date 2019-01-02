@@ -30,3 +30,16 @@ bool ecu_crank_min_time_reset(uint16_t min_time,uint16_t tnbm1_w,uint16_t tnbm_w
 bool ecu_coil_update_window_angle_check(uint16_t set_angle,uint16_t reset_angle,uint16_t angle,uint16_t next_angle) {
     return (((int16_t)(set_angle - next_angle) > 0) && ((int16_t)(angle - reset_angle) > 0));
 }
+
+//поиск b[0] >= a < b[1]
+int ecu_map_bsearch_compare(const void *ap, const void *bp)
+{
+    const uint16_t *a = (uint16_t *) ap;
+    const uint16_t *b = (uint16_t *) bp;
+    if(*a < b[0])
+        return -1;
+    else if(*a >= b[1])
+        return 1;
+    else
+        return 0;
+}
