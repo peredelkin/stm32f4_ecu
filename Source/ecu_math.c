@@ -1,8 +1,8 @@
 #include "ecu_math.h"
-#include <stdlib.h>
 #include "ecu_compare.h"
 #include "ign_angle_mg_by_cycle.h"
 #include "min_max.h"
+#include <stdlib.h>
 
 /**
  * Расчет пройденного периода
@@ -127,9 +127,9 @@ void ecu_instant_rpm_calc(ecu_t* ecu) {
 }
 
 //расчет уоз от циклового расхода
-void ecu_ign_angle_mg_by_cycle_calc(ecu_t* ecu) {
-    uint16_t rpm = min_max_u16(ecu->instant_rpm,IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_MIN,IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_MAX);
-    uint16_t mg = min_max_u16(ecu->mg_by_cycle,IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_MIN,IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_MAX);
+uint16_t ecu_ign_angle_mg_by_cycle_calc(uint16_t rpm_data,uint16_t mg_data) {
+    uint16_t rpm = min_max_u16(rpm_data,IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_MIN,IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_MAX);
+    uint16_t mg = min_max_u16(mg_data,IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_MIN,IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_MAX);
     
     uint16_t *rpm_pointer = (uint16_t *) bsearch(&rpm, ign_angle_mg_by_cycle_rpm_scale, IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_N, 2, ecu_map_bsearch_compare);
     uint16_t *mg_pointer = (uint16_t *) bsearch(&mg, ign_angle_mg_by_cycle_mg_scale, IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N, 2, ecu_map_bsearch_compare);
@@ -138,10 +138,16 @@ void ecu_ign_angle_mg_by_cycle_calc(ecu_t* ecu) {
     uint8_t mg_index = (uint8_t)(mg_pointer - ign_angle_mg_by_cycle_mg_scale);
     
     float angle_0_0 = ign_angle_mg_by_cycle[mg_index][rpm_index];
-    
     float angle_0_1 = ign_angle_mg_by_cycle[mg_index][rpm_index+1];
+    float angle_0 = (angle_0_0 + (((angle_0_1 - angle_0_0)*(rpm - rpm_pointer[0]))/(rpm_pointer[1] - rpm_pointer[0])));
     
     float angle_1_0 = ign_angle_mg_by_cycle[mg_index+1][rpm_index];
-    
     float angle_1_1 = ign_angle_mg_by_cycle[mg_index+1][rpm_index+1];
+    float angle_1 = (angle_1_0 + (((angle_1_1 - angle_1_0)*(rpm - rpm_pointer[0]))/(rpm_pointer[1] - rpm_pointer[0])));
+    
+    float angle = (angle_0 + (((angle_1 - angle_0)*(mg - mg_pointer[0]))/(mg_pointer[1] - mg_pointer[0])));
+    
+    uint16_t angle_u16 = -(uint16_t)(((65535.0*angle)/360.0));
+    
+    return angle_u16;
 }

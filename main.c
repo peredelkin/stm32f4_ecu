@@ -34,11 +34,11 @@ void ECU_CAP_TIM_IRQHandler(void) {
 }
 
 void ecu_crank_handler_callback(void* channel) {
-    ecu_crank_capture_handler(&ecu_struct,channel);
-    
-    sprintf(usart2_data, "RPM %u \r\n", ecu_struct.instant_rpm);
-    usart_bus_write_int(&usart2,usart2_data,strlen((const char*)usart2_data));
-    
+    ecu_crank_capture_handler(&ecu_struct, channel);
+
+    sprintf(usart2_data, "RPM %u \r\n", ecu_struct.ignition.angle);
+    usart_bus_write_int(&usart2, usart2_data, strlen((const char*) usart2_data));
+
     ecu_common_angle_handler(&ecu_struct);
 }
 
@@ -47,43 +47,44 @@ void ecu_crank_ovf_handler_callback(void* channel) {
     ECU_CAP_TIM->CR1 &= ~TIM_CR1_CEN; //остановка таймера захвата
     ECU_COIL_TIM_1->CR1 &= ~TIM_CR1_CEN; //остановка таймера катушек 1
     ECU_COIL_TIM_2->CR1 &= ~TIM_CR1_CEN; //остановка таймера катушек 2
-    
+
     ECU_CAP_TIM->CNT = 0; //сброс счета таймера захвата
     ECU_COIL_TIM_1->CNT = 0; //сброс счета таймера катушек 1
     ECU_COIL_TIM_2->CNT = 0; //сброс счета таймера катушек 2
-    
+
     ecu_struct.cap_time_norm = false;
     ecu_struct.gap_correct = false;
     ecu_struct.gap_found = false;
-    
+
     ecu_all_coil_reset();
-    
-    timer_ch_it_enable(&ecu_struct.cap_ch,false); //включение прерывания захвата
+
+    timer_ch_it_enable(&ecu_struct.cap_ch, false); //включение прерывания захвата
 }
 
 void ecu_init(void) {
-    timer_ch_event_set(&ecu_struct.cap_ch,&ecu_crank_handler_callback); //обработчик захвата
-    timer_ch_event_set(&ecu_struct.ovf_cap_ch,&ecu_crank_ovf_handler_callback); //обработчик останова
-    timer_ch_it_enable(&ecu_struct.cap_ch,false); //включение прерывания захвата
+    timer_ch_event_set(&ecu_struct.cap_ch, &ecu_crank_handler_callback); //обработчик захвата
+    timer_ch_event_set(&ecu_struct.ovf_cap_ch, &ecu_crank_ovf_handler_callback); //обработчик останова
+    timer_ch_it_enable(&ecu_struct.cap_ch, false); //включение прерывания захвата
 }
 
 void usart2_init() {
     gpio_usart2_init(); //порт уарта
     usart2.usart_bus_port = USART2;
-    usart_bus_init(&usart2,SystemCoreClock / 4, 921600, true, false); //
+    usart_bus_init(&usart2, SystemCoreClock / 4, 921600, true, false); //
     NVIC_EnableIRQ(USART2_IRQn);
-//    usart_bus_write_int(&usart2,usart2_data,strlen((const char*)usart2_data));
+    //    usart_bus_write_int(&usart2,usart2_data,strlen((const char*)usart2_data));
 }
 
 int main() {
-	rcc_init(); //тактирование
-        usart2_init();
-	gpio_led_init(); //светодиоды
-	gpio_master_timer_init(); //инициализация пина захвата
-	ecu_crank_capture_init(&ecu_struct); //инициализация захвата
-        ecu_coil_init(&ecu_struct); //инициализация катушек
-        ecu_init(); //
-	while (1) {
-            
-	}
+    ecu_struct.mg_by_cycle = 250;
+    rcc_init(); //тактирование
+    usart2_init();
+    gpio_led_init(); //светодиоды
+    gpio_master_timer_init(); //инициализация пина захвата
+    ecu_crank_capture_init(&ecu_struct); //инициализация захвата
+    ecu_coil_init(&ecu_struct); //инициализация катушек
+    ecu_init(); //
+    while (1) {
+
+    }
 }

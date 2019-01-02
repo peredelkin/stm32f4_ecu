@@ -152,8 +152,8 @@ void ecu_angle_handler(ecu_t* ecu) {
 
 void ecu_common_angle_handler(ecu_t* ecu) {
     if (ecu->gap_found) {
-//        ecu->ignition.angle++;
-        ecu->ignition.dwell_angle = ecu_coil_delta_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, 5000);
+        ecu->ignition.angle = ecu_ign_angle_mg_by_cycle_calc(ecu->instant_rpm,ecu->mg_by_cycle); //уоз от оборотов и циклового расхода
+        ecu->ignition.dwell_angle = ecu_coil_delta_angle_calc(ecu, ecu->vr.prev_1, ecu->vr.count, 2000); //дельта угла от времени накопления
     }
     if (ecu->gap_correct) {
         ecu_angle_handler(ecu);
