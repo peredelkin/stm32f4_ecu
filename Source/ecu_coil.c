@@ -40,31 +40,31 @@ void ecu_coil_slave_timer_2_init() {
 }
 
 void ecu_coil_0_on(void* channel) {
-    COIL_0_GPIO->BSRRL = COIL_0_BSRR_MASK; //оранжевый
+    COIL_0_GPIO->BSRRL = COIL_0_BSRR_MASK;
 }
 void ecu_coil_0_off(void* channel) {
-    COIL_0_GPIO->BSRRH = COIL_0_BSRR_MASK; //оранжевый
+    COIL_0_GPIO->BSRRH = COIL_0_BSRR_MASK;
 }
 
 void ecu_coil_1_on(void* channel) {
-    COIL_1_GPIO->BSRRL = COIL_1_BSRR_MASK; //красный
+    COIL_1_GPIO->BSRRL = COIL_1_BSRR_MASK;
 }
 void ecu_coil_1_off(void* channel) {
-    COIL_1_GPIO->BSRRH = COIL_1_BSRR_MASK; //красный
+    COIL_1_GPIO->BSRRH = COIL_1_BSRR_MASK;
 }
 
 void ecu_coil_2_on(void* channel) {
-    COIL_2_GPIO->BSRRL = COIL_2_BSRR_MASK; //синий
+    COIL_2_GPIO->BSRRL = COIL_2_BSRR_MASK;
 }
 void ecu_coil_2_off(void* channel) {
-    COIL_2_GPIO->BSRRH = COIL_2_BSRR_MASK; //синий
+    COIL_2_GPIO->BSRRH = COIL_2_BSRR_MASK;
 }
 
 void ecu_coil_3_on(void * channel) {
-    COIL_3_GPIO->BSRRL = COIL_3_BSRR_MASK; //зеленый
+    COIL_3_GPIO->BSRRL = COIL_3_BSRR_MASK;
 }
 void ecu_coil_3_off(void * channel) {
-    COIL_3_GPIO->BSRRH = COIL_3_BSRR_MASK; //зеленый
+    COIL_3_GPIO->BSRRH = COIL_3_BSRR_MASK;
 }
 
 void ecu_all_coil_reset(void) {
