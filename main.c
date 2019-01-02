@@ -68,7 +68,7 @@ void usart2_init() {
     usart2.usart_bus_port = USART2;
     usart_bus_init(&usart2, SystemCoreClock / 4, 921600, true, false); //
     NVIC_EnableIRQ(USART2_IRQn);
-    //    usart_bus_write_int(&usart2,usart2_data,strlen((const char*)usart2_data));
+    usart_bus_write_int(&usart2,usart2_data,strlen((const char*)usart2_data));
 }
 
 int main() {
