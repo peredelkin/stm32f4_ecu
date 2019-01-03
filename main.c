@@ -20,6 +20,7 @@
 #include <stdint.h>
 #include "ecu_capture.h"
 #include "ecu_coil.h"
+#include "dma.h"
 
 void ECU_CAP_TIM_IRQHandler(void) {
     ecu_cap_irq_handler(&ecu_struct);
