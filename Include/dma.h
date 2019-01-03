@@ -174,5 +174,17 @@ bool dma_stream_ready(dma_t* dma_stream) {
     else return 1; //ready
 }
 
+void dma_stream_number_of_data(dma_t* dma_stream,uint16_t ndtr) {
+    dma_stream->stream->NDTR = ndtr;
+}
+
+void dma_stream_peripheral_address_register(dma_t* dma_stream,uint32_t par) {
+    dma_stream->stream->PAR = par;
+}
+
+void stream_memory_address_register(dma_t* dma_stream,uint8_t mar_n,uint32_t mar) {
+    dma_stream->stream->MAR[mar_n] = mar;
+}
+
 #endif /* DMA_H */
 
