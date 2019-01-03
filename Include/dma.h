@@ -69,108 +69,108 @@ void dma_stream_transfer_complete_interrupt_handler(dma_t* dma_stream, void* cal
     }
 }
 
-void dma_stream_channel_selection(dma_t* dma_stream,uint8_t chsel) {
-    dma_stream->stream->CR &= ~ DMA_SxCR_CHSEL;
-    dma_stream->stream->CR |= (DMA_SxCR_CHSEL | (uint32_t)(chsel << DMA_SxCR_CHSEL_SHIFT));
+void dma_stream_channel_selection(dma_t* dma_stream, uint8_t chsel) {
+    CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_CHSEL);
+    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_CHSEL | (uint32_t) (chsel << DMA_SxCR_CHSEL_SHIFT)));
 }
 
-void dma_stream_memory_burst_transfer_configuration(dma_t* dma_stream,uint8_t mburst) {
-    dma_stream->stream->CR &= ~ DMA_SxCR_MBURST;
-    dma_stream->stream->CR |= (DMA_SxCR_MBURST | (uint32_t)(mburst << DMA_SxCR_MBURST_SHIFT));
+void dma_stream_memory_burst_transfer_configuration(dma_t* dma_stream, uint8_t mburst) {
+    CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_MBURST);
+    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_MBURST | (uint32_t) (mburst << DMA_SxCR_MBURST_SHIFT)));
 }
 
-void dma_stream_peripheral_burst_transfer_configuration(dma_t* dma_stream,uint8_t pburst) {
-    dma_stream->stream->CR &= ~ DMA_SxCR_PBURST;
-    dma_stream->stream->CR |= (DMA_SxCR_PBURST | (uint32_t)(pburst << DMA_SxCR_PBURST_SHIFT));
+void dma_stream_peripheral_burst_transfer_configuration(dma_t* dma_stream, uint8_t pburst) {
+    CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_PBURST);
+    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_PBURST | (uint32_t) (pburst << DMA_SxCR_PBURST_SHIFT)));
 }
 
-void dma_stream_current_target(dma_t* dma_stream,bool ct) {
-    if(ct) dma_stream->stream->CR |= DMA_SxCR_CT;
-    else dma_stream->stream->CR &= ~DMA_SxCR_CT;
+void dma_stream_current_target(dma_t* dma_stream, bool ct) {
+    if (ct) SET_BIT(dma_stream->stream->CR, DMA_SxCR_CT);
+    else CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_CT);
 }
 
 bool dma_stream_current_target_read(dma_t* dma_stream) {
-    if(dma_stream->stream->CR & DMA_SxCR_CT) return 1;
+    if (READ_BIT(dma_stream->stream->CR, DMA_SxCR_CT)) return 1;
     else return 0;
 }
 
-void dma_stream_double_buffer_mode(dma_t* dma_stream,bool dbm) {
-    if(dbm) dma_stream->stream->CR |= DMA_SxCR_DBM;
-    else dma_stream->stream->CR &= ~DMA_SxCR_DBM;
+void dma_stream_double_buffer_mode(dma_t* dma_stream, bool dbm) {
+    if (dbm) dma_stream->stream->CR |= DMA_SxCR_DBM;
+    else CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_DBM);
 }
 
-void dma_stream_priority_level(dma_t* dma_stream,uint8_t pl) {
-    dma_stream->stream->CR &= ~DMA_SxCR_PL;
-    dma_stream->stream->CR |= (DMA_SxCR_PL | (uint32_t)(pl << DMA_SxCR_PL_SHIFT));
+void dma_stream_priority_level(dma_t* dma_stream, uint8_t pl) {
+    CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_PL);
+    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_PL | (uint32_t) (pl << DMA_SxCR_PL_SHIFT)));
 }
 
-void dma_stream_peripheral_increment_offset_size(dma_t* dma_stream,bool pincos) {
-    if(pincos) dma_stream->stream->CR |= DMA_SxCR_PINCOS;
-    else dma_stream->stream->CR &= ~DMA_SxCR_PINCOS;
+void dma_stream_peripheral_increment_offset_size(dma_t* dma_stream, bool pincos) {
+    if (pincos) SET_BIT(dma_stream->stream->CR, DMA_SxCR_PINCOS);
+    else CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_PINCOS);
 }
 
-void dma_stream_memory_data_size(dma_t* dma_stream,uint8_t msize) {
-    dma_stream->stream->CR &= ~DMA_SxCR_MSIZE;
-    dma_stream->stream->CR |= (DMA_SxCR_MSIZE | (uint32_t)(msize << DMA_SxCR_MSIZE_SHIFT));
+void dma_stream_memory_data_size(dma_t* dma_stream, uint8_t msize) {
+    CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_MSIZE);
+    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_MSIZE | (uint32_t) (msize << DMA_SxCR_MSIZE_SHIFT)));
 }
 
-void dma_stream_peripheral_data_size(dma_t* dma_stream,uint8_t psize) {
-    dma_stream->stream->CR &= ~DMA_SxCR_PSIZE;
-    dma_stream->stream->CR |= (DMA_SxCR_PSIZE | (uint32_t)(psize << DMA_SxCR_PSIZE_SHIFT));
+void dma_stream_peripheral_data_size(dma_t* dma_stream, uint8_t psize) {
+    CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_PSIZE);
+    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_PSIZE | (uint32_t) (psize << DMA_SxCR_PSIZE_SHIFT)));
 }
 
-void dma_stream_memory_increment_mode(dma_t* dma_stream,bool minc) {
-    if(minc) dma_stream->stream->CR |= DMA_SxCR_MINC;
-    else dma_stream->stream->CR &= ~DMA_SxCR_MINC;
+void dma_stream_memory_increment_mode(dma_t* dma_stream, bool minc) {
+    if (minc) SET_BIT(dma_stream->stream->CR, DMA_SxCR_MINC);
+    else CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_MINC);
 }
 
-void dma_stream_peripheral_increment_mode(dma_t* dma_stream,bool pinc) {
-    if(pinc) dma_stream->stream->CR |= DMA_SxCR_PINC;
-    else dma_stream->stream->CR &= ~DMA_SxCR_PINC;
+void dma_stream_peripheral_increment_mode(dma_t* dma_stream, bool pinc) {
+    if (pinc) SET_BIT(dma_stream->stream->CR, DMA_SxCR_PINC);
+    else CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_PINC);
 }
 
-void dma_stream_circular_mode(dma_t* dma_stream,bool circ) {
-    if(circ) dma_stream->stream->CR |= DMA_SxCR_CIRC;
-    else dma_stream->stream->CR &= ~DMA_SxCR_CIRC;
+void dma_stream_circular_mode(dma_t* dma_stream, bool circ) {
+    if (circ) SET_BIT(dma_stream->stream->CR, DMA_SxCR_CIRC);
+    else CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_CIRC);
 }
 
-void dma_stream_data_transfer_direction(dma_t* dma_stream,uint8_t dir) {
-    dma_stream->stream->CR &= ~DMA_SxCR_DIR;
-    dma_stream->stream->CR |= (DMA_SxCR_DIR | (uint32_t)(dir << DMA_SxCR_DIR_SHIFT));
+void dma_stream_data_transfer_direction(dma_t* dma_stream, uint8_t dir) {
+    CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_DIR);
+    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_DIR | (uint32_t) (dir << DMA_SxCR_DIR_SHIFT)));
 }
 
-void dma_stream_peripheral_flow_controller(dma_t* dma_stream,bool pfctrl) {
-    if(pfctrl) dma_stream->stream->CR |= DMA_SxCR_PFCTRL;
-    else dma_stream->stream->CR &= ~DMA_SxCR_PFCTRL;
+void dma_stream_peripheral_flow_controller(dma_t* dma_stream, bool pfctrl) {
+    if (pfctrl) SET_BIT(dma_stream->stream->CR, DMA_SxCR_PFCTRL);
+    else CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_PFCTRL);
 }
 
-void dma_stream_transfer_complete_interrupt(dma_t* dma_stream,bool tcie) {
-    if(tcie) dma_stream->stream->CR |= DMA_SxCR_TCIE;
-    else dma_stream->stream->CR &= ~DMA_SxCR_TCIE;
+void dma_stream_transfer_complete_interrupt(dma_t* dma_stream, bool tcie) {
+    if (tcie) SET_BIT(dma_stream->stream->CR, DMA_SxCR_TCIE);
+    else CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_TCIE);
 }
 
-void dma_stream_half_transfer_interrupt(dma_t* dma_stream,bool htie) {
-    if(htie) dma_stream->stream->CR |= DMA_SxCR_HTIE;
-    else dma_stream->stream->CR &= ~DMA_SxCR_HTIE;
+void dma_stream_half_transfer_interrupt(dma_t* dma_stream, bool htie) {
+    if (htie) SET_BIT(dma_stream->stream->CR, DMA_SxCR_HTIE);
+    else CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_HTIE);
 }
 
-void dma_stream_transfer_error_interrupt(dma_t* dma_stream,bool teie) {
-    if(teie) dma_stream->stream->CR |= DMA_SxCR_TEIE;
-    else dma_stream->stream->CR &= ~DMA_SxCR_TEIE;
+void dma_stream_transfer_error_interrupt(dma_t* dma_stream, bool teie) {
+    if (teie) SET_BIT(dma_stream->stream->CR, DMA_SxCR_TEIE);
+    else CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_TEIE);
 }
 
-void dma_stream_direct_mode_error_interrupt(dma_t* dma_stream,bool dmeie) {
-    if(dmeie) dma_stream->stream->CR |= DMA_SxCR_DMEIE;
-    else dma_stream->stream->CR &= ~DMA_SxCR_DMEIE;
+void dma_stream_direct_mode_error_interrupt(dma_t* dma_stream, bool dmeie) {
+    if (dmeie) SET_BIT(dma_stream->stream->CR, DMA_SxCR_DMEIE);
+    else CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_DMEIE);
 }
 
-void dma_stream_enable(dma_t* dma_stream,bool en) {
-    if(en) dma_stream->stream->CR |= DMA_SxCR_EN;
-    else dma_stream->stream->CR &= ~DMA_SxCR_EN;
+void dma_stream_enable(dma_t* dma_stream, bool en) {
+    if (en) SET_BIT(dma_stream->stream->CR, DMA_SxCR_EN);
+    else CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_EN);
 }
 
 bool dma_stream_ready(dma_t* dma_stream) {
-    if(dma_stream->stream->CR & DMA_SxCR_EN) return 0; //not ready
+    if (READ_BIT(dma_stream->stream->CR, DMA_SxCR_EN)) return 0; //not ready
     else return 1; //ready
 }
 
