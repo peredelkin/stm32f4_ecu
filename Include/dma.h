@@ -22,12 +22,10 @@
 #define DMA_SxCR_CHSEL_SHIFT 25
 #define DMA_SxCR_MBURST_SHIFT 23
 #define DMA_SxCR_PBURST_SHIFT 21
-#define DMA_SxCR_CT_SHIFT 19
-#define DMA_SxCR_DBM_SHIFT 18
 #define DMA_SxCR_PL_SHIFT 16
-#define DMA_SxCR_PINCOS_SHIFT 15
 #define DMA_SxCR_MSIZE_SHIFT 13
 #define DMA_SxCR_PSIZE_SHIFT 11
+#define DMA_SxCR_DIR_SHIFT 6
 
 typedef struct {
     DMA_Stream_TypeDef* stream;
@@ -87,8 +85,8 @@ void dma_stream_peripheral_burst_transfer_configuration(dma_t* dma_stream,uint8_
 }
 
 void dma_stream_current_target(dma_t* dma_stream,bool ct) {
-    dma_stream->stream->CR &= ~DMA_SxCR_CT;
-    dma_stream->stream->CR |= (DMA_SxCR_CT | (uint32_t)(ct << DMA_SxCR_CT_SHIFT));
+    if(ct) dma_stream->stream->CR |= DMA_SxCR_CT;
+    else dma_stream->stream->CR &= ~DMA_SxCR_CT;
 }
 
 bool dma_stream_current_target_read(dma_t* dma_stream) {
@@ -97,8 +95,8 @@ bool dma_stream_current_target_read(dma_t* dma_stream) {
 }
 
 void dma_stream_double_buffer_mode(dma_t* dma_stream,bool dbm) {
-    dma_stream->stream->CR &= ~DMA_SxCR_DBM;
-    dma_stream->stream->CR |= (DMA_SxCR_DBM | (uint32_t)(dbm << DMA_SxCR_DBM_SHIFT));
+    if(dbm) dma_stream->stream->CR |= DMA_SxCR_DBM;
+    else dma_stream->stream->CR &= ~DMA_SxCR_DBM;
 }
 
 void dma_stream_priority_level(dma_t* dma_stream,uint8_t pl) {
@@ -107,8 +105,8 @@ void dma_stream_priority_level(dma_t* dma_stream,uint8_t pl) {
 }
 
 void dma_stream_peripheral_increment_offset_size(dma_t* dma_stream,bool pincos) {
-    dma_stream->stream->CR &= ~DMA_SxCR_PINCOS;
-    dma_stream->stream->CR |= (DMA_SxCR_PINCOS | (uint32_t)(pincos << DMA_SxCR_PINCOS_SHIFT));
+    if(pincos) dma_stream->stream->CR |= DMA_SxCR_PINCOS;
+    else dma_stream->stream->CR &= ~DMA_SxCR_PINCOS;
 }
 
 void dma_stream_memory_data_size(dma_t* dma_stream,uint8_t msize) {
@@ -118,7 +116,62 @@ void dma_stream_memory_data_size(dma_t* dma_stream,uint8_t msize) {
 
 void dma_stream_peripheral_data_size(dma_t* dma_stream,uint8_t psize) {
     dma_stream->stream->CR &= ~DMA_SxCR_PSIZE;
-    dma_stream->stream->CR |= (DMA_SxCR_PSIZE | (uint16_t)(psize << DMA_SxCR_PSIZE_SHIFT));
+    dma_stream->stream->CR |= (DMA_SxCR_PSIZE | (uint32_t)(psize << DMA_SxCR_PSIZE_SHIFT));
+}
+
+void dma_stream_memory_increment_mode(dma_t* dma_stream,bool minc) {
+    if(minc) dma_stream->stream->CR |= DMA_SxCR_MINC;
+    else dma_stream->stream->CR &= ~DMA_SxCR_MINC;
+}
+
+void dma_stream_peripheral_increment_mode(dma_t* dma_stream,bool pinc) {
+    if(pinc) dma_stream->stream->CR |= DMA_SxCR_PINC;
+    else dma_stream->stream->CR &= ~DMA_SxCR_PINC;
+}
+
+void dma_stream_circular_mode(dma_t* dma_stream,bool circ) {
+    if(circ) dma_stream->stream->CR |= DMA_SxCR_CIRC;
+    else dma_stream->stream->CR &= ~DMA_SxCR_CIRC;
+}
+
+void dma_stream_data_transfer_direction(dma_t* dma_stream,uint8_t dir) {
+    dma_stream->stream->CR &= ~DMA_SxCR_DIR;
+    dma_stream->stream->CR |= (DMA_SxCR_DIR | (uint32_t)(dir << DMA_SxCR_DIR_SHIFT));
+}
+
+void dma_stream_peripheral_flow_controller(dma_t* dma_stream,bool pfctrl) {
+    if(pfctrl) dma_stream->stream->CR |= DMA_SxCR_PFCTRL;
+    else dma_stream->stream->CR &= ~DMA_SxCR_PFCTRL;
+}
+
+void dma_stream_transfer_complete_interrupt(dma_t* dma_stream,bool tcie) {
+    if(tcie) dma_stream->stream->CR |= DMA_SxCR_TCIE;
+    else dma_stream->stream->CR &= ~DMA_SxCR_TCIE;
+}
+
+void dma_stream_half_transfer_interrupt(dma_t* dma_stream,bool htie) {
+    if(htie) dma_stream->stream->CR |= DMA_SxCR_HTIE;
+    else dma_stream->stream->CR &= ~DMA_SxCR_HTIE;
+}
+
+void dma_stream_transfer_error_interrupt(dma_t* dma_stream,bool teie) {
+    if(teie) dma_stream->stream->CR |= DMA_SxCR_TEIE;
+    else dma_stream->stream->CR &= ~DMA_SxCR_TEIE;
+}
+
+void dma_stream_direct_mode_error_interrupt(dma_t* dma_stream,bool dmeie) {
+    if(dmeie) dma_stream->stream->CR |= DMA_SxCR_DMEIE;
+    else dma_stream->stream->CR &= ~DMA_SxCR_DMEIE;
+}
+
+void dma_stream_enable(dma_t* dma_stream,bool en) {
+    if(en) dma_stream->stream->CR |= DMA_SxCR_EN;
+    else dma_stream->stream->CR &= ~DMA_SxCR_EN;
+}
+
+bool dma_stream_ready(dma_t* dma_stream) {
+    if(dma_stream->stream->CR & DMA_SxCR_EN) return 0; //not ready
+    else return 1; //ready
 }
 
 #endif /* DMA_H */
