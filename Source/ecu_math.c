@@ -126,6 +126,8 @@ void ecu_instant_rpm_calc(ecu_t* ecu) {
     }
 }
 
+#define RPM_FACTOR
+
 //расчет уоз от циклового расхода
 uint16_t ecu_ign_angle_mg_by_cycle_calc(uint16_t rpm_data,uint16_t mg_data) {
     uint16_t rpm = min_max_u16(rpm_data,IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_MIN,IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_MAX);
@@ -137,13 +139,27 @@ uint16_t ecu_ign_angle_mg_by_cycle_calc(uint16_t rpm_data,uint16_t mg_data) {
     uint8_t rpm_index = (uint8_t)(rpm_pointer - ign_angle_mg_by_cycle_rpm_scale);
     uint8_t mg_index = (uint8_t)(mg_pointer - ign_angle_mg_by_cycle_mg_scale);
     
+#ifdef RPM_FACTOR
+    float rpm_factor = ((float)(rpm - rpm_pointer[0]))/((float)(rpm_pointer[1] - rpm_pointer[0]));
+#endif
+    
     float angle_0_0 = ign_angle_mg_by_cycle[mg_index][rpm_index];
     float angle_0_1 = ign_angle_mg_by_cycle[mg_index][rpm_index+1];
+
+#ifdef RPM_FACTOR
+    float angle_0 = (angle_0_0 + ((angle_0_1 - angle_0_0)*rpm_factor));
+#else
     float angle_0 = (angle_0_0 + (((angle_0_1 - angle_0_0)*(rpm - rpm_pointer[0]))/(rpm_pointer[1] - rpm_pointer[0])));
+#endif
     
     float angle_1_0 = ign_angle_mg_by_cycle[mg_index+1][rpm_index];
     float angle_1_1 = ign_angle_mg_by_cycle[mg_index+1][rpm_index+1];
+
+#ifdef RPM_FACTOR
+    float angle_1 = (angle_1_0 + ((angle_1_1 - angle_1_0)*rpm_factor));
+#else
     float angle_1 = (angle_1_0 + (((angle_1_1 - angle_1_0)*(rpm - rpm_pointer[0]))/(rpm_pointer[1] - rpm_pointer[0])));
+#endif
     
     float angle = (angle_0 + (((angle_1 - angle_0)*(mg - mg_pointer[0]))/(mg_pointer[1] - mg_pointer[0])));
     
