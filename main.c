@@ -21,14 +21,6 @@
 #include "ecu_capture.h"
 #include "ecu_coil.h"
 
-usart_t usart2;
-
-int8_t usart2_data[20] = "Usart2 inited";
-
-void USART2_IRQHandler(void) {
-    usart_bus_interrupt_txe_handler(&usart2);
-}
-
 void ECU_CAP_TIM_IRQHandler(void) {
     ecu_cap_irq_handler(&ecu_struct);
 }
@@ -63,18 +55,9 @@ void ecu_init(void) {
     timer_ch_it_enable(&ecu_struct.cap_ch, false); //включение прерывания захвата
 }
 
-void usart2_init() {
-    gpio_usart2_init(); //порт уарта
-    usart2.usart_bus_port = USART2;
-    usart_bus_init(&usart2, SystemCoreClock / 4, 921600, true, false); //
-    NVIC_EnableIRQ(USART2_IRQn);
-    usart_bus_write_int(&usart2,usart2_data,strlen((const char*)usart2_data));
-}
-
 int main() {
     ecu_struct.mg_by_cycle = 250;
     rcc_init(); //тактирование
-    usart2_init();
     gpio_led_init(); //светодиоды
     gpio_master_timer_init(); //инициализация пина захвата
     ecu_crank_capture_init(&ecu_struct); //инициализация захвата
