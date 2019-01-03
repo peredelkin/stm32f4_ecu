@@ -34,40 +34,40 @@ typedef struct {
     uint8_t dma_isr_ifcr_mask_shift; //сдвиг маски ISR/IFCR
 } dma_t;
 
-void dma_stream_fifo_error_interrupt_handler(dma_t* dma_stream, void* callback()) {
-    if (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint16_t) (DMA_ISR_FEIF << dma_stream->dma_isr_ifcr_mask_shift)) {
-        dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint16_t) (DMA_IFCR_CFEIF << dma_stream->dma_isr_ifcr_mask_shift);
-        if (callback) callback();
-    }
-}
-
-void dma_stream_direct_mode_error_interrupt_handler(dma_t* dma_stream, void* callback()) {
-    if (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint16_t) (DMA_ISR_DMEIF << dma_stream->dma_isr_ifcr_mask_shift)) {
-        dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint16_t) (DMA_IFCR_CDMEIF << dma_stream->dma_isr_ifcr_mask_shift);
-        if (callback) callback();
-    }
-}
-
-void dma_stream_transfer_error_interrupt_handler(dma_t* dma_stream, void* callback()) {
-    if (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint16_t) (DMA_ISR_TEIF << dma_stream->dma_isr_ifcr_mask_shift)) {
-        dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint16_t) (DMA_IFCR_CTEIF << dma_stream->dma_isr_ifcr_mask_shift);
-        if (callback) callback();
-    }
-}
-
-void dma_stream_half_transfer_interrupt_handler(dma_t* dma_stream, void* callback()) {
-    if (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint16_t) (DMA_ISR_HTIF << dma_stream->dma_isr_ifcr_mask_shift)) {
-        dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint16_t) (DMA_IFCR_CHTIF << dma_stream->dma_isr_ifcr_mask_shift);
-        if (callback) callback();
-    }
-}
-
-void dma_stream_transfer_complete_interrupt_handler(dma_t* dma_stream, void* callback()) {
-    if (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint16_t) (DMA_ISR_TCIF << dma_stream->dma_isr_ifcr_mask_shift)) {
-        dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint16_t) (DMA_IFCR_CTCIF << dma_stream->dma_isr_ifcr_mask_shift);
-        if (callback) callback();
-    }
-}
+//void dma_stream_fifo_error_interrupt_handler(dma_t* dma_stream, void* callback()) {
+//    if (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint16_t) (DMA_ISR_FEIF << dma_stream->dma_isr_ifcr_mask_shift)) {
+//        dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint16_t) (DMA_IFCR_CFEIF << dma_stream->dma_isr_ifcr_mask_shift);
+//        if (callback) callback();
+//    }
+//}
+//
+//void dma_stream_direct_mode_error_interrupt_handler(dma_t* dma_stream, void* callback()) {
+//    if (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint16_t) (DMA_ISR_DMEIF << dma_stream->dma_isr_ifcr_mask_shift)) {
+//        dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint16_t) (DMA_IFCR_CDMEIF << dma_stream->dma_isr_ifcr_mask_shift);
+//        if (callback) callback();
+//    }
+//}
+//
+//void dma_stream_transfer_error_interrupt_handler(dma_t* dma_stream, void* callback()) {
+//    if (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint16_t) (DMA_ISR_TEIF << dma_stream->dma_isr_ifcr_mask_shift)) {
+//        dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint16_t) (DMA_IFCR_CTEIF << dma_stream->dma_isr_ifcr_mask_shift);
+//        if (callback) callback();
+//    }
+//}
+//
+//void dma_stream_half_transfer_interrupt_handler(dma_t* dma_stream, void* callback()) {
+//    if (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint16_t) (DMA_ISR_HTIF << dma_stream->dma_isr_ifcr_mask_shift)) {
+//        dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint16_t) (DMA_IFCR_CHTIF << dma_stream->dma_isr_ifcr_mask_shift);
+//        if (callback) callback();
+//    }
+//}
+//
+//void dma_stream_transfer_complete_interrupt_handler(dma_t* dma_stream, void* callback()) {
+//    if (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint16_t) (DMA_ISR_TCIF << dma_stream->dma_isr_ifcr_mask_shift)) {
+//        dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint16_t) (DMA_IFCR_CTCIF << dma_stream->dma_isr_ifcr_mask_shift);
+//        if (callback) callback();
+//    }
+//}
 
 void dma_stream_channel_selection(dma_t* dma_stream, uint8_t chsel) {
     CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_CHSEL);
