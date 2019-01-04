@@ -21,17 +21,23 @@
 #include "ecu_coil.h"
 #include "usart_bus.h"
 
+usart_bus_t usart2;
+
 void usart_bus_init_common() {
+    gpio_usart2_init(); //USART2 gpio init
+    
     usart_bus_init_t usart2_init = {
         .dma_rx_channel = DMA1_Stream5, /*CH4*/
         .dma_tx_channel = DMA1_Stream6,  /*CH4*/
         .usart_device = USART2
     };
+    
+    dma_stream_channel_selection(&usart2_init.dma_rx_channel,4);
+    dma_stream_channel_selection(&usart2_init.dma_tx_channel,4);
+    
     usart_bus_baud_rate_set(&usart2_init,SystemCoreClock/4,115200);
-}
-
-void ECU_CAP_TIM_IRQHandler(void) {
-    ecu_cap_irq_handler(&ecu_struct);
+    
+    usart_bus_init(&usart2,&usart2_init);
 }
 
 void ecu_crank_handler_callback(void* channel) {
@@ -39,6 +45,8 @@ void ecu_crank_handler_callback(void* channel) {
     ecu_common_angle_handler(&ecu_struct);
 }
 
+
+//\todo: перенести в ecu_capture.c
 void ecu_crank_ovf_handler_callback(void* channel) {
     timer_ch_it_disable(&ecu_struct.cap_ch); //выключение прерывания захвата
     ECU_CAP_TIM->CR1 &= ~TIM_CR1_CEN; //остановка таймера захвата
@@ -67,6 +75,7 @@ void ecu_init(void) {
 int main() {
     ecu_struct.mg_by_cycle = 250;
     rcc_init(); //тактирование
+    usart_bus_init_common();//уарт автобус
     gpio_led_init(); //светодиоды
     gpio_master_timer_init(); //инициализация пина захвата
     ecu_crank_capture_init(&ecu_struct); //инициализация захвата
