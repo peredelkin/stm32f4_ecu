@@ -77,8 +77,6 @@ void dma_stream_transfer_complete_interrupt_clear(dma_t* dma_stream) {
 void dma_stream_channel_selection(dma_t* dma_stream, uint8_t chsel) {
     CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_CHSEL);
     SET_BIT(dma_stream->stream->CR, (DMA_SxCR_CHSEL | (uint32_t) (chsel << DMA_SxCR_CHSEL_SHIFT)));
-    dma_stream->dma_isr_ifcr_n = (uint8_t)(chsel / 2);
-    dma_stream->dma_isr_ifcr_mask_shift = (uint8_t)(6 * (chsel % 2));
 }
 
 void dma_stream_memory_burst_transfer_configuration(dma_t* dma_stream, uint8_t mburst) {
@@ -197,10 +195,11 @@ void dma_stream_memory_address(dma_t* dma_stream,uint8_t mar_n,uint32_t mar) {
     dma_stream->stream->MAR[mar_n] = mar;
 }
 
-void dma_stream_struct_init(dma_t* dma_stream, DMA_TypeDef* dma, DMA_Stream_TypeDef* stream, uint8_t channel) {
+void dma_stream_struct_init(dma_t* dma_stream, DMA_TypeDef* dma, DMA_Stream_TypeDef* stream, uint8_t stream_n) {
     dma_stream->dma = dma;
     dma_stream->stream = stream;
-    dma_stream_channel_selection(dma_stream,channel);
+    dma_stream->dma_isr_ifcr_n = (uint8_t)(stream_n / 2);
+    dma_stream->dma_isr_ifcr_mask_shift = (uint8_t)(6 * (stream_n % 2));
 }
 
 void dma_stream_deinit(dma_t* dma_stream) {
