@@ -7,24 +7,24 @@
  */
 
 static bool usart_bus_dma_lock_tx_channel(usart_bus_t* usart) {
-    usart->dma_tx_locked = dma_channel_trylock(usart->dma_tx_channel);
+//    usart->dma_tx_locked = dma_channel_trylock(usart->dma_tx_channel);
     return usart->dma_tx_locked;
 }
 
 static bool usart_bus_dma_lock_rx_channel(usart_bus_t* usart) {
-    usart->dma_rx_locked = dma_channel_trylock(usart->dma_rx_channel);
+//    usart->dma_rx_locked = dma_channel_trylock(usart->dma_rx_channel);
     return usart->dma_rx_locked;
 }
 
 static void usart_bus_dma_unlock_tx_channel(usart_bus_t* usart) {
-    dma_channel_deinit(usart->dma_tx_channel);
-    dma_channel_unlock(usart->dma_tx_channel);
+    dma_stream_deinit(usart->dma_tx_channel);
+//    dma_channel_unlock(usart->dma_tx_channel);
     usart->dma_tx_locked = false;
 }
 
 static void usart_bus_dma_unlock_rx_channel(usart_bus_t* usart) {
-    dma_channel_deinit(usart->dma_rx_channel);
-    dma_channel_unlock(usart->dma_rx_channel);
+    dma_stream_deinit(usart->dma_rx_channel);
+//    dma_channel_unlock(usart->dma_rx_channel);
     usart->dma_rx_locked = false;
 }
 
