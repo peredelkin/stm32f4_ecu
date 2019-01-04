@@ -127,7 +127,7 @@ void usart_bus_baud_rate_set(usart_t* usart_struct,uint32_t fpclk, uint32_t baud
     uint16_t divider = (uint16_t) (fpclk / baud);
     uint16_t fraction = (uint16_t) (divider - (uint16_t) (mantissa << 4));
     if (over8) {
-        usart_bus_baud_rate_set(usart_struct,mantissa, (fraction & (uint16_t) 0x07));
+        usart_bus_baud_rate_register_set(usart_struct,mantissa, (fraction & (uint16_t) 0x07));
     } else {
         usart_bus_baud_rate_register_set(usart_struct,mantissa, fraction);
     }

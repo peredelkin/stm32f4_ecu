@@ -17,59 +17,59 @@ static bool usart_bus_dma_lock_rx_channel(usart_bus_t* usart) {
 }
 
 static void usart_bus_dma_unlock_tx_channel(usart_bus_t* usart) {
-    dma_stream_deinit(usart->dma_tx_channel);
+    dma_stream_deinit(&usart->dma_tx_channel);
 //    dma_channel_unlock(usart->dma_tx_channel);
     usart->dma_tx_locked = false;
 }
 
 static void usart_bus_dma_unlock_rx_channel(usart_bus_t* usart) {
-    dma_stream_deinit(usart->dma_rx_channel);
+    dma_stream_deinit(&usart->dma_rx_channel);
 //    dma_channel_unlock(usart->dma_rx_channel);
     usart->dma_rx_locked = false;
 }
 
 static void usart_bus_dma_tx_config(usart_bus_t* usart, void* address, size_t size) {
-    dma_stream_enable(usart->dma_tx_channel, false);
-    dma_stream_number_of_data(usart->dma_tx_channel, size);
-    dma_stream_peripheral_address(usart->dma_tx_channel, (uint32_t) & usart->usart_device->DR);
-    dma_stream_memory_address(usart->dma_tx_channel, 0, (uint32_t) address); //M0AR
+    dma_stream_enable(&usart->dma_tx_channel, false);
+    dma_stream_number_of_data(&usart->dma_tx_channel, size);
+    dma_stream_peripheral_address(&usart->dma_tx_channel, (uint32_t) & usart->usart_device->DR);
+    dma_stream_memory_address(&usart->dma_tx_channel, 0, (uint32_t) address); //M0AR
 
-    dma_stream_transfer_error_interrupt_enable(usart->dma_tx_channel, true);
-    dma_stream_transfer_complete_interrupt_enable(usart->dma_tx_channel, true);
-    dma_stream_data_transfer_direction(usart->dma_tx_channel, (uint8_t) 0b01); //Memory-to-peripheral
-    dma_stream_priority_level(usart->dma_tx_channel, (uint8_t) 0b01); //Medium
-    dma_stream_memory_increment_mode(usart->dma_tx_channel, true);
+    dma_stream_transfer_error_interrupt_enable(&usart->dma_tx_channel, true);
+    dma_stream_transfer_complete_interrupt_enable(&usart->dma_tx_channel, true);
+    dma_stream_data_transfer_direction(&usart->dma_tx_channel, (uint8_t) 0b01); //Memory-to-peripheral
+    dma_stream_priority_level(&usart->dma_tx_channel, (uint8_t) 0b01); //Medium
+    dma_stream_memory_increment_mode(&usart->dma_tx_channel, true);
 }
 
 static void usart_bus_dma_rx_config(usart_bus_t* usart, void* address, size_t size) {
-    dma_stream_enable(usart->dma_rx_channel, false);
-    dma_stream_number_of_data(usart->dma_tx_channel, size);
-    dma_stream_peripheral_address(usart->dma_tx_channel, (uint32_t) & usart->usart_device->DR);
-    dma_stream_memory_address(usart->dma_tx_channel, 0, (uint32_t) address); //M0AR
+    dma_stream_enable(&usart->dma_rx_channel, false);
+    dma_stream_number_of_data(&usart->dma_tx_channel, size);
+    dma_stream_peripheral_address(&usart->dma_tx_channel, (uint32_t) & usart->usart_device->DR);
+    dma_stream_memory_address(&usart->dma_tx_channel, 0, (uint32_t) address); //M0AR
 
-    dma_stream_transfer_error_interrupt_enable(usart->dma_tx_channel, true);
-    dma_stream_transfer_complete_interrupt_enable(usart->dma_tx_channel, true);
-    dma_stream_priority_level(usart->dma_tx_channel, (uint8_t) 0b01); //Medium
-    dma_stream_memory_increment_mode(usart->dma_tx_channel, true);
+    dma_stream_transfer_error_interrupt_enable(&usart->dma_tx_channel, true);
+    dma_stream_transfer_complete_interrupt_enable(&usart->dma_tx_channel, true);
+    dma_stream_priority_level(&usart->dma_tx_channel, (uint8_t) 0b01); //Medium
+    dma_stream_memory_increment_mode(&usart->dma_tx_channel, true);
 }
 
 static void usart_bus_dma_start_tx(usart_bus_t* usart) {
     usart->usart_device->CR3 |= USART_CR3_DMAT;
-    dma_stream_enable(usart->dma_tx_channel, true);
+    dma_stream_enable(&usart->dma_tx_channel, true);
 }
 
 static void usart_bus_dma_start_rx(usart_bus_t* usart) {
     usart->usart_device->CR3 |= USART_CR3_DMAR;
-    dma_stream_enable(usart->dma_rx_channel, true);
+    dma_stream_enable(&usart->dma_rx_channel, true);
 }
 
 static void usart_bus_dma_stop_tx(usart_bus_t* usart) {
-    dma_stream_enable(usart->dma_tx_channel, false);
+    dma_stream_enable(&usart->dma_tx_channel, false);
     usart->usart_device->CR3 &= ~USART_CR3_DMAT;
 }
 
 static void usart_bus_dma_stop_rx(usart_bus_t* usart) {
-    dma_stream_enable(usart->dma_rx_channel, false);
+    dma_stream_enable(&usart->dma_rx_channel, false);
     usart->usart_device->CR3 &= ~USART_CR3_DMAR;
 }
 
@@ -92,7 +92,7 @@ static void usart_bus_dma_rx_done(usart_bus_t* usart) {
     usart_bus_dma_stop_rx(usart);
 
 
-    usart->rx_size -= dma_stream_number_of_data_read(usart->dma_rx_channel);
+    usart->rx_size -= dma_stream_number_of_data_read(&usart->dma_rx_channel);
 
     usart_bus_dma_unlock_rx_channel(usart);
 
@@ -104,7 +104,7 @@ static void usart_bus_dma_rx_error(usart_bus_t* usart) {
     usart_bus_dma_stop_rx(usart);
 
     usart->rx_errors |= USART_ERROR_DMA;
-    usart->rx_size -= dma_stream_number_of_data_read(usart->dma_rx_channel);
+    usart->rx_size -= dma_stream_number_of_data_read(&usart->dma_rx_channel);
 
     usart_bus_dma_unlock_rx_channel(usart);
 
@@ -115,7 +115,7 @@ static void usart_bus_dma_rx_error(usart_bus_t* usart) {
 static void usart_bus_dma_tx_done(usart_bus_t* usart) {
     usart_bus_dma_stop_tx(usart);
 
-    usart->tx_size -= dma_stream_number_of_data_read(usart->dma_tx_channel);
+    usart->tx_size -= dma_stream_number_of_data_read(&usart->dma_tx_channel);
 
     usart_bus_dma_unlock_tx_channel(usart);
 }
@@ -124,7 +124,7 @@ static void usart_bus_dma_tx_error(usart_bus_t* usart) {
     usart_bus_dma_stop_tx(usart);
 
     usart->tx_errors |= USART_ERROR_DMA;
-    usart->tx_size -= dma_stream_number_of_data_read(usart->dma_tx_channel);
+    usart->tx_size -= dma_stream_number_of_data_read(&usart->dma_tx_channel);
 
     usart_bus_dma_unlock_tx_channel(usart);
 }
@@ -279,17 +279,17 @@ bool usart_bus_dma_rx_channel_irq_handler(usart_bus_t* usart) {
 
     if (!can_rx || !usart->dma_rx_locked) return false;
 
-    if (dma_stream_transfer_complete_interrupt_read(usart->dma_rx_channel)) {
+    if (dma_stream_transfer_complete_interrupt_read(&usart->dma_rx_channel)) {
 
-        dma_stream_transfer_complete_interrupt_clear(usart->dma_rx_channel);
+        dma_stream_transfer_complete_interrupt_clear(&usart->dma_rx_channel);
 
         usart_bus_dma_rx_done(usart);
 
         usart_bus_rx_done(usart);
 
-    } else if (dma_stream_transfer_error_interrupt_read(usart->dma_rx_channel)) {
+    } else if (dma_stream_transfer_error_interrupt_read(&usart->dma_rx_channel)) {
 
-        dma_stream_transfer_error_interrupt_clear(usart->dma_rx_channel);
+        dma_stream_transfer_error_interrupt_clear(&usart->dma_rx_channel);
 
         usart_bus_dma_rx_error(usart);
 
@@ -306,17 +306,17 @@ bool usart_bus_dma_tx_channel_irq_handler(usart_bus_t* usart) {
 
     if (!can_tx || !usart->dma_tx_locked) return false;
 
-    if (dma_stream_transfer_complete_interrupt_read(usart->dma_tx_channel)) {
+    if (dma_stream_transfer_complete_interrupt_read(&usart->dma_tx_channel)) {
 
-        dma_stream_transfer_complete_interrupt_clear(usart->dma_tx_channel);
+        dma_stream_transfer_complete_interrupt_clear(&usart->dma_tx_channel);
 
         usart_bus_dma_tx_done(usart);
 
         usart_bus_tx_done(usart);
 
-    } else if (dma_stream_transfer_error_interrupt_read(usart->dma_tx_channel)) {
+    } else if (dma_stream_transfer_error_interrupt_read(&usart->dma_tx_channel)) {
 
-        dma_stream_transfer_error_interrupt_clear(usart->dma_tx_channel);
+        dma_stream_transfer_error_interrupt_clear(&usart->dma_tx_channel);
 
         usart_bus_dma_tx_error(usart);
 
@@ -515,5 +515,31 @@ err_t usart_bus_recv(usart_bus_t* usart, void* data, size_t size) {
     usart_bus_dma_start_rx(usart);
 
     return E_NO_ERROR;
+}
+
+bool usart_bus_control_register_read_1(usart_bus_init_t* usart_struct,uint16_t ctrl) {
+    if (usart_struct->usart_device->CR1 & ctrl) return 1;
+    else return 0;
+}
+
+bool usart_bus_oversampling_mode_read(usart_bus_init_t* usart_struct) {
+    return usart_bus_control_register_read_1(usart_struct,USART_CR1_OVER8);
+}
+
+void usart_bus_baud_rate_register_set(usart_bus_init_t* usart_struct,uint16_t mantissa, uint16_t fraction) {
+    usart_struct->usart_device->BRR = ((uint16_t) (mantissa << 4) & (uint16_t) USART_BRR_DIV_Mantissa) |
+            ((uint16_t) fraction & (uint16_t) USART_BRR_DIV_Fraction);
+}
+
+void usart_bus_baud_rate_set(usart_bus_init_t* usart_struct,uint32_t fpclk, uint32_t baud) {
+    uint32_t over8 = (uint32_t) usart_bus_oversampling_mode_read(usart_struct);
+    uint32_t mantissa = (fpclk / ((8 * (2 - over8)) * baud));
+    uint16_t divider = (uint16_t) (fpclk / baud);
+    uint16_t fraction = (uint16_t) (divider - (uint16_t) (mantissa << 4));
+    if (over8) {
+        usart_bus_baud_rate_set(usart_struct,mantissa, (fraction & (uint16_t) 0x07));
+    } else {
+        usart_bus_baud_rate_register_set(usart_struct,mantissa, fraction);
+    }
 }
 

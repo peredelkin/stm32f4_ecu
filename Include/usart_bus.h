@@ -12,7 +12,7 @@
 #include <stddef.h>
 #include "errors.h"
 #include "defs.h"
-
+#include "dma.h"
 
 
 /**
@@ -391,5 +391,7 @@ EXTERN err_t usart_bus_send(usart_bus_t* usart, const void* data, size_t size);
  * @return Код ошибки.
  */
 EXTERN err_t usart_bus_recv(usart_bus_t* usart, void* data, size_t size);
+
+extern void usart_bus_baud_rate_set(usart_bus_init_t* usart_struct,uint32_t fpclk, uint32_t baud);
 
 #endif	/* USART_BUS_H */
