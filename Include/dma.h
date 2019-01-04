@@ -149,22 +149,22 @@ void dma_stream_peripheral_flow_controller(dma_t* dma_stream, bool pfctrl) {
     else CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_PFCTRL);
 }
 
-void dma_stream_transfer_complete_interrupt(dma_t* dma_stream, bool tcie) {
+void dma_stream_transfer_complete_interrupt_enable(dma_t* dma_stream, bool tcie) {
     if (tcie) SET_BIT(dma_stream->stream->CR, DMA_SxCR_TCIE);
     else CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_TCIE);
 }
 
-void dma_stream_half_transfer_interrupt(dma_t* dma_stream, bool htie) {
+void dma_stream_half_transfer_interrupt_enable(dma_t* dma_stream, bool htie) {
     if (htie) SET_BIT(dma_stream->stream->CR, DMA_SxCR_HTIE);
     else CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_HTIE);
 }
 
-void dma_stream_transfer_error_interrupt(dma_t* dma_stream, bool teie) {
+void dma_stream_transfer_error_interrupt_enable(dma_t* dma_stream, bool teie) {
     if (teie) SET_BIT(dma_stream->stream->CR, DMA_SxCR_TEIE);
     else CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_TEIE);
 }
 
-void dma_stream_direct_mode_error_interrupt(dma_t* dma_stream, bool dmeie) {
+void dma_stream_direct_mode_error_interrupt_enable(dma_t* dma_stream, bool dmeie) {
     if (dmeie) SET_BIT(dma_stream->stream->CR, DMA_SxCR_DMEIE);
     else CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_DMEIE);
 }
