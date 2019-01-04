@@ -185,11 +185,15 @@ void dma_stream_number_of_data(dma_t* dma_stream,uint16_t ndtr) {
     dma_stream->stream->NDTR = ndtr;
 }
 
-void dma_stream_peripheral_address_register(dma_t* dma_stream,uint32_t par) {
+uint16_t dma_stream_number_of_data_read(dma_t* dma_stream) {
+    return dma_stream->stream->NDTR;
+}
+
+void dma_stream_peripheral_address(dma_t* dma_stream,uint32_t par) {
     dma_stream->stream->PAR = par;
 }
 
-void stream_memory_address_register(dma_t* dma_stream,uint8_t mar_n,uint32_t mar) {
+void dma_stream_memory_address(dma_t* dma_stream,uint8_t mar_n,uint32_t mar) {
     dma_stream->stream->MAR[mar_n] = mar;
 }
 
@@ -197,6 +201,11 @@ void dma_stream_struct_init(dma_t* dma_stream, DMA_TypeDef* dma, DMA_Stream_Type
     dma_stream->dma = dma;
     dma_stream->stream = stream;
     dma_stream_channel_selection(dma_stream,channel);
+}
+
+void dma_stream_deinit(dma_t* dma_stream) {
+    dma_stream_enable(dma_stream,false);
+    dma_stream->stream->CR = 0;
 }
 
 #endif /* DMA_H */
