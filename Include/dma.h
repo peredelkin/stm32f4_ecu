@@ -70,7 +70,7 @@ uint16_t dma_stream_transfer_complete_interrupt_read(dma_t* dma_stream) {
     return (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint16_t) (DMA_ISR_TCIF << dma_stream->dma_isr_ifcr_mask_shift));
 }
 
-void dma_stream_transfer_complete_interrupt_read(dma_t* dma_stream) {
+void dma_stream_transfer_complete_interrupt_clear(dma_t* dma_stream) {
     dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint16_t) (DMA_IFCR_CTCIF << dma_stream->dma_isr_ifcr_mask_shift);
 }
 
