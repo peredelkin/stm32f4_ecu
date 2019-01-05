@@ -89,7 +89,7 @@ void init_usart() {
     // При обнаружении свободной линии - прекратить принимать данные.
     usart_bus_set_idle_mode(&usart2, USART_IDLE_MODE_END_RX);
     
-    usart_bus_baud_rate_set(&usart2,SystemCoreClock/4,9600);
+    usart_bus_baud_rate_set(&usart2,SystemCoreClock/4,1200);
     
     usart_bus_transmitter_enable(&usart2);
     
@@ -254,9 +254,9 @@ int main() {
     while (1) {
         delay_1s();
         COIL_2_GPIO->ODR ^= COIL_2_BSRR_MASK;
-        sprintf(usart2_data,"RX err %u\r\n",usart2.rx_errors);
-        if(usart2.rx_errors) {
-            usart_bus_send(&usart2, usart2_data, strlen(usart2_data));
-        }
+//        sprintf(usart2_data,"RX err %u\r\n",usart2.rx_errors);
+//        if(usart2.rx_errors) {
+//            usart_bus_send(&usart2, usart2_data, strlen(usart2_data));
+//        }
     }
 }

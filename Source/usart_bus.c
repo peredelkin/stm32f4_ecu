@@ -497,7 +497,7 @@ err_t usart_bus_recv(usart_bus_t* usart, void* data, size_t size) {
     if (size == 0) return E_INVALID_VALUE;
     if (size > UINT16_MAX) return E_OUT_OF_RANGE;
 
-    if (!usart_bus_dma_lock_rx_channel(usart)) return E_BUSY;
+    //if (!usart_bus_dma_lock_rx_channel(usart)) return E_BUSY;
     if (!usart_bus_receiver_state(usart->usart_device)) return E_STATE;
 
     usart->usart_device->CR1 &= ~USART_CR1_RXNEIE;
