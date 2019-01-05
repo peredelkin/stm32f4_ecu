@@ -29,16 +29,12 @@ void USART2_IRQHandler() {
     usart_bus_irq_handler(&usart2);
 }
 
-//void DMA1_Stream5_IRQHandler() {
-//    usart_bus_dma_rx_channel_irq_handler(&usart2);
-//}
+void DMA1_Stream5_IRQHandler() {
+    usart_bus_dma_rx_channel_irq_handler(&usart2);
+}
 
 
 void DMA1_Stream6_IRQHandler() {
-//    if(dma_stream_transfer_complete_interrupt_read(&usart2.dma_tx_channel)) {
-//        dma_stream_transfer_complete_interrupt_clear(&usart2.dma_tx_channel);
-//        COIL_3_GPIO->BSRRL = COIL_3_BSRR_MASK;
-//    }
     usart_bus_dma_tx_channel_irq_handler(&usart2);
 }
 
@@ -54,7 +50,7 @@ void usart_bus_init_common() {
     dma_stream_channel_selection(&usart2.dma_tx_channel,4);
     
     NVIC_EnableIRQ(USART2_IRQn);
-    //NVIC_EnableIRQ(DMA1_Stream5_IRQn);
+    NVIC_EnableIRQ(DMA1_Stream5_IRQn);
     NVIC_EnableIRQ(DMA1_Stream6_IRQn);
     
     usart_bus_baud_rate_set(&usart2,SystemCoreClock/4,115200);
