@@ -58,8 +58,6 @@ void usart_bus_init_common() {
     
     usart_bus_transmitter_enable(&usart2);
     
-    USART2->CR1 |= USART_CR1_UE;
-    
     usart_bus_send(&usart2,usart_test,strlen(usart_test));
     
     //USART2->DR = usart_test[0]; //H

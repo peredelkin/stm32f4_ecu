@@ -328,6 +328,7 @@ bool usart_bus_receiver_enabled(usart_bus_t* usart) {
 
 void usart_bus_receiver_enable(usart_bus_t* usart) {
     usart->usart_device->CR1 |= USART_CR1_RE;
+    usart->usart_device->CR1 |= USART_CR1_UE;
 }
 
 void usart_bus_receiver_disable(usart_bus_t* usart) {
@@ -340,6 +341,7 @@ bool usart_bus_transmitter_enabled(usart_bus_t* usart) {
 
 void usart_bus_transmitter_enable(usart_bus_t* usart) {
     usart->usart_device->CR1 |= USART_CR1_TE;
+    usart->usart_device->CR1 |= USART_CR1_UE;
 }
 
 void usart_bus_transmitter_disable(usart_bus_t* usart) {
