@@ -35,7 +35,7 @@ uint16_t cnt_reg = 0;
 
 modbus_rtu_message_t modbus_rx_msg, modbus_tx_msg;
 
-uint8_t usart2_init_str[5];
+uint8_t usart2_data[30];
 
 void USART2_IRQHandler() {
     usart_bus_irq_handler(&usart2);
@@ -89,13 +89,14 @@ void init_usart() {
     // При обнаружении свободной линии - прекратить принимать данные.
     usart_bus_set_idle_mode(&usart2, USART_IDLE_MODE_END_RX);
     
-    usart_bus_baud_rate_set(&usart2,SystemCoreClock/4,115200);
+    usart_bus_baud_rate_set(&usart2,SystemCoreClock/4,9600);
     
     usart_bus_transmitter_enable(&usart2);
     
     usart_bus_receiver_enable(&usart2);
     
-//    usart_bus_send(&usart2,usart2_init_str,strlen(usart2_init_str));
+    sprintf(usart2_data, "Usart Inited\r\n");
+    usart_bus_send(&usart2, usart2_data, strlen(usart2_data));
 }
 
 void modbus_on_msg_recv(void)
@@ -231,17 +232,30 @@ void ecu_init(void) {
     timer_ch_it_enable(&ecu_struct.cap_ch, false); //включение прерывания захвата
 }
 
+volatile uint32_t i;
+
+void delay_1s(void)
+{
+    i = 80000000;
+    while(-- i);
+}
+
 int main() {
     ecu_struct.mg_by_cycle = 250;
     rcc_init(); //тактирование
     gpio_led_init(); //светодиоды
     gpio_master_timer_init(); //инициализация пина захвата
-    init_usart();//уарт автобус
-    init_modbus();//модбас
+    init_usart(); //уарт автобус
+    init_modbus(); //модбас
     ecu_crank_capture_init(&ecu_struct); //инициализация захвата
     ecu_coil_init(&ecu_struct); //инициализация катушек
     ecu_init(); //
     while (1) {
-
+        delay_1s();
+        COIL_2_GPIO->ODR ^= COIL_2_BSRR_MASK;
+        sprintf(usart2_data, "RX error %u \r\n", usart2.rx_errors);
+        if (usart2.rx_errors) {  
+            usart_bus_send(&usart2, usart2_data, strlen(usart2_data));
+        }
     }
 }

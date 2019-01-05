@@ -54,10 +54,10 @@ void ecu_coil_1_off(void* channel) {
 }
 
 void ecu_coil_2_on(void* channel) {
-    COIL_2_GPIO->BSRRL = COIL_2_BSRR_MASK;
+//    COIL_2_GPIO->BSRRL = COIL_2_BSRR_MASK;
 }
 void ecu_coil_2_off(void* channel) {
-    COIL_2_GPIO->BSRRH = COIL_2_BSRR_MASK;
+//    COIL_2_GPIO->BSRRH = COIL_2_BSRR_MASK;
 }
 
 void ecu_coil_3_on(void * channel) {

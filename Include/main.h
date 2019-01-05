@@ -45,18 +45,18 @@ void gpio_led_init() {
 
 void gpio_usart2_init() {
     //TX PD5 AF7
-    GPIOD->MODER &= ~GPIO_MODER_MODER5; //Reset Mode 2
-    GPIOD->MODER |= GPIO_MODER_MODER5_1; //Set Alternate Mode
+    GPIOA->MODER &= ~GPIO_MODER_MODER2; //Reset Mode 2
+    GPIOA->MODER |= GPIO_MODER_MODER2_1; //Set Alternate Mode
    
-    GPIOD->OTYPER &= ~GPIO_OTYPER_ODR_5; //Reset Output Type
+    GPIOA->OTYPER &= ~GPIO_OTYPER_ODR_2; //Reset Output Type
     
-    GPIOD->OSPEEDR &= ~GPIO_OSPEEDER_OSPEEDR5;// Reset Speed 2
-    GPIOD->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR5; //Set Very High Speed 2
+    GPIOA->OSPEEDR &= ~GPIO_OSPEEDER_OSPEEDR2;// Reset Speed 2
+    GPIOA->OSPEEDR |= GPIO_OSPEEDER_OSPEEDR2; //Set Very High Speed 2
     
-    GPIOD->PUPDR &= ~GPIO_PUPDR_PUPDR5; // Reset PUPD
+    GPIOA->PUPDR &= ~GPIO_PUPDR_PUPDR2; // Reset PUPD
     
-    GPIOD->AFR[0] &= ~(uint32_t)(0b1111 << ((5 % 8)*4)); //Reset Alternate 5
-    GPIOD->AFR[0] |= (uint32_t)(0b0111 << ((5 % 8)*4)); //Set AF7 to 5
+    GPIOA->AFR[0] &= ~(uint32_t)(0b1111 << ((2 % 8)*4)); //Reset Alternate 5
+    GPIOA->AFR[0] |= (uint32_t)(0b0111 << ((2 % 8)*4)); //Set AF7 to 5
     
     //RX PD6 AF7
     GPIOD->MODER &= ~GPIO_MODER_MODER6; //Reset Mode 2
