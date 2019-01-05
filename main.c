@@ -20,10 +20,22 @@
 #include "ecu_capture.h"
 #include "ecu_coil.h"
 #include "usart_bus.h"
+#include "modbus_rtu.h"
 
 usart_bus_t usart2;
 
-uint8_t usart_test[] = "Hello World!\r\n";
+modbus_rtu_t modbus;
+
+//! Адрес регистра флагов со светодиодом.
+#define LED_ADDRESS 0x1
+//! Адрес регистра хранения со счётчиком.
+#define CNT_ADDRESS 0x1
+
+uint16_t cnt_reg = 0;
+
+modbus_rtu_message_t modbus_rx_msg, modbus_tx_msg;
+
+static const uint8_t usart2_init_str[] = "usart2_bus_inited\r\n";
 
 void USART2_IRQHandler() {
     usart_bus_irq_handler(&usart2);
@@ -33,12 +45,11 @@ void DMA1_Stream5_IRQHandler() {
     usart_bus_dma_rx_channel_irq_handler(&usart2);
 }
 
-
 void DMA1_Stream6_IRQHandler() {
     usart_bus_dma_tx_channel_irq_handler(&usart2);
 }
 
-void usart_bus_init_common() {
+void init_usart() {
     gpio_usart2_init(); //USART2 gpio init
     
     usart2.usart_device = USART2;
@@ -59,9 +70,110 @@ void usart_bus_init_common() {
     
     usart_bus_transmitter_enable(&usart2);
     
-    usart_bus_send(&usart2,usart_test,strlen(usart_test));
+    usart_bus_receiver_enable(&usart2);
     
-    //USART2->DR = usart_test[0]; //H
+    usart_bus_send(&usart2,usart2_init_str,strlen(usart2_init_str));
+}
+
+void modbus_on_msg_recv(void)
+{
+    modbus_rtu_dispatch(&modbus);
+}
+
+void led_on() {
+    COIL_3_GPIO->BSRRL = COIL_3_BSRR_MASK;
+}
+
+void led_off() {
+    COIL_3_GPIO->BSRRH = COIL_3_BSRR_MASK;
+}
+
+bool led_status() {
+    if(COIL_3_GPIO->ODR & COIL_3_BSRR_MASK) return true;
+    else return false;
+}
+
+modbus_rtu_error_t modbus_on_read_coil(uint16_t address, modbus_rtu_coil_value_t* value)
+{
+    // Если не адрес светодиода - возврат ошибки.
+    if(address != LED_ADDRESS) return MODBUS_RTU_ERROR_INVALID_ADDRESS;
+
+    // Передадим состояние светодиода.
+    *value = led_status();
+    
+    return MODBUS_RTU_ERROR_NONE;
+}
+
+static modbus_rtu_error_t modbus_on_write_coil(uint16_t address, modbus_rtu_coil_value_t value)
+{
+    // Если не адрес светодиода - возврат ошибки.
+    if(address != LED_ADDRESS) return MODBUS_RTU_ERROR_INVALID_ADDRESS;
+    
+    // Зажжём или погасим светодиод
+    // в зависимости от значения.
+    if(value) led_on();
+    else led_off();
+    
+    return MODBUS_RTU_ERROR_NONE;
+}
+
+modbus_rtu_error_t modbus_on_report_slave_id(modbus_rtu_slave_id_t* slave_id)
+{
+    // Состояние - работаем.
+    slave_id->status = MODBUS_RTU_RUN_STATUS_ON;
+    // Идентификатор - для пример возьмём 0xaa.
+    slave_id->id = 0xaa;
+    // В дополнительных данных передадим наше имя.
+    slave_id->data = "STM32 MCU Modbus v1.0";
+    // Длина имени.
+    slave_id->data_size = 21;
+    
+    return MODBUS_RTU_ERROR_NONE;
+}
+
+static modbus_rtu_error_t modbus_on_read_hold_reg(uint16_t address, uint16_t* value)
+{
+    // Если не адрес регистра счётчика - возврат ошибки.
+    if(address != CNT_ADDRESS) return MODBUS_RTU_ERROR_INVALID_ADDRESS;
+    
+    // Передадим значение регистра счётчика.
+    *value = cnt_reg;
+    
+    return MODBUS_RTU_ERROR_NONE;
+}
+
+static modbus_rtu_error_t modbus_on_write_reg(uint16_t address, uint16_t value)
+{
+    // Если не адрес регистра счётчика - возврат ошибки.
+    if(address != CNT_ADDRESS) return MODBUS_RTU_ERROR_INVALID_ADDRESS;
+    
+    // Установим значение регистра счётчика.
+    cnt_reg = value;
+    
+    return MODBUS_RTU_ERROR_NONE;
+}
+
+void init_modbus(void)
+{
+    // Структура инициализации Modbus.
+    modbus_rtu_init_t modbus_is;
+    
+    modbus_is.usart = &usart2; // Шина USART.
+    modbus_is.mode = MODBUS_RTU_MODE_SLAVE; // Режим - ведомый.
+    modbus_is.address = 0xaa; // Адрес.
+    modbus_is.rx_message = &modbus_rx_msg; // Сообщение для приёма.
+    modbus_is.tx_message = &modbus_tx_msg; // Сообщение для передачи.
+    
+    // Инициализируем Modbus.
+    modbus_rtu_init(&modbus, &modbus_is);
+    // Установка каллбэка получения сообщения.
+    modbus_rtu_set_msg_recv_callback(&modbus, modbus_on_msg_recv);
+    // Установка каллбэков доступа к данным.
+    modbus_rtu_set_read_coil_callback(&modbus, modbus_on_read_coil);
+    modbus_rtu_set_write_coil_callback(&modbus, modbus_on_write_coil);
+    modbus_rtu_set_report_slave_id_callback(&modbus, modbus_on_report_slave_id);
+    modbus_rtu_set_read_holding_reg_callback(&modbus, modbus_on_read_hold_reg);
+    modbus_rtu_set_write_holding_reg_callback(&modbus, modbus_on_write_reg);
 }
 
 void ecu_crank_handler_callback(void* channel) {
@@ -101,7 +213,8 @@ int main() {
     rcc_init(); //тактирование
     gpio_led_init(); //светодиоды
     gpio_master_timer_init(); //инициализация пина захвата
-    usart_bus_init_common();//уарт автобус
+    init_usart();//уарт автобус
+    init_modbus();//модбас
     ecu_crank_capture_init(&ecu_struct); //инициализация захвата
     ecu_coil_init(&ecu_struct); //инициализация катушек
     ecu_init(); //
