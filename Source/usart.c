@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-#include <usart.h>
+#include "usart.h"
 
 bool usart_bus_status_register_read(usart_t* usart_struct,uint16_t status) {
     if (usart_struct->usart_bus_port->SR & status) return 1;

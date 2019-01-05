@@ -14,16 +14,6 @@
 #include "defs.h"
 #include "dma.h"
 
-
-/**
- * Структура инициализации шины USART.
- */
-typedef struct _UsartBusInit {
-    USART_TypeDef* usart_device; //!< Устройство USART.
-    dma_t dma_rx_channel; //!< Канал DMA для приёма.
-    dma_t dma_tx_channel; //!< Канал DMA для передачи.
-}usart_bus_init_t;
-
 //! Состояние шины USART.
 typedef enum _Usart_Status {
     USART_STATUS_IDLE = 0,//!< Бездействие.
@@ -126,7 +116,7 @@ EXTERN bool usart_bus_halfduplex_state(USART_TypeDef* usart);
  * @param usart_bus_init Структура инициализации USART.
  * @return Код ошибки.
  */
-EXTERN err_t usart_bus_init(usart_bus_t* usart, usart_bus_init_t* usart_bus_is);
+EXTERN err_t usart_bus_init(usart_bus_t* usart);
 
 /**
  * Функция для обработки прерывания USART.
@@ -392,6 +382,6 @@ EXTERN err_t usart_bus_send(usart_bus_t* usart, const void* data, size_t size);
  */
 EXTERN err_t usart_bus_recv(usart_bus_t* usart, void* data, size_t size);
 
-extern void usart_bus_baud_rate_set(usart_bus_init_t* usart_struct,uint32_t fpclk, uint32_t baud);
+extern void usart_bus_baud_rate_set(usart_bus_t* usart_struct,uint32_t fpclk, uint32_t baud);
 
 #endif	/* USART_BUS_H */

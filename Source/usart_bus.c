@@ -7,24 +7,24 @@
  */
 
 static bool usart_bus_dma_lock_tx_channel(usart_bus_t* usart) {
-//    usart->dma_tx_locked = dma_channel_trylock(usart->dma_tx_channel);
+    //    usart->dma_tx_locked = dma_channel_trylock(usart->dma_tx_channel);
     return usart->dma_tx_locked;
 }
 
 static bool usart_bus_dma_lock_rx_channel(usart_bus_t* usart) {
-//    usart->dma_rx_locked = dma_channel_trylock(usart->dma_rx_channel);
+    //    usart->dma_rx_locked = dma_channel_trylock(usart->dma_rx_channel);
     return usart->dma_rx_locked;
 }
 
 static void usart_bus_dma_unlock_tx_channel(usart_bus_t* usart) {
     dma_stream_deinit(&usart->dma_tx_channel);
-//    dma_channel_unlock(usart->dma_tx_channel);
+    //    dma_channel_unlock(usart->dma_tx_channel);
     usart->dma_tx_locked = false;
 }
 
 static void usart_bus_dma_unlock_rx_channel(usart_bus_t* usart) {
     dma_stream_deinit(&usart->dma_rx_channel);
-//    dma_channel_unlock(usart->dma_rx_channel);
+    //    dma_channel_unlock(usart->dma_rx_channel);
     usart->dma_rx_locked = false;
 }
 
@@ -184,13 +184,9 @@ bool usart_bus_halfduplex_state(USART_TypeDef* usart) {
  * Основной функционал.
  */
 
-err_t usart_bus_init(usart_bus_t* usart, usart_bus_init_t* usart_bus_is) {
+err_t usart_bus_init(usart_bus_t* usart) {
     // Адрес периферии не может быть нулём.
-    if (usart_bus_is->usart_device == NULL) return E_NULL_POINTER;
-
-    usart->usart_device = usart_bus_is->usart_device;
-    usart->dma_tx_channel = usart_bus_is->dma_tx_channel;
-    usart->dma_rx_channel = usart_bus_is->dma_rx_channel;
+    if (usart->usart_device == NULL) return E_NULL_POINTER;
 
     usart->rx_byte_callback = NULL;
     usart->rx_callback = NULL;
@@ -481,7 +477,7 @@ err_t usart_bus_send(usart_bus_t* usart, const void* data, size_t size) {
     if (size == 0) return E_INVALID_VALUE;
     if (size > UINT16_MAX) return E_OUT_OF_RANGE;
 
-    if (!usart_bus_dma_lock_tx_channel(usart)) return E_BUSY;
+    //if (!usart_bus_dma_lock_tx_channel(usart)) return E_BUSY;
 
     usart->tx_errors = USART_ERROR_NONE;
     usart->tx_status = USART_STATUS_TRANSFERING;
@@ -517,29 +513,29 @@ err_t usart_bus_recv(usart_bus_t* usart, void* data, size_t size) {
     return E_NO_ERROR;
 }
 
-bool usart_bus_control_register_read_1(usart_bus_init_t* usart_struct,uint16_t ctrl) {
+bool usart_bus_control_register_read_1(usart_bus_t* usart_struct, uint16_t ctrl) {
     if (usart_struct->usart_device->CR1 & ctrl) return 1;
     else return 0;
 }
 
-bool usart_bus_oversampling_mode_read(usart_bus_init_t* usart_struct) {
-    return usart_bus_control_register_read_1(usart_struct,USART_CR1_OVER8);
+bool usart_bus_oversampling_mode_read(usart_bus_t* usart_struct) {
+    return usart_bus_control_register_read_1(usart_struct, USART_CR1_OVER8);
 }
 
-void usart_bus_baud_rate_register_set(usart_bus_init_t* usart_struct,uint16_t mantissa, uint16_t fraction) {
+void usart_bus_baud_rate_register_set(usart_bus_t* usart_struct, uint16_t mantissa, uint16_t fraction) {
     usart_struct->usart_device->BRR = ((uint16_t) (mantissa << 4) & (uint16_t) USART_BRR_DIV_Mantissa) |
             ((uint16_t) fraction & (uint16_t) USART_BRR_DIV_Fraction);
 }
 
-void usart_bus_baud_rate_set(usart_bus_init_t* usart_struct,uint32_t fpclk, uint32_t baud) {
+void usart_bus_baud_rate_set(usart_bus_t* usart_struct, uint32_t fpclk, uint32_t baud) {
     uint32_t over8 = (uint32_t) usart_bus_oversampling_mode_read(usart_struct);
     uint32_t mantissa = (fpclk / ((8 * (2 - over8)) * baud));
     uint16_t divider = (uint16_t) (fpclk / baud);
     uint16_t fraction = (uint16_t) (divider - (uint16_t) (mantissa << 4));
     if (over8) {
-        usart_bus_baud_rate_set(usart_struct,mantissa, (fraction & (uint16_t) 0x07));
+        usart_bus_baud_rate_set(usart_struct, mantissa, (fraction & (uint16_t) 0x07));
     } else {
-        usart_bus_baud_rate_register_set(usart_struct,mantissa, fraction);
+        usart_bus_baud_rate_register_set(usart_struct, mantissa, fraction);
     }
 }
 

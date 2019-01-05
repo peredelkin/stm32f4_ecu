@@ -42,17 +42,17 @@ void dma_stream_transfer_complete_interrupt_clear(dma_t* dma_stream) {
 
 void dma_stream_channel_selection(dma_t* dma_stream, uint8_t chsel) {
     CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_CHSEL);
-    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_CHSEL | (uint32_t) (chsel << DMA_SxCR_CHSEL_SHIFT)));
+    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_CHSEL & (uint32_t) (chsel << DMA_SxCR_CHSEL_SHIFT)));
 }
 
 void dma_stream_memory_burst_transfer_configuration(dma_t* dma_stream, uint8_t mburst) {
     CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_MBURST);
-    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_MBURST | (uint32_t) (mburst << DMA_SxCR_MBURST_SHIFT)));
+    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_MBURST & (uint32_t) (mburst << DMA_SxCR_MBURST_SHIFT)));
 }
 
 void dma_stream_peripheral_burst_transfer_configuration(dma_t* dma_stream, uint8_t pburst) {
     CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_PBURST);
-    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_PBURST | (uint32_t) (pburst << DMA_SxCR_PBURST_SHIFT)));
+    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_PBURST & (uint32_t) (pburst << DMA_SxCR_PBURST_SHIFT)));
 }
 
 void dma_stream_current_target(dma_t* dma_stream, bool ct) {
@@ -72,7 +72,7 @@ void dma_stream_double_buffer_mode(dma_t* dma_stream, bool dbm) {
 
 void dma_stream_priority_level(dma_t* dma_stream, uint8_t pl) {
     CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_PL);
-    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_PL | (uint32_t) (pl << DMA_SxCR_PL_SHIFT)));
+    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_PL & (uint32_t) (pl << DMA_SxCR_PL_SHIFT)));
 }
 
 void dma_stream_peripheral_increment_offset_size(dma_t* dma_stream, bool pincos) {
@@ -82,12 +82,12 @@ void dma_stream_peripheral_increment_offset_size(dma_t* dma_stream, bool pincos)
 
 void dma_stream_memory_data_size(dma_t* dma_stream, uint8_t msize) {
     CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_MSIZE);
-    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_MSIZE | (uint32_t) (msize << DMA_SxCR_MSIZE_SHIFT)));
+    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_MSIZE & (uint32_t) (msize << DMA_SxCR_MSIZE_SHIFT)));
 }
 
 void dma_stream_peripheral_data_size(dma_t* dma_stream, uint8_t psize) {
     CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_PSIZE);
-    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_PSIZE | (uint32_t) (psize << DMA_SxCR_PSIZE_SHIFT)));
+    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_PSIZE & (uint32_t) (psize << DMA_SxCR_PSIZE_SHIFT)));
 }
 
 void dma_stream_memory_increment_mode(dma_t* dma_stream, bool minc) {
@@ -107,7 +107,7 @@ void dma_stream_circular_mode(dma_t* dma_stream, bool circ) {
 
 void dma_stream_data_transfer_direction(dma_t* dma_stream, uint8_t dir) {
     CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_DIR);
-    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_DIR | (uint32_t) (dir << DMA_SxCR_DIR_SHIFT)));
+    SET_BIT(dma_stream->stream->CR, (DMA_SxCR_DIR & (uint32_t) (dir << DMA_SxCR_DIR_SHIFT)));
 }
 
 void dma_stream_peripheral_flow_controller(dma_t* dma_stream, bool pfctrl) {

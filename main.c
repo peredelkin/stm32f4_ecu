@@ -23,21 +23,46 @@
 
 usart_bus_t usart2;
 
+uint8_t usart_test[] = "Hello World!";
+
+void USART2_IRQHandler(void) {
+    usart_bus_irq_handler(&usart2);
+}
+
+void DMA1_Stream5_IRQHandler(void) {
+    usart_bus_dma_rx_channel_irq_handler(&usart2);
+}
+
+void DMA1_Stream6_IRQHandler(void) {
+    usart_bus_dma_tx_channel_irq_handler(&usart2);
+}
+
 void usart_bus_init_common() {
     gpio_usart2_init(); //USART2 gpio init
     
-    usart_bus_init_t usart2_init = {
-        .dma_rx_channel = DMA1_Stream5, /*CH4*/
-        .dma_tx_channel = DMA1_Stream6,  /*CH4*/
-        .usart_device = USART2
-    };
+    usart2.usart_device = USART2;
     
-    dma_stream_channel_selection(&usart2_init.dma_rx_channel,4);
-    dma_stream_channel_selection(&usart2_init.dma_tx_channel,4);
+    dma_stream_struct_init(&usart2.dma_rx_channel,DMA1,DMA1_Stream5,5);
+    dma_stream_struct_init(&usart2.dma_tx_channel,DMA1,DMA1_Stream6,6);
     
-    usart_bus_baud_rate_set(&usart2_init,SystemCoreClock/4,115200);
+    dma_stream_channel_selection(&usart2.dma_rx_channel,4);
+    dma_stream_channel_selection(&usart2.dma_tx_channel,4);
     
-    usart_bus_init(&usart2,&usart2_init);
+    NVIC_EnableIRQ(USART2_IRQn);
+    NVIC_EnableIRQ(DMA1_Stream5_IRQn);
+    NVIC_EnableIRQ(DMA1_Stream6_IRQn);
+    
+    usart_bus_baud_rate_set(&usart2,SystemCoreClock/4,115200);
+    
+    usart_bus_init(&usart2);
+    
+    usart_bus_transmitter_enable(&usart2);
+    
+    USART2->CR1 |= USART_CR1_UE;
+    
+    usart_bus_send(&usart2,usart_test,strlen(usart_test));
+    
+    //USART2->DR = usart_test[0]; //H
 }
 
 void ecu_crank_handler_callback(void* channel) {
@@ -75,9 +100,9 @@ void ecu_init(void) {
 int main() {
     ecu_struct.mg_by_cycle = 250;
     rcc_init(); //тактирование
-    usart_bus_init_common();//уарт автобус
     gpio_led_init(); //светодиоды
     gpio_master_timer_init(); //инициализация пина захвата
+    usart_bus_init_common();//уарт автобус
     ecu_crank_capture_init(&ecu_struct); //инициализация захвата
     ecu_coil_init(&ecu_struct); //инициализация катушек
     ecu_init(); //
