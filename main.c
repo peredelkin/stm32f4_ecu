@@ -35,7 +35,7 @@ uint16_t cnt_reg = 0;
 
 modbus_rtu_message_t modbus_rx_msg, modbus_tx_msg;
 
-static const uint8_t usart2_init_str[] = "usart2_bus_inited\r\n";
+uint8_t usart2_init_str[5];
 
 void USART2_IRQHandler() {
     usart_bus_irq_handler(&usart2);
@@ -69,6 +69,8 @@ void init_usart() {
     
     usart2.usart_device = USART2;
     
+    usart_bus_init(&usart2);
+    
     dma_stream_struct_init(&usart2.dma_rx_channel,DMA1,DMA1_Stream5,5);
     dma_stream_struct_init(&usart2.dma_tx_channel,DMA1,DMA1_Stream6,6);
     
@@ -89,13 +91,11 @@ void init_usart() {
     
     usart_bus_baud_rate_set(&usart2,SystemCoreClock/4,115200);
     
-    usart_bus_init(&usart2);
-    
     usart_bus_transmitter_enable(&usart2);
     
     usart_bus_receiver_enable(&usart2);
     
-    usart_bus_send(&usart2,usart2_init_str,strlen(usart2_init_str));
+//    usart_bus_send(&usart2,usart2_init_str,strlen(usart2_init_str));
 }
 
 void modbus_on_msg_recv(void)

@@ -507,7 +507,7 @@ err_t usart_bus_recv(usart_bus_t* usart, void* data, size_t size) {
     usart->rx_errors = USART_ERROR_NONE;
     usart->rx_status = USART_STATUS_TRANSFERING;
     usart->rx_size = size;
-
+    
     usart_bus_dma_rx_config(usart, data, size);
 
     usart_bus_dma_start_rx(usart);
