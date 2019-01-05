@@ -164,8 +164,8 @@ void dma_stream_memory_address(dma_t* dma_stream,uint8_t mar_n,uint32_t mar) {
 void dma_stream_struct_init(dma_t* dma_stream, DMA_TypeDef* dma, DMA_Stream_TypeDef* stream, uint8_t stream_n) {
     dma_stream->dma = dma;
     dma_stream->stream = stream;
-    dma_stream->dma_isr_ifcr_n = (uint8_t)(stream_n / 4);
-    dma_stream->dma_isr_ifcr_mask_shift = (uint8_t)(dma_stream->dma_isr_ifcr_n * 16) + (6 * (stream_n % 2));
+    dma_stream->dma_isr_ifcr_n = (uint8_t) (stream_n/4);
+    dma_stream->dma_isr_ifcr_mask_shift = (uint8_t)((stream_n%4)*8)-((stream_n%2)*2);
 }
 
 void dma_stream_deinit(dma_t* dma_stream) {

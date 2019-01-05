@@ -271,9 +271,9 @@ void usart_bus_irq_handler(usart_bus_t* usart) {
 bool usart_bus_dma_rx_channel_irq_handler(usart_bus_t* usart) {
     if (usart->rx_status != USART_STATUS_TRANSFERING) return false;
 
-    bool can_rx = usart_bus_transmitter_state(usart->usart_device);
+    //bool can_rx = usart_bus_transmitter_state(usart->usart_device);
 
-    if (!can_rx || !usart->dma_rx_locked) return false;
+    //if (!can_rx || !usart->dma_rx_locked) return false;
 
     if (dma_stream_transfer_complete_interrupt_read(&usart->dma_rx_channel)) {
 
@@ -298,9 +298,9 @@ bool usart_bus_dma_rx_channel_irq_handler(usart_bus_t* usart) {
 bool usart_bus_dma_tx_channel_irq_handler(usart_bus_t* usart) {
     if (usart->tx_status != USART_STATUS_TRANSFERING) return false;
 
-    bool can_tx = usart_bus_transmitter_state(usart->usart_device);
+    //bool can_tx = usart_bus_transmitter_state(usart->usart_device);
 
-    if (!can_tx || !usart->dma_tx_locked) return false;
+    //if (!can_tx || !usart->dma_tx_locked) return false;
 
     if (dma_stream_transfer_complete_interrupt_read(&usart->dma_tx_channel)) {
 
