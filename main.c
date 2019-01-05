@@ -35,7 +35,7 @@ uint16_t cnt_reg = 0;
 
 modbus_rtu_message_t modbus_rx_msg, modbus_tx_msg;
 
-uint8_t usart2_data[30];
+uint8_t usart2_data[20];
 
 void USART2_IRQHandler() {
     usart_bus_irq_handler(&usart2);
@@ -95,7 +95,8 @@ void init_usart() {
     
     usart_bus_receiver_enable(&usart2);
     
-    sprintf(usart2_data, "Usart Inited\r\n");
+    sprintf(usart2_data,"Usart inited\r\n");
+    
     usart_bus_send(&usart2, usart2_data, strlen(usart2_data));
 }
 
@@ -236,7 +237,7 @@ volatile uint32_t i;
 
 void delay_1s(void)
 {
-    i = 80000000;
+    i = 16800000;
     while(-- i);
 }
 
@@ -253,8 +254,8 @@ int main() {
     while (1) {
         delay_1s();
         COIL_2_GPIO->ODR ^= COIL_2_BSRR_MASK;
-        sprintf(usart2_data, "RX error %u \r\n", usart2.rx_errors);
-        if (usart2.rx_errors) {  
+        sprintf(usart2_data,"RX err %u\r\n",usart2.rx_errors);
+        if(usart2.rx_errors) {
             usart_bus_send(&usart2, usart2_data, strlen(usart2_data));
         }
     }

@@ -37,20 +37,19 @@ static void usart_bus_dma_tx_config(usart_bus_t* usart, void* address, size_t si
     dma_stream_transfer_error_interrupt_enable(&usart->dma_tx_channel, true);
     dma_stream_transfer_complete_interrupt_enable(&usart->dma_tx_channel, true);
     dma_stream_data_transfer_direction(&usart->dma_tx_channel, (uint8_t) 0b01); //Memory-to-peripheral
-    dma_stream_priority_level(&usart->dma_tx_channel, (uint8_t) 0b01); //Medium
     dma_stream_memory_increment_mode(&usart->dma_tx_channel, true);
 }
 
 static void usart_bus_dma_rx_config(usart_bus_t* usart, void* address, size_t size) {
     dma_stream_enable(&usart->dma_rx_channel, false);
-    dma_stream_number_of_data(&usart->dma_tx_channel, size);
-    dma_stream_peripheral_address(&usart->dma_tx_channel, (uint32_t) & usart->usart_device->DR);
-    dma_stream_memory_address(&usart->dma_tx_channel, 0, (uint32_t) address); //M0AR
+    dma_stream_number_of_data(&usart->dma_rx_channel, size);
+    dma_stream_peripheral_address(&usart->dma_rx_channel, (uint32_t) & usart->usart_device->DR);
+    dma_stream_memory_address(&usart->dma_rx_channel, 0, (uint32_t) address); //M0AR
 
-    dma_stream_transfer_error_interrupt_enable(&usart->dma_tx_channel, true);
-    dma_stream_transfer_complete_interrupt_enable(&usart->dma_tx_channel, true);
-    dma_stream_priority_level(&usart->dma_tx_channel, (uint8_t) 0b01); //Medium
-    dma_stream_memory_increment_mode(&usart->dma_tx_channel, true);
+    dma_stream_transfer_error_interrupt_enable(&usart->dma_rx_channel, true);
+    dma_stream_transfer_complete_interrupt_enable(&usart->dma_rx_channel, true);
+    dma_stream_data_transfer_direction(&usart->dma_rx_channel, (uint8_t) 0b00); //Peripheral-to-memory
+    dma_stream_memory_increment_mode(&usart->dma_rx_channel, true);
 }
 
 static void usart_bus_dma_start_tx(usart_bus_t* usart) {

@@ -66,7 +66,7 @@ bool dma_stream_current_target_read(dma_t* dma_stream) {
 }
 
 void dma_stream_double_buffer_mode(dma_t* dma_stream, bool dbm) {
-    if (dbm) dma_stream->stream->CR |= DMA_SxCR_DBM;
+    if (dbm) SET_BIT(dma_stream->stream->CR,DMA_SxCR_DBM);
     else CLEAR_BIT(dma_stream->stream->CR, DMA_SxCR_DBM);
 }
 
