@@ -49,6 +49,21 @@ void DMA1_Stream6_IRQHandler() {
     usart_bus_dma_tx_channel_irq_handler(&usart2);
 }
 
+bool usart_rx_callback(void)
+{
+    return modbus_rtu_usart_rx_callback(&modbus);
+}
+
+bool usart_tx_callback(void)
+{
+    return modbus_rtu_usart_tx_callback(&modbus);
+}
+
+bool usart_rx_byte_callback(uint8_t byte)
+{
+    return modbus_rtu_usart_rx_byte_callback(&modbus, byte);
+}
+
 void init_usart() {
     gpio_usart2_init(); //USART2 gpio init
     
@@ -63,6 +78,14 @@ void init_usart() {
     NVIC_EnableIRQ(USART2_IRQn);
     NVIC_EnableIRQ(DMA1_Stream5_IRQn);
     NVIC_EnableIRQ(DMA1_Stream6_IRQn);
+    
+    // Установка каллбэков.
+    usart_bus_set_rx_callback(&usart2, usart_rx_callback);
+    usart_bus_set_tx_callback(&usart2, usart_tx_callback);
+    usart_bus_set_rx_byte_callback(&usart2, usart_rx_byte_callback);
+    
+    // При обнаружении свободной линии - прекратить принимать данные.
+    usart_bus_set_idle_mode(&usart2, USART_IDLE_MODE_END_RX);
     
     usart_bus_baud_rate_set(&usart2,SystemCoreClock/4,115200);
     
