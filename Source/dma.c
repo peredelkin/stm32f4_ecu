@@ -1,43 +1,43 @@
 #include "dma.h"
 
-uint16_t dma_stream_fifo_error_interrupt_status_read(dma_t* dma_stream) {
-    return (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint16_t) (DMA_ISR_FEIF << dma_stream->dma_isr_ifcr_mask_shift));
+uint32_t dma_stream_fifo_error_interrupt_status_read(dma_t* dma_stream) {
+    return (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint32_t) (DMA_ISR_FEIF << dma_stream->dma_isr_ifcr_mask_shift));
 }
 
 void dma_stream_fifo_error_interrupt_status_clear(dma_t* dma_stream) {
-    dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint16_t) (DMA_IFCR_CFEIF << dma_stream->dma_isr_ifcr_mask_shift);
+    dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint32_t) (DMA_IFCR_CFEIF << dma_stream->dma_isr_ifcr_mask_shift);
 }
 
-uint16_t dma_stream_direct_mode_error_interrupt_read(dma_t* dma_stream) {
-    return (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint16_t) (DMA_ISR_DMEIF << dma_stream->dma_isr_ifcr_mask_shift));
+uint32_t dma_stream_direct_mode_error_interrupt_read(dma_t* dma_stream) {
+    return (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint32_t) (DMA_ISR_DMEIF << dma_stream->dma_isr_ifcr_mask_shift));
 }
 
 void dma_stream_direct_mode_error_interrupt_clear(dma_t* dma_stream) {
-    dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint16_t) (DMA_IFCR_CDMEIF << dma_stream->dma_isr_ifcr_mask_shift);
+    dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint32_t) (DMA_IFCR_CDMEIF << dma_stream->dma_isr_ifcr_mask_shift);
 }
 
-uint16_t dma_stream_transfer_error_interrupt_read(dma_t* dma_stream) {
-    return (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint16_t) (DMA_ISR_TEIF << dma_stream->dma_isr_ifcr_mask_shift));
+uint32_t dma_stream_transfer_error_interrupt_read(dma_t* dma_stream) {
+    return (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint32_t) (DMA_ISR_TEIF << dma_stream->dma_isr_ifcr_mask_shift));
 }
 
 void dma_stream_transfer_error_interrupt_clear(dma_t* dma_stream) {
-    dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint16_t) (DMA_IFCR_CTEIF << dma_stream->dma_isr_ifcr_mask_shift);
+    dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint32_t) (DMA_IFCR_CTEIF << dma_stream->dma_isr_ifcr_mask_shift);
 }
 
-uint16_t dma_stream_half_transfer_interrupt_read(dma_t* dma_stream) {
-    return (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint16_t) (DMA_ISR_HTIF << dma_stream->dma_isr_ifcr_mask_shift));
+uint32_t dma_stream_half_transfer_interrupt_read(dma_t* dma_stream) {
+    return (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint32_t) (DMA_ISR_HTIF << dma_stream->dma_isr_ifcr_mask_shift));
 }
 
 void dma_stream_half_transfer_interrupt_clear(dma_t* dma_stream) {
-    dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint16_t) (DMA_IFCR_CHTIF << dma_stream->dma_isr_ifcr_mask_shift);
+    dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint32_t) (DMA_IFCR_CHTIF << dma_stream->dma_isr_ifcr_mask_shift);
 }
 
-uint16_t dma_stream_transfer_complete_interrupt_read(dma_t* dma_stream) {
-    return (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint16_t) (DMA_ISR_TCIF << dma_stream->dma_isr_ifcr_mask_shift));
+uint32_t dma_stream_transfer_complete_interrupt_read(dma_t* dma_stream) {
+    return (dma_stream->dma->ISR[dma_stream->dma_isr_ifcr_n] & (uint32_t) (DMA_ISR_TCIF << dma_stream->dma_isr_ifcr_mask_shift));
 }
 
 void dma_stream_transfer_complete_interrupt_clear(dma_t* dma_stream) {
-    dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint16_t) (DMA_IFCR_CTCIF << dma_stream->dma_isr_ifcr_mask_shift);
+    dma_stream->dma->IFCR[dma_stream->dma_isr_ifcr_n] = (uint32_t) (DMA_IFCR_CTCIF << dma_stream->dma_isr_ifcr_mask_shift);
 }
 
 void dma_stream_channel_selection(dma_t* dma_stream, uint8_t chsel) {
@@ -164,8 +164,8 @@ void dma_stream_memory_address(dma_t* dma_stream,uint8_t mar_n,uint32_t mar) {
 void dma_stream_struct_init(dma_t* dma_stream, DMA_TypeDef* dma, DMA_Stream_TypeDef* stream, uint8_t stream_n) {
     dma_stream->dma = dma;
     dma_stream->stream = stream;
-    dma_stream->dma_isr_ifcr_n = (uint8_t)(stream_n / 2);
-    dma_stream->dma_isr_ifcr_mask_shift = (uint8_t)(6 * (stream_n % 2));
+    dma_stream->dma_isr_ifcr_n = (uint8_t)(stream_n / 4);
+    dma_stream->dma_isr_ifcr_mask_shift = (uint8_t)(dma_stream->dma_isr_ifcr_n * 16) + (6 * (stream_n % 2));
 }
 
 void dma_stream_deinit(dma_t* dma_stream) {

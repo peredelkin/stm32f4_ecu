@@ -23,17 +23,18 @@
 
 usart_bus_t usart2;
 
-uint8_t usart_test[] = "Hello World!";
+uint8_t usart_test[] = "Hello World!\r\n";
 
-void USART2_IRQHandler(void) {
+void USART2_IRQHandler() {
     usart_bus_irq_handler(&usart2);
 }
 
-void DMA1_Stream5_IRQHandler(void) {
+void DMA1_Stream5_IRQHandler() {
     usart_bus_dma_rx_channel_irq_handler(&usart2);
 }
 
-void DMA1_Stream6_IRQHandler(void) {
+
+void DMA1_Stream6_IRQHandler() {
     usart_bus_dma_tx_channel_irq_handler(&usart2);
 }
 
@@ -49,7 +50,7 @@ void usart_bus_init_common() {
     dma_stream_channel_selection(&usart2.dma_tx_channel,4);
     
     NVIC_EnableIRQ(USART2_IRQn);
-    NVIC_EnableIRQ(DMA1_Stream5_IRQn);
+    //NVIC_EnableIRQ(DMA1_Stream5_IRQn);
     NVIC_EnableIRQ(DMA1_Stream6_IRQn);
     
     usart_bus_baud_rate_set(&usart2,SystemCoreClock/4,115200);

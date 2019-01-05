@@ -35,23 +35,23 @@ typedef struct {
     uint8_t dma_isr_ifcr_mask_shift; //сдвиг маски ISR/IFCR
 } dma_t;
 
-extern uint16_t dma_stream_fifo_error_interrupt_status_read(dma_t* dma_stream);
+extern uint32_t dma_stream_fifo_error_interrupt_status_read(dma_t* dma_stream);
 
 extern void dma_stream_fifo_error_interrupt_status_clear(dma_t* dma_stream);
 
-extern uint16_t dma_stream_direct_mode_error_interrupt_read(dma_t* dma_stream);
+extern uint32_t dma_stream_direct_mode_error_interrupt_read(dma_t* dma_stream);
 
 extern void dma_stream_direct_mode_error_interrupt_clear(dma_t* dma_stream);
 
-extern uint16_t dma_stream_transfer_error_interrupt_read(dma_t* dma_stream);
+extern uint32_t dma_stream_transfer_error_interrupt_read(dma_t* dma_stream);
 
 extern void dma_stream_transfer_error_interrupt_clear(dma_t* dma_stream);
 
-extern uint16_t dma_stream_half_transfer_interrupt_read(dma_t* dma_stream);
+extern uint32_t dma_stream_half_transfer_interrupt_read(dma_t* dma_stream);
 
 extern void dma_stream_half_transfer_interrupt_clear(dma_t* dma_stream);
 
-extern uint16_t dma_stream_transfer_complete_interrupt_read(dma_t* dma_stream);
+extern uint32_t dma_stream_transfer_complete_interrupt_read(dma_t* dma_stream);
 
 extern void dma_stream_transfer_complete_interrupt_clear(dma_t* dma_stream);
 
