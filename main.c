@@ -42,6 +42,7 @@ void USART2_IRQHandler() {
 }
 
 void DMA1_Stream5_IRQHandler() {
+    COIL_2_GPIO->ODR ^= COIL_2_BSRR_MASK;
     usart_bus_dma_rx_channel_irq_handler(&usart2);
 }
 
@@ -253,10 +254,10 @@ int main() {
     ecu_init(); //
     while (1) {
         delay_1s();
-        COIL_2_GPIO->ODR ^= COIL_2_BSRR_MASK;
-//        sprintf(usart2_data,"RX err %u\r\n",usart2.rx_errors);
-//        if(usart2.rx_errors) {
-//            usart_bus_send(&usart2, usart2_data, strlen(usart2_data));
-//        }
+//        COIL_2_GPIO->ODR ^= COIL_2_BSRR_MASK;
+        sprintf(usart2_data,"RX err %u\r\n",usart2.rx_errors);
+        if(usart2.rx_errors) {
+            usart_bus_send(&usart2, usart2_data, strlen(usart2_data));
+        }
     }
 }
