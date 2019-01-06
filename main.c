@@ -42,25 +42,26 @@ void USART2_IRQHandler() {
 }
 
 void DMA1_Stream5_IRQHandler() {
-    COIL_2_GPIO->ODR ^= COIL_2_BSRR_MASK;
+    COIL_2_GPIO->BSRRL = COIL_2_BSRR_MASK;
     usart_bus_dma_rx_channel_irq_handler(&usart2);
+    COIL_2_GPIO->BSRRH = COIL_2_BSRR_MASK;
 }
 
 void DMA1_Stream6_IRQHandler() {
     usart_bus_dma_tx_channel_irq_handler(&usart2);
 }
 
-bool usart_rx_callback(void)
+static bool usart_rx_callback(void)
 {
     return modbus_rtu_usart_rx_callback(&modbus);
 }
 
-bool usart_tx_callback(void)
+static bool usart_tx_callback(void)
 {
     return modbus_rtu_usart_tx_callback(&modbus);
 }
 
-bool usart_rx_byte_callback(uint8_t byte)
+static bool usart_rx_byte_callback(uint8_t byte)
 {
     return modbus_rtu_usart_rx_byte_callback(&modbus, byte);
 }
@@ -101,25 +102,25 @@ void init_usart() {
     usart_bus_send(&usart2, usart2_data, strlen(usart2_data));
 }
 
-void modbus_on_msg_recv(void)
+static void modbus_on_msg_recv_callback(void)
 {
     modbus_rtu_dispatch(&modbus);
 }
 
-void led_on() {
+static void led_on() {
     COIL_3_GPIO->BSRRL = COIL_3_BSRR_MASK;
 }
 
-void led_off() {
+static void led_off() {
     COIL_3_GPIO->BSRRH = COIL_3_BSRR_MASK;
 }
 
-bool led_status() {
+static bool led_status() {
     if(COIL_3_GPIO->ODR & COIL_3_BSRR_MASK) return true;
     else return false;
 }
 
-modbus_rtu_error_t modbus_on_read_coil(uint16_t address, modbus_rtu_coil_value_t* value)
+static modbus_rtu_error_t modbus_on_read_coil(uint16_t address, modbus_rtu_coil_value_t* value)
 {
     // Если не адрес светодиода - возврат ошибки.
     if(address != LED_ADDRESS) return MODBUS_RTU_ERROR_INVALID_ADDRESS;
@@ -143,7 +144,7 @@ static modbus_rtu_error_t modbus_on_write_coil(uint16_t address, modbus_rtu_coil
     return MODBUS_RTU_ERROR_NONE;
 }
 
-modbus_rtu_error_t modbus_on_report_slave_id(modbus_rtu_slave_id_t* slave_id)
+static modbus_rtu_error_t modbus_on_report_slave_id(modbus_rtu_slave_id_t* slave_id)
 {
     // Состояние - работаем.
     slave_id->status = MODBUS_RTU_RUN_STATUS_ON;
@@ -193,7 +194,7 @@ void init_modbus(void)
     // Инициализируем Modbus.
     modbus_rtu_init(&modbus, &modbus_is);
     // Установка каллбэка получения сообщения.
-    modbus_rtu_set_msg_recv_callback(&modbus, modbus_on_msg_recv);
+    modbus_rtu_set_msg_recv_callback(&modbus, modbus_on_msg_recv_callback);
     // Установка каллбэков доступа к данным.
     modbus_rtu_set_read_coil_callback(&modbus, modbus_on_read_coil);
     modbus_rtu_set_write_coil_callback(&modbus, modbus_on_write_coil);
@@ -255,6 +256,7 @@ int main() {
     while (1) {
         delay_1s();
 //        COIL_2_GPIO->ODR ^= COIL_2_BSRR_MASK;
+        cnt_reg++;
         sprintf(usart2_data,"RX err %u\r\n",usart2.rx_errors);
         if(usart2.rx_errors) {
             usart_bus_send(&usart2, usart2_data, strlen(usart2_data));

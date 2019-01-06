@@ -4,7 +4,7 @@
 #include <stddef.h>
 
 void ecu_coil_slave_timer_1_init() {
-    NVIC_SetPriority(TIM3_IRQn, 5); //36 default
+    NVIC_SetPriority(TIM3_IRQn, 6); //36 default
     NVIC_EnableIRQ(ECU_COIL_TIM_1_IRQn); //Compare
 
     ECU_COIL_TIM_1->PSC = (uint16_t) (((SystemCoreClock/ECU_CAP_TIM_CLK)/2) - 1); // Prescaler
@@ -22,7 +22,7 @@ void ecu_coil_slave_timer_1_init() {
 }
 
 void ecu_coil_slave_timer_2_init() {
-    NVIC_SetPriority(TIM3_IRQn, 5); //37 default
+    NVIC_SetPriority(TIM3_IRQn, 6); //37 default
     NVIC_EnableIRQ(ECU_COIL_TIM_2_IRQn); //Compare
 
     ECU_COIL_TIM_2->PSC = (uint16_t) (((SystemCoreClock/ECU_CAP_TIM_CLK)/2) - 1); // Prescaler
