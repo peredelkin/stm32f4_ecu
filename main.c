@@ -71,7 +71,7 @@ void init_usart() {
     
     usart2.usart_device = USART2;
     
-    usart_bus_baud_rate_set(&usart2,SystemCoreClock/4,1200);
+    usart_bus_baud_rate_set(&usart2,SystemCoreClock/4, 4800);
     
     usart_bus_transmitter_enable(&usart2);
     
@@ -153,7 +153,7 @@ static modbus_rtu_error_t modbus_on_report_slave_id(modbus_rtu_slave_id_t* slave
     // В дополнительных данных передадим наше имя.
     slave_id->data = "STM32 MCU Modbus v1.0";
     // Длина имени.
-    slave_id->data_size = 21;
+    slave_id->data_size = strlen(slave_id->data);
     
     return MODBUS_RTU_ERROR_NONE;
 }
@@ -257,9 +257,9 @@ int main() {
         delay_1s();
 //        COIL_2_GPIO->ODR ^= COIL_2_BSRR_MASK;
         cnt_reg++;
-        sprintf(usart2_data,"RX err %u\r\n",usart2.rx_errors);
-        if(usart2.rx_errors) {
-            usart_bus_send(&usart2, usart2_data, strlen(usart2_data));
-        }
+       // sprintf(usart2_data,"RX err %u\r\n",usart2.rx_errors);
+       // if(usart2.rx_errors) {
+        //    usart_bus_send(&usart2, usart2_data, strlen(usart2_data));
+       // }
     }
 }
