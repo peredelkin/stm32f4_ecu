@@ -71,6 +71,12 @@ void init_usart() {
     
     usart2.usart_device = USART2;
     
+    usart_bus_baud_rate_set(&usart2,SystemCoreClock/4,1200);
+    
+    usart_bus_transmitter_enable(&usart2);
+    
+    usart_bus_receiver_enable(&usart2);
+    
     usart_bus_init(&usart2);
     
     dma_stream_struct_init(&usart2.dma_rx_channel,DMA1,DMA1_Stream5,5);
@@ -90,12 +96,6 @@ void init_usart() {
     
     // При обнаружении свободной линии - прекратить принимать данные.
     usart_bus_set_idle_mode(&usart2, USART_IDLE_MODE_END_RX);
-    
-    usart_bus_baud_rate_set(&usart2,SystemCoreClock/4,1200);
-    
-    usart_bus_transmitter_enable(&usart2);
-    
-    usart_bus_receiver_enable(&usart2);
     
     sprintf(usart2_data,"Usart inited\r\n");
     
