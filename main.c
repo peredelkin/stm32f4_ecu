@@ -31,14 +31,16 @@ modbus_rtu_t modbus;
 //! Адрес регистра хранения со счётчиком.
 #define CNT_ADDRESS 0x1
 
-uint16_t cnt_reg = 0;
+volatile uint16_t cnt_reg = 0;
 
 modbus_rtu_message_t modbus_rx_msg, modbus_tx_msg;
 
 uint8_t usart2_data[20];
 
 void USART2_IRQHandler() {
+//    COIL_2_GPIO->BSRRL = COIL_2_BSRR_MASK;
     usart_bus_irq_handler(&usart2);
+//    COIL_2_GPIO->BSRRH = COIL_2_BSRR_MASK;
 }
 
 void DMA1_Stream5_IRQHandler() {
@@ -149,7 +151,7 @@ static modbus_rtu_error_t modbus_on_report_slave_id(modbus_rtu_slave_id_t* slave
     // Состояние - работаем.
     slave_id->status = MODBUS_RTU_RUN_STATUS_ON;
     // Идентификатор - для пример возьмём 0xaa.
-    slave_id->id = 0xaa;
+    slave_id->id = 32;
     // В дополнительных данных передадим наше имя.
     slave_id->data = "STM32 MCU Modbus v1.0";
     // Длина имени.
@@ -187,7 +189,7 @@ void init_modbus(void)
     
     modbus_is.usart = &usart2; // Шина USART.
     modbus_is.mode = MODBUS_RTU_MODE_SLAVE; // Режим - ведомый.
-    modbus_is.address = 0xaa; // Адрес.
+    modbus_is.address = 32; // Адрес.
     modbus_is.rx_message = &modbus_rx_msg; // Сообщение для приёма.
     modbus_is.tx_message = &modbus_tx_msg; // Сообщение для передачи.
     
@@ -255,7 +257,7 @@ int main() {
     ecu_init(); //
     while (1) {
         delay_1s();
-//        COIL_2_GPIO->ODR ^= COIL_2_BSRR_MASK;
+        COIL_2_GPIO->ODR ^= COIL_2_BSRR_MASK;
         cnt_reg++;
        // sprintf(usart2_data,"RX err %u\r\n",usart2.rx_errors);
        // if(usart2.rx_errors) {

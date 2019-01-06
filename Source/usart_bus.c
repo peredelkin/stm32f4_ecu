@@ -237,7 +237,7 @@ void usart_bus_irq_handler(usart_bus_t* usart) {
         usart->rx_errors = usart_bus_get_rx_errors(SR);
 
         if (usart->rx_status == USART_STATUS_TRANSFERING) {
-
+            
             usart_bus_dma_rx_done(usart);
 
             usart_bus_rx_done(usart);
