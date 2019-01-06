@@ -6,26 +6,26 @@
  * Работа с DMA.
  */
 
-static bool usart_bus_dma_lock_tx_channel(usart_bus_t* usart) {
-    //    usart->dma_tx_locked = dma_channel_trylock(usart->dma_tx_channel);
-    return usart->dma_tx_locked;
-}
-
-static bool usart_bus_dma_lock_rx_channel(usart_bus_t* usart) {
-    //    usart->dma_rx_locked = dma_channel_trylock(usart->dma_rx_channel);
-    return usart->dma_rx_locked;
-}
+//static bool usart_bus_dma_lock_tx_channel(usart_bus_t* usart) {
+//    //    usart->dma_tx_locked = dma_channel_trylock(usart->dma_tx_channel);
+//    return usart->dma_tx_locked;
+//}
+//
+//static bool usart_bus_dma_lock_rx_channel(usart_bus_t* usart) {
+//    //    usart->dma_rx_locked = dma_channel_trylock(usart->dma_rx_channel);
+//    return usart->dma_rx_locked;
+//}
 
 static void usart_bus_dma_unlock_tx_channel(usart_bus_t* usart) {
     dma_stream_deinit(&usart->dma_tx_channel);
     //    dma_channel_unlock(usart->dma_tx_channel);
-    usart->dma_tx_locked = false;
+//    usart->dma_tx_locked = false;
 }
 
 static void usart_bus_dma_unlock_rx_channel(usart_bus_t* usart) {
     dma_stream_deinit(&usart->dma_rx_channel);
     //    dma_channel_unlock(usart->dma_rx_channel);
-    usart->dma_rx_locked = false;
+//    usart->dma_rx_locked = false;
 }
 
 static void usart_bus_dma_tx_config(usart_bus_t* usart, void* address, size_t size) {
@@ -34,6 +34,7 @@ static void usart_bus_dma_tx_config(usart_bus_t* usart, void* address, size_t si
     dma_stream_peripheral_address(&usart->dma_tx_channel, (uint32_t) & usart->usart_device->DR);
     dma_stream_memory_address(&usart->dma_tx_channel, 0, (uint32_t) address); //M0AR
 
+    dma_stream_channel_selection(&usart->dma_tx_channel, usart->dma_tx_channel_n);
     dma_stream_transfer_error_interrupt_enable(&usart->dma_tx_channel, true);
     dma_stream_transfer_complete_interrupt_enable(&usart->dma_tx_channel, true);
     dma_stream_data_transfer_direction(&usart->dma_tx_channel, (uint8_t) 0b01); //Memory-to-peripheral
@@ -46,6 +47,7 @@ static void usart_bus_dma_rx_config(usart_bus_t* usart, void* address, size_t si
     dma_stream_peripheral_address(&usart->dma_rx_channel, (uint32_t) & usart->usart_device->DR);
     dma_stream_memory_address(&usart->dma_rx_channel, 0, (uint32_t) address); //M0AR
 
+    dma_stream_channel_selection(&usart->dma_rx_channel, usart->dma_rx_channel_n);
     dma_stream_transfer_error_interrupt_enable(&usart->dma_rx_channel, true);
     dma_stream_transfer_complete_interrupt_enable(&usart->dma_rx_channel, true);
     dma_stream_data_transfer_direction(&usart->dma_rx_channel, (uint8_t) 0b00); //Peripheral-to-memory

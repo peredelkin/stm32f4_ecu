@@ -71,24 +71,24 @@ void init_usart() {
     
     usart2.usart_device = USART2;
     
-    usart_bus_baud_rate_set(&usart2,SystemCoreClock/4, 4800);
+    usart_bus_baud_rate_set(&usart2,SystemCoreClock/4, 115200);
     
     usart_bus_transmitter_enable(&usart2);
     
     usart_bus_receiver_enable(&usart2);
     
-    usart_bus_init(&usart2);
-    
     dma_stream_struct_init(&usart2.dma_rx_channel,DMA1,DMA1_Stream5,5);
     dma_stream_struct_init(&usart2.dma_tx_channel,DMA1,DMA1_Stream6,6);
     
-    dma_stream_channel_selection(&usart2.dma_rx_channel,4);
-    dma_stream_channel_selection(&usart2.dma_tx_channel,4);
+    usart2.dma_rx_channel_n = 4;
+    usart2.dma_tx_channel_n = 4;
     
     NVIC_EnableIRQ(USART2_IRQn);
     NVIC_EnableIRQ(DMA1_Stream5_IRQn);
     NVIC_EnableIRQ(DMA1_Stream6_IRQn);
     
+    usart_bus_init(&usart2);
+
     // Установка каллбэков.
     usart_bus_set_rx_callback(&usart2, usart_rx_callback);
     usart_bus_set_tx_callback(&usart2, usart_tx_callback);

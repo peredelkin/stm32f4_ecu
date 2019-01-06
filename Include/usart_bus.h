@@ -70,7 +70,9 @@ typedef uint8_t usart_transfer_id_t;
 typedef struct _UsartBus {
     USART_TypeDef* usart_device; //!< Устройство USART.
     dma_t dma_rx_channel; //!< Канал DMA для приёма.
+    uint8_t dma_rx_channel_n; //
     dma_t dma_tx_channel; //!< Канал DMA для передачи.
+    uint8_t dma_tx_channel_n;
     usart_bus_rx_byte_callback_t rx_byte_callback; //!< Каллбэк при приёме байта.
     usart_bus_callback_t rx_callback; //!< Каллбэк событий приёма данных шины USART.
     usart_bus_callback_t tx_callback; //!< Каллбэк событий передачи данных шины USART.

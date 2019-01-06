@@ -170,5 +170,6 @@ void dma_stream_struct_init(dma_t* dma_stream, DMA_TypeDef* dma, DMA_Stream_Type
 
 void dma_stream_deinit(dma_t* dma_stream) {
     dma_stream_enable(dma_stream,false);
-//    dma_stream->stream->CR = 0; \todo: необходимо сделать нормальный деинит
+    dma_stream->stream->CR = 0;
+    dma_stream->stream->NDTR = 0;
 }
