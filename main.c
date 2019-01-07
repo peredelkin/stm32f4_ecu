@@ -257,7 +257,7 @@ int main() {
     ecu_init(); //
     while (1) {
         delay_1s();
-        COIL_2_GPIO->ODR ^= COIL_2_BSRR_MASK;
+        //COIL_2_GPIO->ODR ^= COIL_2_BSRR_MASK;
         cnt_reg++;
        // sprintf(usart2_data,"RX err %u\r\n",usart2.rx_errors);
        // if(usart2.rx_errors) {

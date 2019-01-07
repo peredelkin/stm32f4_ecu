@@ -64,14 +64,32 @@ static void usart_bus_dma_start_rx(usart_bus_t* usart) {
     dma_stream_enable(&usart->dma_rx_channel, true);
 }
 
+//static void usart_bus_dma_stop_tx(usart_bus_t* usart) {
+//    dma_stream_enable(&usart->dma_tx_channel, false);
+//    usart->usart_device->CR3 &= ~USART_CR3_DMAT;
+//}
+
 static void usart_bus_dma_stop_tx(usart_bus_t* usart) {
+    dma_stream_transfer_complete_interrupt_enable(&usart->dma_tx_channel, false);
+
     dma_stream_enable(&usart->dma_tx_channel, false);
     usart->usart_device->CR3 &= ~USART_CR3_DMAT;
+
+    dma_stream_transfer_complete_interrupt_clear(&usart->dma_tx_channel);
 }
 
+//static void usart_bus_dma_stop_rx(usart_bus_t* usart) {
+//    dma_stream_enable(&usart->dma_rx_channel, false);
+//    usart->usart_device->CR3 &= ~USART_CR3_DMAR;
+//}
+
 static void usart_bus_dma_stop_rx(usart_bus_t* usart) {
+    dma_stream_transfer_complete_interrupt_enable(&usart->dma_rx_channel, false);
+
     dma_stream_enable(&usart->dma_rx_channel, false);
     usart->usart_device->CR3 &= ~USART_CR3_DMAR;
+
+    dma_stream_transfer_complete_interrupt_clear(&usart->dma_rx_channel);
 }
 
 ALWAYS_INLINE static bool usart_bus_has_rx_errors(uint16_t SR) {
