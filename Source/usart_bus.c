@@ -288,7 +288,7 @@ void usart_bus_irq_handler(usart_bus_t* usart) {
 }
 
 bool usart_bus_dma_rx_channel_irq_handler(usart_bus_t* usart) {
-    //if (usart->rx_status != USART_STATUS_TRANSFERING) return false;
+    if (usart->rx_status != USART_STATUS_TRANSFERING) return false;
 
     //bool can_rx = usart_bus_transmitter_state(usart->usart_device);
 
