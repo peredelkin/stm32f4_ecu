@@ -8,7 +8,7 @@
 #define IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N 16
 
 
-float ign_angle_mg_by_cycle[IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N][IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_N] = {
+static volatile float ign_angle_mg_by_cycle[IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N][IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_N] = {
     21.5,   22.5,   23.5,   25.0,   30.5,   31.5,   33.0,   37.0,   37.5,   38.0,   38.5,   39.5,   40.0,   41.0,   42.0,   42.0,   /*29*/
     21.5,   22.5,   23.5,   25.0,   30.5,   31.5,   33.0,   37.0,   37.5,   38.0,   38.5,   39.5,   40.0,   41.0,   42.0,   42.0,   /*57*/
     21.5,   22.5,   23.5,   25.0,   30.5,   31.5,   33.0,   37.0,   37.5,   38.0,   38.5,   39.5,   40.0,   41.0,   42.0,   42.0,   /*85*/
