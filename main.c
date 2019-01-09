@@ -167,13 +167,15 @@ static modbus_rtu_error_t modbus_on_report_slave_id(modbus_rtu_slave_id_t* slave
 #define MB_HR_A_IGN_ANGLE_MG_BY_CYCLE (uint16_t)0x1
 
 modbus_rtu_error_t modbus_ign_angle_mg_by_cycle_read(uint16_t address, uint16_t* value) {
-    if(address >= ((IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N*IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_N*2)-1)) return MODBUS_RTU_ERROR_INVALID_ADDRESS;
+    if(address >= (IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N*IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_N*2)) return MODBUS_RTU_ERROR_INVALID_ADDRESS;
     *value = ((uint16_t*)ign_angle_mg_by_cycle)[address];
+    return MODBUS_RTU_ERROR_NONE;
 }
 
 modbus_rtu_error_t modbus_ign_angle_mg_by_cycle_write(uint16_t address, uint16_t value) {
-    if(address >= ((IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N*IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_N*2)-1)) return MODBUS_RTU_ERROR_INVALID_ADDRESS;
+    if(address >= (IGN_ANGLE_MG_BY_CYCLE_MG_SCALE_N*IGN_ANGLE_MG_BY_CYCLE_RPM_SCALE_N*2)) return MODBUS_RTU_ERROR_INVALID_ADDRESS;
     ((uint16_t*)ign_angle_mg_by_cycle)[address] = value;
+    return MODBUS_RTU_ERROR_NONE;
 }
 
 static modbus_rtu_error_t modbus_on_read_hold_reg(uint16_t address, uint16_t* value)
@@ -181,11 +183,9 @@ static modbus_rtu_error_t modbus_on_read_hold_reg(uint16_t address, uint16_t* va
     uint16_t switch_addr = (uint16_t)((MB_HR_A_MASK & address) >> MB_HR_A_SHIFT);
     uint16_t addr = address & (~MB_HR_A_MASK);
     switch (switch_addr) {
-        case MB_HR_A_IGN_ANGLE_MG_BY_CYCLE: modbus_ign_angle_mg_by_cycle_read(addr,value); break;
+        case MB_HR_A_IGN_ANGLE_MG_BY_CYCLE: return modbus_ign_angle_mg_by_cycle_read(addr,value); break;
         default: return MODBUS_RTU_ERROR_INVALID_ADDRESS;
     }
-    
-    return MODBUS_RTU_ERROR_NONE;
 }
 
 static modbus_rtu_error_t modbus_on_write_hold_reg(uint16_t address, uint16_t value)
@@ -193,11 +193,9 @@ static modbus_rtu_error_t modbus_on_write_hold_reg(uint16_t address, uint16_t va
     uint16_t switch_addr = (uint16_t)((MB_HR_A_MASK & address) >> MB_HR_A_SHIFT);
     uint16_t addr = address & (~MB_HR_A_MASK);
     switch (switch_addr) {
-        case MB_HR_A_IGN_ANGLE_MG_BY_CYCLE: modbus_ign_angle_mg_by_cycle_write(addr,value); break;
+        case MB_HR_A_IGN_ANGLE_MG_BY_CYCLE: return modbus_ign_angle_mg_by_cycle_write(addr,value); break;
         default: return MODBUS_RTU_ERROR_INVALID_ADDRESS;
     }
-    
-    return MODBUS_RTU_ERROR_NONE;
 }
 
 void init_modbus(void)
