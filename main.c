@@ -266,15 +266,15 @@ int main() {
     rcc_init(); //тактирование
     gpio_led_init(); //светодиоды
     gpio_master_timer_init(); //инициализация пина захвата
-    init_usart(); //уарт автобус
-    init_modbus(); //модбас
+    //init_usart(); //уарт автобус
+    //init_modbus(); //модбас
     ecu_crank_capture_init(&ecu_struct); //инициализация захвата
     ecu_coil_init(&ecu_struct); //инициализация катушек
     ecu_init(); //
     while (1) {
-        delay_1s();
+        //delay_1s();
         //COIL_2_GPIO->ODR ^= COIL_2_BSRR_MASK;
-        cnt_reg++;
+        //cnt_reg++;
        // sprintf(usart2_data,"RX err %u\r\n",usart2.rx_errors);
        // if(usart2.rx_errors) {
         //    usart_bus_send(&usart2, usart2_data, strlen(usart2_data));
