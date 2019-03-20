@@ -18,6 +18,7 @@
 
 #define CPS_GPIO GPIOA //crankshaft position sensor port
 #define CPS_PIN_N 8 //crankshaft position sensor pin
+#define CPS_PIN_AF 1 //AF1
 
 void rcc_init(void) {
     RCC->AHB1ENR |= RCC_AHB1ENR_GPIODEN; //GPIO_D
@@ -84,8 +85,8 @@ void gpio_master_timer_init() {
     CPS_GPIO->PUPDR &= ~GPIO_PUPDR_PUPDR8;
     CPS_GPIO->PUPDR |= GPIO_PUPDR_PUPDR8_1; // PU
 
-    CPS_GPIO->AFR[CPS_PIN_N / 8] &= ~(uint32_t) ((0b1111 << ((CPS_PIN_N % 8)*4)));
-    CPS_GPIO->AFR[CPS_PIN_N / 8] |= (uint32_t) ((0b0001 << ((CPS_PIN_N % 8)*4))); //AF1
+    CPS_GPIO->AFR[CPS_PIN_N / 8] &= ~(uint32_t) ((0b1111 << ((CPS_PIN_N % 8)*4))); //Clear AF
+    CPS_GPIO->AFR[CPS_PIN_N / 8] |= (uint32_t) (((0b1111 & CPS_PIN_AF) << ((CPS_PIN_N % 8)*4))); //AF1
 }
 
 #endif /* MAIN_H */
