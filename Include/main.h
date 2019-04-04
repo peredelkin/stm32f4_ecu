@@ -77,6 +77,11 @@ void gpio_usart2_init() {
     GPIOD->AFR[0] |= (uint32_t)(0b0111 << ((6 % 8)*4)); //Set AF7 to 6
 }
 
+void gpio_afr_set(GPIO_TypeDef * gpio,uint8_t gpio_pin_n,uint8_t gpio_pin_af) {
+    gpio->AFR[gpio_pin_n / 8] &= ~(uint32_t) ((0b1111 << ((gpio_pin_n % 8)*4))); //Clear AF
+    gpio->AFR[gpio_pin_n / 8] |= (uint32_t) (((0b1111 & gpio_pin_af) << ((gpio_pin_n % 8)*4))); //Set AF
+}
+
 void gpio_master_timer_init() {
     //Capture TIMER PA8
     CPS_GPIO->MODER &= ~GPIO_MODER_MODER8;
@@ -85,8 +90,9 @@ void gpio_master_timer_init() {
     CPS_GPIO->PUPDR &= ~GPIO_PUPDR_PUPDR8;
     CPS_GPIO->PUPDR |= GPIO_PUPDR_PUPDR8_1; // PU
 
-    CPS_GPIO->AFR[CPS_PIN_N / 8] &= ~(uint32_t) ((0b1111 << ((CPS_PIN_N % 8)*4))); //Clear AF
-    CPS_GPIO->AFR[CPS_PIN_N / 8] |= (uint32_t) (((0b1111 & CPS_PIN_AF) << ((CPS_PIN_N % 8)*4))); //AF1
+    gpio_afr_set(CPS_GPIO,CPS_PIN_N,CPS_PIN_AF);
+    //CPS_GPIO->AFR[CPS_PIN_N / 8] &= ~(uint32_t) ((0b1111 << ((CPS_PIN_N % 8)*4))); //Clear AF
+    //CPS_GPIO->AFR[CPS_PIN_N / 8] |= (uint32_t) (((0b1111 & CPS_PIN_AF) << ((CPS_PIN_N % 8)*4))); //AF1
 }
 
 #endif /* MAIN_H */
