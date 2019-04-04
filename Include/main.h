@@ -15,6 +15,7 @@
 #define MAIN_H
 
 #include <stm32f4xx.h>
+#include "gpio.h"
 
 #define CPS_GPIO GPIOA //crankshaft position sensor port
 #define CPS_PIN_N 8 //crankshaft position sensor pin
@@ -59,8 +60,9 @@ void gpio_usart2_init() {
     
     GPIOA->PUPDR &= ~GPIO_PUPDR_PUPDR2; // Reset PUPD
     
-    GPIOA->AFR[0] &= ~(uint32_t)(0b1111 << ((2 % 8)*4)); //Reset Alternate 5
-    GPIOA->AFR[0] |= (uint32_t)(0b0111 << ((2 % 8)*4)); //Set AF7 to 5
+    gpio_afr_set(GPIOA,2,7);
+    //GPIOA->AFR[0] &= ~(uint32_t)(0b1111 << ((2 % 8)*4)); //Reset Alternate 2
+    //GPIOA->AFR[0] |= (uint32_t)(0b0111 << ((2 % 8)*4)); //Set AF7 to 2
     
     //RX PD6 AF7
     GPIOD->MODER &= ~GPIO_MODER_MODER6; //Reset Mode 2
@@ -73,13 +75,9 @@ void gpio_usart2_init() {
     
     GPIOD->PUPDR &= ~GPIO_PUPDR_PUPDR6; // Reset PUPD
     
-    GPIOD->AFR[0] &= ~(uint32_t)(0b1111 << ((6 % 8)*4)); //Reset Alternate 6
-    GPIOD->AFR[0] |= (uint32_t)(0b0111 << ((6 % 8)*4)); //Set AF7 to 6
-}
-
-void gpio_afr_set(GPIO_TypeDef * gpio,uint8_t gpio_pin_n,uint8_t gpio_pin_af) {
-    gpio->AFR[gpio_pin_n / 8] &= ~(uint32_t) ((0b1111 << ((gpio_pin_n % 8)*4))); //Clear AF
-    gpio->AFR[gpio_pin_n / 8] |= (uint32_t) (((0b1111 & gpio_pin_af) << ((gpio_pin_n % 8)*4))); //Set AF
+    gpio_afr_set(GPIOD,6,7);
+    //GPIOD->AFR[0] &= ~(uint32_t)(0b1111 << ((6 % 8)*4)); //Reset Alternate 6
+    //GPIOD->AFR[0] |= (uint32_t)(0b0111 << ((6 % 8)*4)); //Set AF7 to 6
 }
 
 void gpio_master_timer_init() {

@@ -16,7 +16,7 @@
 
 #include <stm32f4xx.h>
 
-
+extern void gpio_afr_set(GPIO_TypeDef * gpio,uint8_t gpio_pin_n,uint8_t gpio_pin_af);
 
 #endif /* GPIO_H */
 
