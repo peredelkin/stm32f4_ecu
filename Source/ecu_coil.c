@@ -152,6 +152,7 @@ void ecu_coil_angle_handler(ecu_t* ecu,uint16_t angle,uint16_t next_angle,uint16
 /**
  * Обработчик событий
  * @param ecu Структура эбу
+ * @TODO: отделить от ecu_coil.c
  */
 void ecu_angle_handler(ecu_t* ecu) {
     uint16_t angle = ecu->crank.angle[ecu->vr.next_1]; //угол захвата N+1
