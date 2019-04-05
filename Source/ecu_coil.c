@@ -133,14 +133,11 @@ void ecu_coil_angle_update(ecu_t* ecu, ecu_coil_t* coil) {
  */
 void ecu_angle_handler(ecu_t* ecu) {
     uint8_t coil_count = COIL_N;
-    //угол захвата N+1
-    uint16_t angle = ecu->crank.angle[ecu->vr.next_1];
-    //угол захвата N+2
-    uint16_t next_angle = ecu->crank.angle[ecu->vr.next_2];
-    //значение захвата N+1
-    uint16_t capture = ecu->crank.capture[ecu->vr.next_1];
-    //период захвата N+2
-    uint16_t next_period = ecu->crank.period[ecu->vr.next_2];
+    
+    uint16_t angle = ecu->crank.angle[ecu->vr.next_1]; //угол захвата N+1
+    uint16_t next_angle = ecu->crank.angle[ecu->vr.next_2]; //угол захвата N+2
+    uint16_t capture = ecu->crank.capture[ecu->vr.next_1]; //значение захвата N+1
+    uint16_t next_period = ecu->crank.period[ecu->vr.next_2]; //период захвата N+2
     
     while (coil_count) {
         coil_count--;
