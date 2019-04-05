@@ -14,7 +14,9 @@
 #ifndef ECU_MASS_AIR_FLOW_MAP_H
 #define ECU_MASS_AIR_FLOW_MAP_H
 
-static const float mass_air_flow_map[256] = {
+#define MASS_AIR_FLOW_MAP_SIZE 256
+
+static const float mass_air_flow_map[MASS_AIR_FLOW_MAP_SIZE] = {
 -38.4,
 -37.3,
 -36.2,
